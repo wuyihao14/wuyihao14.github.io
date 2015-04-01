@@ -1,0 +1,459 @@
+
+ <!DOCTYPE HTML>
+<html >
+<head>
+  <meta charset="UTF-8">
+  
+    <title>神经网络复习 | Shelter</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="Donald Wu">
+    
+
+    
+    <meta name="description" content="复习了一下PNN，仍旧是只涉猎了一点浅显的内容，不过还是有新的收获。
+概率神经网络围绕的中心是贝叶斯决策理论（使错误率最小）。它是前向传播算法，没有反馈。
+它分为四层。输入层、模式层、求和层、输出（竞争）层。其中模式层，激活函数是非线性，且神经元多于种类数的是为了把输入映射到高维空间（类似于径向基神经网络），以解决线性不可分的问题，和提高精度。求和层的神经元数等于类别数，激活函数是线性的。
+分类器">
+<meta property="og:type" content="article">
+<meta property="og:title" content="神经网络复习">
+<meta property="og:url" content="http://wuyihao14.github.io/2015/02/19/神经网络复习/index.html">
+<meta property="og:site_name" content="Shelter">
+<meta property="og:description" content="复习了一下PNN，仍旧是只涉猎了一点浅显的内容，不过还是有新的收获。
+概率神经网络围绕的中心是贝叶斯决策理论（使错误率最小）。它是前向传播算法，没有反馈。
+它分为四层。输入层、模式层、求和层、输出（竞争）层。其中模式层，激活函数是非线性，且神经元多于种类数的是为了把输入映射到高维空间（类似于径向基神经网络），以解决线性不可分的问题，和提高精度。求和层的神经元数等于类别数，激活函数是线性的。
+分类器">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="神经网络复习">
+<meta name="twitter:description" content="复习了一下PNN，仍旧是只涉猎了一点浅显的内容，不过还是有新的收获。
+概率神经网络围绕的中心是贝叶斯决策理论（使错误率最小）。它是前向传播算法，没有反馈。
+它分为四层。输入层、模式层、求和层、输出（竞争）层。其中模式层，激活函数是非线性，且神经元多于种类数的是为了把输入映射到高维空间（类似于径向基神经网络），以解决线性不可分的问题，和提高精度。求和层的神经元数等于类别数，激活函数是线性的。
+分类器">
+
+    
+    <link rel="alternative" href="/atom.xml" title="Shelter" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+</head>
+
+  <body>
+    <header>
+      <div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="Shelter" title="Shelter"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="Shelter">Shelter</a></h1>
+				<h2 class="blog-motto"></h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜單">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+						<li><a href="/about">About</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:wuyihao14.github.io">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2015/02/19/神经网络复习/" title="神经网络复习" itemprop="url">神经网络复习</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="http://wuyihao14.github.io/about" title="Donald Wu" target="_blank" itemprop="author">Donald Wu</a>
+		
+  <p class="article-time">
+    <time datetime="2015-02-19T10:27:24.000Z" itemprop="datePublished"> 發表於 2015-02-19</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目錄</strong>
+		
+			
+		
+		</div>
+		
+		<p>复习了一下PNN，仍旧是只涉猎了一点浅显的内容，不过还是有新的收获。</p>
+<p>概率神经网络围绕的中心是<strong>贝叶斯决策理论（使错误率最小）</strong>。它是前向传播算法，没有<strong>反馈</strong>。</p>
+<p>它分为四层。<strong>输入层</strong>、<strong>模式层</strong>、<strong>求和层</strong>、<strong>输出（竞争）层</strong>。其中模式层，激活函数是<strong>非线性</strong>，且神经元多于种类数的是为了把输入<strong>映射到高维空间</strong>（类似于径向基神经网络），以解决<strong>线性不可分</strong>的问题，和提高精度。求和层的神经元数等于类别数，激活函数是线性的。</p>
+<p>分类器理论，基于贝叶斯决策。即$P(w_i|\vec{x})&gt;P(w_j|\vec{x}) \forall j\neq i \Rightarrow vec{x} \in w_i$，$P(w_i|\vec{x})$是<strong>后验概率</strong>，即在x向量属于wi类的可能性，把x归为可能性最大的一类。</p>
+<p>又$P(w_i|x)=\frac{P(x|w_i)P(w_i)}{\sum_{j=1}^{c}{P(x|w_j)P(w_j)}}$。也可以写成$P(w_i|x)=\frac{P(x|w_i)P(w_i)}{P(x)}$。即<strong>后验概率=似然*先验/证据因子</strong></p>
+<font color="grey" size="1px">最好所有的_前面都价一个\，有时候会出错。sum的内容也要跟一个{}</font>
+
+<p>计算$P(x|w_i)$。概率密度是难以得到其准确函数的，但是我们可以用估计方法来获得其近似函数。分为<strong>参数法</strong>和<strong>非参数法</strong>。参数法是预测一个确定的函数形式（如多项式函数），然后通过算法来确定其参数，这种方法实际应用中效果不如非参数法好。在PNN中，应用的即是非参数法中的<strong>核方法</strong>中的Parzen窗法，另外还有直方图法。选取的核为<strong>高斯核</strong>（其符合正态分布)。要求是概率密度函数积分为1，积分就不做了，不会。得到$P(\vec{x}|w_i)=\frac{1}{N_i} \sum_{k=1}^{N_i}{\frac{1}{(2 \pi)^{\frac{l}{2} } \sigma^l}e^{-\frac{ {\left|\vec{x}-\vec{x_{ik} }\right|}^2}{2 \sigma^2} } }$。这种方法是基于训练样本的。</p>
+<font color="grey" size="1px">LATEX不要把两个{连着了,编译不过，中间插个空格</font>
+
+<p>P(x)和P(w_i)在样本足够大，随机的情况下，是可以得到的。然后就可以计算出后验概率。</p>
+<p>求决策函数，因为决策函数只用来比较，不需要知道确切的值，因此可以省略掉后验概率密度函数中的共有项。进而对样本进行归一话后，可以对函数进一步化简。$g_i(\vec{x})=\frac{p(w_i)}{N_i}\sum_{k=1}^{N_i}{e^{-\frac{ {\left|\vec{x}-\vec{x_{ik} }\right|}^2}{2 \sigma^2} }=\frac{p(w_i)}{N_i}\sum_{k=1}^{N_i}e^{\frac{\vec{x}^T\vec{x_{ik} }-1}{\sigma^2} }}$</p>
+<p>我仍然不理解的是，PNN比RBF和BP优的原因，不能理解是矩阵运算的低效，不过由于矩阵运算的高度并行化，如果实现算法并行化，肯定能体现出其优势。效率上没有具体数字的呈现，不太能够承认。然而实验能力的不足，没法自己验证。等待以后再来理解吧.</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/AI/">AI</a>
+</div>
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://wuyihao14.github.io/2015/02/19/神经网络复习/" data-title="神经网络复习 | Shelter" data-tsina="null" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2015/02/20/在Github上建立我的博客-四/" title="在Github上建立我的博客(四)——添加Latex支持">
+  <strong>上一篇：</strong><br/>
+  <span>
+  在Github上建立我的博客(四)——添加Latex支持</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2015/02/19/在Github上建立我的博客-三/"  title="在Github上建立我的博客(三)——图床">
+ <strong>下一篇：</strong><br/> 
+ <span>在Github上建立我的博客(三)——图床
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="顯示側邊欄"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目錄</strong>
+ 
+ 
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隱藏側邊欄"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分類</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/ACM/" title="ACM">ACM<sup>7</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/AI/" title="AI">AI<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/HPC/" title="HPC">HPC<sup>5</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Just4Fun/" title="Just4Fun">Just4Fun<sup>4</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Math/" title="Math">Math<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Networking/" title="Networking">Networking<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Server/" title="Server">Server<sup>1</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+
+  <div class="linkslist">
+  <p class="asidetitle">友情鏈接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://blog.ikow.cn" target="_blank" title="k神">k神</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://nlfox.sinaapp.com" target="_blank" title="狐神">狐神</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 訂閱</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> wuyihao. ^_^ <br/>
+			Mjr in Sftwr. Fncy4 Algrthm, Info&#39;Sec. Cmptr Ntwrk.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2015 
+		
+		<a href="http://wuyihao14.github.io/about" target="_blank" title="Donald Wu">Donald Wu</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#nothing"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});     
+</script>
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回頂部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>

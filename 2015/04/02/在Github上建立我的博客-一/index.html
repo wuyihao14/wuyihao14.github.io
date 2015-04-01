@@ -1,0 +1,452 @@
+
+ <!DOCTYPE HTML>
+<html >
+<head>
+  <meta charset="UTF-8">
+  
+    <title>在Github上建立我的博客(一)——基本 | Shelter</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="Donald Wu">
+    
+
+    
+    <meta name="description" content="ssh-keygen -t rsa把id_rsa.pub粘贴到github里去ssh -T git@github.com提示id_rsa的others权限过高，于是改成600
+
+mkdir blog 建立文件夹cd blog/echo “# wuyihao14.github.io” &amp;gt;&amp;gt; README.md 创建READMEgit init 初始化gitgit remote add o">
+<meta property="og:type" content="article">
+<meta property="og:title" content="在Github上建立我的博客(一)——基本">
+<meta property="og:url" content="http://wuyihao14.github.io/2015/04/02/在Github上建立我的博客-一/index.html">
+<meta property="og:site_name" content="Shelter">
+<meta property="og:description" content="ssh-keygen -t rsa把id_rsa.pub粘贴到github里去ssh -T git@github.com提示id_rsa的others权限过高，于是改成600
+
+mkdir blog 建立文件夹cd blog/echo “# wuyihao14.github.io” &amp;gt;&amp;gt; README.md 创建READMEgit init 初始化gitgit remote add o">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="在Github上建立我的博客(一)——基本">
+<meta name="twitter:description" content="ssh-keygen -t rsa把id_rsa.pub粘贴到github里去ssh -T git@github.com提示id_rsa的others权限过高，于是改成600
+
+mkdir blog 建立文件夹cd blog/echo “# wuyihao14.github.io” &amp;gt;&amp;gt; README.md 创建READMEgit init 初始化gitgit remote add o">
+
+    
+    <link rel="alternative" href="/atom.xml" title="Shelter" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+</head>
+
+  <body>
+    <header>
+      <div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="Shelter" title="Shelter"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="Shelter">Shelter</a></h1>
+				<h2 class="blog-motto"></h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜單">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+						<li><a href="/about">About</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:wuyihao14.github.io">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2015/04/02/在Github上建立我的博客-一/" title="在Github上建立我的博客(一)——基本" itemprop="url">在Github上建立我的博客(一)——基本</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="http://wuyihao14.github.io/about" title="Donald Wu" target="_blank" itemprop="author">Donald Wu</a>
+		
+  <p class="article-time">
+    <time datetime="2015-04-01T16:30:22.995Z" itemprop="datePublished"> 發表於 2015-04-02</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目錄</strong>
+		
+			
+		
+		</div>
+		
+		<p>ssh-keygen -t rsa<br>把id_rsa.pub粘贴到github里去<br>ssh -T git@github.com<br>提示id_rsa的others权限过高，于是改成600</p>
+<hr>
+<p>mkdir blog 建立文件夹<br>cd blog/<br>echo “# wuyihao14.github.io” &gt;&gt; README.md 创建README<br>git init 初始化git<br>git remote add origin git@github.com:wuyihao14/wuyihao14.github.io.git 在github上添加repository，origin是默认的远程版本库名称</p>
+<p>touch a    添加文件<br>git add a 添加到repository中<br>git commit -m “first commit” 提交更改<br>git push -u origin master 推送到github</p>
+<p>hexo init 创建hexo博客<br>npm install 下载modules<br>hexo g  生成静态文件，因为github只支持静态，hexo d部署，只会提交.deploy文件夹，也就是只有静态文件，合并为hexo d -g。hexo s预览</p>
+<hr>
+<p>这些在本博客中都用不上<br>git add  -f 强制添加所有文件<br>git commit -m “Set up Blog”<br>git push -u origin master </p>
+<hr>
+<p>git remote remove origin 有时候会提醒已存在origin<br>error:src refspec master does not match any 这个错误说明提交的空目录<br>[error] Deployer not found: null 因为没有配置deployer<br>修改_config.yml<br>deploy:<br>  type: github<br>  repository: <a href="https://github.com/wuyihao14/wuyihao14.github.io.git" target="_blank" rel="external">https://github.com/wuyihao14/wuyihao14.github.io.git</a><br>  branch: master<br>但是这样之后每次都要求输入密码，有什么办法?</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Just4Fun/">Just4Fun</a>
+</div>
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://wuyihao14.github.io/2015/04/02/在Github上建立我的博客-一/" data-title="在Github上建立我的博客(一)——基本 | Shelter" data-tsina="null" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2015/04/02/在Github上建立我的博客-二/" title="在Github上建立我的博客(二)——主题">
+  <strong>上一篇：</strong><br/>
+  <span>
+  在Github上建立我的博客(二)——主题</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2015/03/26/Omnetpp-4-6折腾笔记/"  title="Omnetpp-4.6折腾笔记">
+ <strong>下一篇：</strong><br/> 
+ <span>Omnetpp-4.6折腾笔记
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="顯示側邊欄"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目錄</strong>
+ 
+ 
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隱藏側邊欄"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分類</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/ACM/" title="ACM">ACM<sup>7</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/AI/" title="AI">AI<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/HPC/" title="HPC">HPC<sup>5</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Just4Fun/" title="Just4Fun">Just4Fun<sup>4</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Math/" title="Math">Math<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Networking/" title="Networking">Networking<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Server/" title="Server">Server<sup>1</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+
+  <div class="linkslist">
+  <p class="asidetitle">友情鏈接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://blog.ikow.cn" target="_blank" title="k神">k神</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://nlfox.sinaapp.com" target="_blank" title="狐神">狐神</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 訂閱</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> wuyihao. ^_^ <br/>
+			Mjr in Sftwr. Fncy4 Algrthm, Info&#39;Sec. Cmptr Ntwrk.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2015 
+		
+		<a href="http://wuyihao14.github.io/about" target="_blank" title="Donald Wu">Donald Wu</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#nothing"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});     
+</script>
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回頂部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>
