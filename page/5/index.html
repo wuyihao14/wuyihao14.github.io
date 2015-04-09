@@ -80,6 +80,63 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/2015/02/27/简易配置NFS/" title="简易配置NFS" itemprop="url">简易配置NFS</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="http://wuyihao14.github.io/about" title="Donald Wu" target="_blank" itemprop="author">Donald Wu</a>
+		
+  <p class="article-time">
+    <time datetime="2015-02-27T03:33:14.000Z" itemprop="datePublished"> 發表於 2015-02-27</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>在安装Intel编译器和调试器的时候，虚拟机内存不够了，du -s发现需要7.9g，我只有6g。然而安装包iso特别大，于是用nfs把iso挂在host上</p>
+<p>安装nfs-common、rpcbind(原名portmap)、nfs-kernel-server<br>dpkg-reconfig rpcbind<br>建立/home/nfs<br>修改/etc/exports，对NFS卷的访问是由exports来批准, 它枚举了若干有权访问NFS服务器上文件系统的主机名.<br>添加一行<br>    /home/nfs        *(rw,sync,no_root_squash)<br>service nfs-kernel-server restart<br>netstate -tnp查看端口是否打开了</p>
+<p>在客户端上mount -t nfs username@host /media/nfs 即可</p>
+
+        
+        
+        <p class="article-more-link">
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Server/">Server</a>
+</div>
+
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/2015/02/20/在Github上建立我的博客-四/" title="在Github上建立我的博客(四)——添加Latex支持" itemprop="url">在Github上建立我的博客(四)——添加Latex支持</a>
   </h1>
   <p class="article-author">By
@@ -268,77 +325,9 @@
 
 
 
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2015/02/19/科普图解傅里叶变换/" title="科普图解傅里叶变换" itemprop="url">科普图解傅里叶变换</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="http://wuyihao14.github.io/about" title="Donald Wu" target="_blank" itemprop="author">Donald Wu</a>
-		
-  <p class="article-time">
-    <time datetime="2015-02-19T05:44:56.000Z" itemprop="datePublished"> 發表於 2015-02-19</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <ul>
-<li><p>话不多说先上两个GIF图。<br><img src="http://7vzpn8.com1.z0.glb.clouddn.com/FourierByAnim/1.gif" alt=""><br><img src="http://7vzpn8.com1.z0.glb.clouddn.com/FourierByAnim/2.gif" alt=""></p>
-</li>
-<li><p>第一个动画和第二个动画其实都是对时域的周期矩形形波（近似看成矩形波，并不是严格意义的矩形方波）进行傅里叶变换分析。</p>
-</li>
-<li><p>对于第一个图形来说，它侧重展示变换的本质之一：叠加性，每个圆代表一个谐波分量。</p>
-</li>
-<li><p>第二个图形则侧重展示离散的频谱图。</p>
-</li>
-<li><p>但是这两个图形其实都只是展示了周期信号的频谱分析，对应的都是离散谱，而且都只是对一种很特殊的时域波形进行的分析。不过通过这两个动画，想必对傅里叶变化也有了更深刻的印象吧！</p>
-</li>
-</ul>
-<hr>
-<p>原文地址：<a href="http://www.guokr.com/post/463448/" target="_blank" rel="external">http://www.guokr.com/post/463448/</a></p>
-
-        
-        
-        <p class="article-more-link">
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-<div class="article-categories">
-  <span></span>
-  <a class="article-category-link" href="/categories/Math/">Math</a>
-</div>
-
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
 
   <nav id="page-nav" class="clearfix">
-    <a class="extend prev" rel="prev" href="/page/4/"><span></span>Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><span class="page-number current">5</span>
+    <a class="extend prev" rel="prev" href="/page/4/"><span></span>Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><span class="page-number current">5</span><a class="page-number" href="/page/6/">6</a><a class="extend next" rel="next" href="/page/6/">Next<span></span></a>
   </nav>
 
 </div>
@@ -375,6 +364,10 @@
 		
 		  
 			<li><a href="/categories/Networking/" title="Networking">Networking<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Security/" title="Security">Security<sup>1</sup></a></li>
 		  
 		
 		  
