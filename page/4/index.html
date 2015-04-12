@@ -46,7 +46,7 @@
 				<h1 class="site-name"><a href="/" title="Shelter">Shelter</a></h1>
 				<h2 class="blog-motto"></h2>
 			</div>
-			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜單">
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
 			</a></div>
 			<nav class="animated">
 				<ul>
@@ -80,6 +80,68 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/2015/04/02/在Github上建立我的博客-二/" title="在Github上建立我的博客(二)——主题" itemprop="url">在Github上建立我的博客(二)——主题</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="http://wuyihao14.github.io/about" title="Donald Wu" target="_blank" itemprop="author">Donald Wu</a>
+		
+  <p class="article-time">
+    <time datetime="2015-04-01T16:30:25.507Z" itemprop="datePublished"> 发表于 2015-04-02</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <h1 id="换一个theme">换一个theme</h1><p>获取jacman，pacman主题的一个分支<br>git clone <a href="https://github.com/wuchong/jacman.git" target="_blank" rel="external">https://github.com/wuchong/jacman.git</a> themes/jacman</p>
+<p>配置_config.yml<br>theme: jackman 一定要有空格</p>
+<p># Stylus<br>stylus:<br>  compress: true</p>
+<hr>
+<p>使用jacman或pacman主题，建议按此标准语法写：</p>
+<p>title: postName #文章页面上的显示名称，可以任意修改，不会出现在URL中<br>date: 2013-12-02 15:30:16 #文章生成时间，一般不改，当然也可以任意修改<br>categories: example #分类<br>tags: [tag1,tag2,tag3] #文章标签，可空，多标签请用格式，注意:后面有个空格<br>description: 附加一段文章摘要，字数最好在140字以内。</p>
+<hr>
+<h1 id="修改theme">修改theme</h1><p>hexo s启动服务器，然后即可变修改边预览，不需要hexo g</p>
+
+        
+        
+        <p class="article-more-link">
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Just4Fun/">Just4Fun</a>
+</div>
+
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/2015/04/02/在Github上建立我的博客-一/" title="在Github上建立我的博客(一)——基本" itemprop="url">在Github上建立我的博客(一)——基本</a>
   </h1>
   <p class="article-author">By
@@ -87,7 +149,7 @@
 		<a href="http://wuyihao14.github.io/about" title="Donald Wu" target="_blank" itemprop="author">Donald Wu</a>
 		
   <p class="article-time">
-    <time datetime="2015-04-01T16:30:22.995Z" itemprop="datePublished"> 發表於 2015-04-02</time>
+    <time datetime="2015-04-01T16:30:22.995Z" itemprop="datePublished"> 发表于 2015-04-02</time>
     
   </p>
 </header>
@@ -150,7 +212,7 @@
 		<a href="http://wuyihao14.github.io/about" title="Donald Wu" target="_blank" itemprop="author">Donald Wu</a>
 		
   <p class="article-time">
-    <time datetime="2015-03-25T16:05:37.000Z" itemprop="datePublished"> 發表於 2015-03-26</time>
+    <time datetime="2015-03-25T16:05:37.000Z" itemprop="datePublished"> 发表于 2015-03-26</time>
     
   </p>
 </header>
@@ -205,7 +267,7 @@
 		<a href="http://wuyihao14.github.io/about" title="Donald Wu" target="_blank" itemprop="author">Donald Wu</a>
 		
   <p class="article-time">
-    <time datetime="2015-03-11T05:12:06.000Z" itemprop="datePublished"> 發表於 2015-03-11</time>
+    <time datetime="2015-03-11T05:12:06.000Z" itemprop="datePublished"> 发表于 2015-03-11</time>
     
   </p>
 </header>
@@ -273,80 +335,21 @@
 
 
 
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2015/03/07/MPI实验记录/" title="MPI实验记录" itemprop="url">MPI实验记录</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="http://wuyihao14.github.io/about" title="Donald Wu" target="_blank" itemprop="author">Donald Wu</a>
-		
-  <p class="article-time">
-    <time datetime="2015-03-07T05:48:28.000Z" itemprop="datePublished"> 發表於 2015-03-07</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <h1 id="Trouble_Shooting">Trouble Shooting</h1><p>[wuyihao@ascdut MPItest]$ mpicc ./test1.cpp -o test<br>/tmp/ccC7wVkw.o:(.eh_frame+0x12): undefined reference to `__gxx_personality_v0’</p>
-<p>[wuyihao@ascdut MPItest]$ mpicc -lstdc++ ./test1.cpp -o test</p>
-<hr>
-<p>[root@ascdut MPItest]# mpicc ./test2.cpp -o test<br>./test2.cpp:9: internal compiler error: in ix86_valid_target_attribute_inner_p, at config/i386/i386.c:4121<br>Please submit a full bug report,<br>       with preprocessed source if appropriate.<br>       See <a href="http://bugzilla.redhat.com/bugzilla" target="_blank" rel="external">http://bugzilla.redhat.com/bugzilla</a> for instructions.<br>       Preprocessed source stored into /tmp/ccEgkJYF.out file, please attach this to your bugreport.</p>
-<p>使用mpiicc而不是mipcc</p>
-
-        
-        
-        <p class="article-more-link">
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-<div class="article-categories">
-  <span></span>
-  <a class="article-category-link" href="/categories/HPC/">HPC</a>
-</div>
-
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
 
   <nav id="page-nav" class="clearfix">
     <a class="extend prev" rel="prev" href="/page/3/"><span></span>Prev</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="page-number current">4</span><a class="page-number" href="/page/5/">5</a><a class="page-number" href="/page/6/">6</a><a class="extend next" rel="next" href="/page/5/">Next<span></span></a>
   </nav>
 
 </div>
-      <div class="openaside"><a class="navbutton" href="#" title="顯示側邊欄"></a></div>
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
 
 <div id="asidepart">
-<div class="closeaside"><a class="closebutton" href="#" title="隱藏側邊欄"></a></div>
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
 <aside class="clearfix">
 
   
 <div class="categorieslist">
-	<p class="asidetitle">分類</p>
+	<p class="asidetitle">分类</p>
 		<ul>
 		
 		  
@@ -355,6 +358,10 @@
 		
 		  
 			<li><a href="/categories/AI/" title="AI">AI<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/CTF/" title="CTF">CTF<sup>1</sup></a></li>
 		  
 		
 		  
@@ -388,7 +395,7 @@
   
 
   <div class="linkslist">
-  <p class="asidetitle">友情鏈接</p>
+  <p class="asidetitle">友情链接</p>
     <ul>
         
           <li>
@@ -410,7 +417,7 @@
 
 
   <div class="rsspart">
-	<a href="/atom.xml" target="_blank" title="rss">RSS 訂閱</a>
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
 </div>
 
 </aside>
@@ -524,7 +531,7 @@ $(document).ready(function(){
 <!-- Totop Begin -->
 
 	<div id="totop">
-	<a title="返回頂部"><img src="/img/scrollup.png"/></a>
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
 	</div>
 	<script src="/js/totop.js"></script>
 

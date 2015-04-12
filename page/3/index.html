@@ -46,7 +46,7 @@
 				<h1 class="site-name"><a href="/" title="Shelter">Shelter</a></h1>
 				<h2 class="blog-motto"></h2>
 			</div>
-			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜單">
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
 			</a></div>
 			<nav class="animated">
 				<ul>
@@ -80,6 +80,139 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/2015/04/02/CityHorizon_矩形切割/" title="City Horizon" itemprop="url">City Horizon</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="http://wuyihao14.github.io/about" title="Donald Wu" target="_blank" itemprop="author">Donald Wu</a>
+		
+  <p class="article-time">
+    <time datetime="2015-04-01T16:32:36.967Z" itemprop="datePublished"> 发表于 2015-04-02</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>Description<br>Farmer John has taken his cows on a trip to the city! As the sun sets, the cows gaze at the city horizon and observe the beautiful silhouettes formed by the rectangular buildings.</p>
+<p>The entire horizon is represented by a number line with N (1 ≤ N ≤ 40,000) buildings. Building i’s silhouette has a base that spans locations Ai through Bi along the horizon (1 ≤ Ai &lt; Bi ≤ 1,000,000,000) and has height Hi (1 ≤ Hi ≤ 1,000,000,000). Determine the area, in square units, of the aggregate silhouette formed by all N buildings.</p>
+<p>Input<br>Line 1: A single integer: N<br>Lines 2.. N+1: Input line i+1 describes building i with three space-separated integers: Ai, Bi, and Hi<br>Output<br>Line 1: The total area, in square units, of the silhouettes formed by all N buildings<br>Sample Input<br>4<br>2 5 1<br>9 10 4<br>6 8 2<br>4 6 3<br>Sample Output<br>16<br>Hint<br>The first building overlaps with the fourth building for an area of 1 square unit, so the total area is just 3<em>1 + 1</em>4 + 2<em>2 + 2</em>3 - 1 = 16.<br>Source<br>USACO 2007 Open Silver</p>
+<hr>
+<p>矩形切割模板题，代码太容易理解了，就是当前枚举到：前k个矩形划分出来的某一个小块，如果不被后面的矩形切割了，便加入答案，否则继续切割。</p>
+<pre><code><span class="preprocessor">#<span class="keyword">include</span> &lt;stdio.h&gt;  </span>
+<span class="preprocessor">#<span class="keyword">include</span> &lt;string.h&gt;  </span>
+<span class="preprocessor">#<span class="keyword">include</span> &lt;algorithm&gt;  </span>
+
+<span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;  
+
+<span class="preprocessor">#<span class="keyword">define</span> ll long long </span>
+
+<span class="keyword">const</span> <span class="keyword">int</span> N = <span class="number">40010</span>;  
+
+<span class="keyword">struct</span> Build
+{  
+    ll x1,y1;  
+    ll x2,y2;  
+    ll sum;  
+
+    <span class="keyword">bool</span> <span class="keyword">operator</span>&lt;(<span class="keyword">const</span> Build&amp; b2)<span class="keyword">const</span> {
+        <span class="keyword">if</span> (y2 != b2.y2)
+            <span class="keyword">return</span> y2&lt;b2.y2;
+        <span class="keyword">if</span> (x2 != b2.x2)
+            <span class="keyword">return</span> x2&lt;b2.x2;
+        <span class="keyword">return</span> x1&gt;b2.x1;
+    }
+};
+Build building[N];
+
+ll n;  
+
+<span class="function"><span class="keyword">void</span> <span class="title">Cover</span><span class="params">(ll x1,ll y1,ll x2,ll y2,ll k,ll c)</span></span>{  
+    <span class="keyword">while</span>(k&lt;n&amp;&amp;(x1&gt;=building[k].x2||x2&lt;=building[k].x1||y1&gt;=building[k].y2||y2&lt;=building[k].y1)) k++;
+    <span class="keyword">if</span>(k&gt;=n){  
+        building[c].sum+=(x2-x1)*(y2-y1);  
+        <span class="keyword">return</span>;  
+    }  
+    <span class="keyword">if</span>(x1&lt;building[k].x1){  
+        Cover(x1,y1,building[k].x1,y2,k+<span class="number">1</span>,c);  
+        x1=building[k].x1;  
+    }  
+    <span class="keyword">if</span>(x2&gt;building[k].x2){  
+        Cover(building[k].x2,y1,x2,y2,k+<span class="number">1</span>,c);  
+        x2=building[k].x2;  
+    }  
+    <span class="keyword">if</span>(y1&lt;building[k].y1){  
+        Cover(x1,y1,x2,building[k].y1,k+<span class="number">1</span>,c);  
+        y1=building[k].y1;  
+    }  
+    <span class="keyword">if</span>(y2&gt;building[k].y2){  
+        Cover(x1,building[k].y2,x2,y2,k+<span class="number">1</span>,c);  
+        y2=building[k].y2;  
+    }  
+}  
+
+<span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span>{  
+    ll i;  
+    ll a,b,c;  
+    <span class="keyword">while</span>(~<span class="built_in">scanf</span>(<span class="string">"%lld"</span>,&amp;n)){  
+        <span class="keyword">for</span>(i=<span class="number">0</span>;i&lt;n;i++){  
+            <span class="built_in">scanf</span>(<span class="string">"%lld%lld%lld"</span>,&amp;a,&amp;b,&amp;c);  
+            building[i].x1=a;  
+            building[i].y1=<span class="number">0</span>;  
+            building[i].x2=b;  
+            building[i].y2=c;  
+            building[i].sum=<span class="number">0</span>;  
+        }  
+        sort(building,building+n);  
+        <span class="keyword">for</span>(i=n-<span class="number">1</span>;i&gt;=<span class="number">0</span>;i--)  
+            Cover(building[i].x1,building[i].y1,building[i].x2,building[i].y2,i+<span class="number">1</span>,i);  
+        ll ans=<span class="number">0</span>;  
+        <span class="keyword">for</span>(i=<span class="number">0</span>;i&lt;n;i++)  
+            ans+=building[i].sum;  
+        <span class="built_in">printf</span>(<span class="string">"%lld\n"</span>,ans);  
+    }  
+    <span class="keyword">return</span> <span class="number">0</span>;  
+}  
+</code></pre>
+        
+        
+        <p class="article-more-link">
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/ACM/">ACM</a>
+</div>
+
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/2015/04/02/AlicesPrintSerive_二分/" title="Alice&#39;s Print Service 二分" itemprop="url">Alice&#39;s Print Service 二分</a>
   </h1>
   <p class="article-author">By
@@ -87,7 +220,7 @@
 		<a href="http://wuyihao14.github.io/about" title="Donald Wu" target="_blank" itemprop="author">Donald Wu</a>
 		
   <p class="article-time">
-    <time datetime="2015-04-01T16:32:34.847Z" itemprop="datePublished"> 發表於 2015-04-02</time>
+    <time datetime="2015-04-01T16:32:34.847Z" itemprop="datePublished"> 发表于 2015-04-02</time>
     
   </p>
 </header>
@@ -186,7 +319,7 @@ ll a[N],s[N],t[N];
 		<a href="http://wuyihao14.github.io/about" title="Donald Wu" target="_blank" itemprop="author">Donald Wu</a>
 		
   <p class="article-time">
-    <time datetime="2015-04-01T16:32:10.871Z" itemprop="datePublished"> 發表於 2015-04-02</time>
+    <time datetime="2015-04-01T16:32:10.871Z" itemprop="datePublished"> 发表于 2015-04-02</time>
     
   </p>
 </header>
@@ -295,7 +428,7 @@ ll a[N],s[N],t[N];
 		<a href="http://wuyihao14.github.io/about" title="Donald Wu" target="_blank" itemprop="author">Donald Wu</a>
 		
   <p class="article-time">
-    <time datetime="2015-04-01T16:32:00.695Z" itemprop="datePublished"> 發表於 2015-04-02</time>
+    <time datetime="2015-04-01T16:32:00.695Z" itemprop="datePublished"> 发表于 2015-04-02</time>
     
   </p>
 </header>
@@ -378,83 +511,21 @@ Computation rate - <span class="number">216.3096</span>.
 
 
 
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2015/04/02/在Github上建立我的博客-二/" title="在Github上建立我的博客(二)——主题" itemprop="url">在Github上建立我的博客(二)——主题</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="http://wuyihao14.github.io/about" title="Donald Wu" target="_blank" itemprop="author">Donald Wu</a>
-		
-  <p class="article-time">
-    <time datetime="2015-04-01T16:30:25.507Z" itemprop="datePublished"> 發表於 2015-04-02</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <h1 id="换一个theme">换一个theme</h1><p>获取jacman，pacman主题的一个分支<br>git clone <a href="https://github.com/wuchong/jacman.git" target="_blank" rel="external">https://github.com/wuchong/jacman.git</a> themes/jacman</p>
-<p>配置_config.yml<br>theme: jackman 一定要有空格</p>
-<p># Stylus<br>stylus:<br>  compress: true</p>
-<hr>
-<p>使用jacman或pacman主题，建议按此标准语法写：</p>
-<p>title: postName #文章页面上的显示名称，可以任意修改，不会出现在URL中<br>date: 2013-12-02 15:30:16 #文章生成时间，一般不改，当然也可以任意修改<br>categories: example #分类<br>tags: [tag1,tag2,tag3] #文章标签，可空，多标签请用格式，注意:后面有个空格<br>description: 附加一段文章摘要，字数最好在140字以内。</p>
-<hr>
-<h1 id="修改theme">修改theme</h1><p>hexo s启动服务器，然后即可变修改边预览，不需要hexo g</p>
-
-        
-        
-        <p class="article-more-link">
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-<div class="article-categories">
-  <span></span>
-  <a class="article-category-link" href="/categories/Just4Fun/">Just4Fun</a>
-</div>
-
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
 
   <nav id="page-nav" class="clearfix">
     <a class="extend prev" rel="prev" href="/page/2/"><span></span>Prev</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/page/4/">4</a><a class="page-number" href="/page/5/">5</a><a class="page-number" href="/page/6/">6</a><a class="extend next" rel="next" href="/page/4/">Next<span></span></a>
   </nav>
 
 </div>
-      <div class="openaside"><a class="navbutton" href="#" title="顯示側邊欄"></a></div>
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
 
 <div id="asidepart">
-<div class="closeaside"><a class="closebutton" href="#" title="隱藏側邊欄"></a></div>
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
 <aside class="clearfix">
 
   
 <div class="categorieslist">
-	<p class="asidetitle">分類</p>
+	<p class="asidetitle">分类</p>
 		<ul>
 		
 		  
@@ -463,6 +534,10 @@ Computation rate - <span class="number">216.3096</span>.
 		
 		  
 			<li><a href="/categories/AI/" title="AI">AI<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/CTF/" title="CTF">CTF<sup>1</sup></a></li>
 		  
 		
 		  
@@ -496,7 +571,7 @@ Computation rate - <span class="number">216.3096</span>.
   
 
   <div class="linkslist">
-  <p class="asidetitle">友情鏈接</p>
+  <p class="asidetitle">友情链接</p>
     <ul>
         
           <li>
@@ -518,7 +593,7 @@ Computation rate - <span class="number">216.3096</span>.
 
 
   <div class="rsspart">
-	<a href="/atom.xml" target="_blank" title="rss">RSS 訂閱</a>
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
 </div>
 
 </aside>
@@ -632,7 +707,7 @@ $(document).ready(function(){
 <!-- Totop Begin -->
 
 	<div id="totop">
-	<a title="返回頂部"><img src="/img/scrollup.png"/></a>
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
 	</div>
 	<script src="/js/totop.js"></script>
 
