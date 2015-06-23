@@ -17,6 +17,7 @@
 <meta property="og:url" content="http://wuyihao14.github.io/2015/03/26/Omnetpp-4-6折腾笔记/index.html">
 <meta property="og:site_name" content="Shelter">
 <meta property="og:description" content="仿真软件Omnet++4.6的安装先装tcl/tk，貌似跟图形界面有关。编译omnet++，中途会遇到mpi等问题，但是可以忽略，毕竟是个人电脑。运行不了，两个原因，java的预取bug，通过在ide/omnetpp.ini中加入-XX:-UseLoopPredicate解决。另一个问题，一堆GLib-CRITICAL错误，是GTK 2和GTK 3的兼容问题，export SWT_GTK3=0tc">
+<meta property="og:updated_time" content="2015-04-01T16:32:48.315Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Omnetpp-4.6折腾笔记">
 <meta name="twitter:description" content="仿真软件Omnet++4.6的安装先装tcl/tk，貌似跟图形界面有关。编译omnet++，中途会遇到mpi等问题，但是可以忽略，毕竟是个人电脑。运行不了，两个原因，java的预取bug，通过在ide/omnetpp.ini中加入-XX:-UseLoopPredicate解决。另一个问题，一堆GLib-CRITICAL错误，是GTK 2和GTK 3的兼容问题，export SWT_GTK3=0tc">
@@ -36,7 +37,8 @@
 
   <body>
     <header>
-      <div>
+      
+<div>
 		
 			<div id="imglogo">
 				<a href="/"><img src="/img/logo.png" alt="Shelter" title="Shelter"/></a>
@@ -46,7 +48,7 @@
 				<h1 class="site-name"><a href="/" title="Shelter">Shelter</a></h1>
 				<h2 class="blog-motto"></h2>
 			</div>
-			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜單">
 			</a></div>
 			<nav class="animated">
 				<ul>
@@ -82,17 +84,17 @@
   </h1>
   <p class="article-author">By
        
-		<a href="http://wuyihao14.github.io/about" title="Donald Wu" target="_blank" itemprop="author">Donald Wu</a>
+		<a href="/about" title="Donald Wu" target="_blank" itemprop="author">Donald Wu</a>
 		
   <p class="article-time">
-    <time datetime="2015-03-25T16:05:37.000Z" itemprop="datePublished"> 发表于 2015-03-26</time>
+    <time datetime="2015-03-25T16:05:37.000Z" itemprop="datePublished"> 發表於 2015-03-26</time>
     
   </p>
 </header>
 	<div class="article-content">
 		
 		<div id="toc" class="toc-article">
-			<strong class="toc-title">文章目录</strong>
+			<strong class="toc-title">文章目錄</strong>
 		
 			<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#仿真软件Omnet++4-6的安装"><span class="toc-number">1.</span> <span class="toc-text">仿真软件Omnet++4.6的安装</span></a></li></ol>
 		
@@ -151,22 +153,22 @@
 	
 
 </div>  
-      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+      <div class="openaside"><a class="navbutton" href="#" title="顯示側邊欄"></a></div>
 
   <div id="toc" class="toc-aside">
-  <strong class="toc-title">文章目录</strong>
+  <strong class="toc-title">文章目錄</strong>
  
  <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#仿真软件Omnet++4-6的安装"><span class="toc-number">1.</span> <span class="toc-text">仿真软件Omnet++4.6的安装</span></a></li></ol>
  
   </div>
 
 <div id="asidepart">
-<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<div class="closeaside"><a class="closebutton" href="#" title="隱藏側邊欄"></a></div>
 <aside class="clearfix">
 
   
 <div class="categorieslist">
-	<p class="asidetitle">分类</p>
+	<p class="asidetitle">分類</p>
 		<ul>
 		
 		  
@@ -198,6 +200,10 @@
 		  
 		
 		  
+			<li><a href="/categories/Programming/" title="Programming">Programming<sup>1</sup></a></li>
+		  
+		
+		  
 			<li><a href="/categories/Security/" title="Security">Security<sup>1</sup></a></li>
 		  
 		
@@ -212,7 +218,7 @@
   
 
   <div class="linkslist">
-  <p class="asidetitle">友情链接</p>
+  <p class="asidetitle">友情鏈接</p>
     <ul>
         
           <li>
@@ -234,7 +240,7 @@
 
 
   <div class="rsspart">
-	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+	<a href="/atom.xml" target="_blank" title="rss">RSS 訂閱</a>
 </div>
 
 </aside>
@@ -250,7 +256,7 @@
 	
 	<section class="info">
 		<p> wuyihao. ^_^ <br/>
-			Mjr in Sftwr. Fncy4 Algrthm, Info&#39;Sec. Cmptr Ntwrk.</p>
+			Major in Network Engineering. Fancy 4 Algorithm, Infomation Security. Computer Network. etc</p>
 	</section>
 	 
 	<div class="social-font" class="clearfix">
@@ -271,7 +277,7 @@
 		<p class="copyright">
 		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2015 
 		
-		<a href="http://wuyihao14.github.io/about" target="_blank" title="Donald Wu">Donald Wu</a>
+		<a href="/about" target="_blank" title="Donald Wu">Donald Wu</a>
 		
 		
 		</p>
@@ -426,7 +432,7 @@ $(document).ready(function(){
 <!-- Totop Begin -->
 
 	<div id="totop">
-	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	<a title="返回頂部"><img src="/img/scrollup.png"/></a>
 	</div>
 	<script src="/js/totop.js"></script>
 

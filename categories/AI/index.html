@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   
-    <title>Shelter</title>
+    <title>分類 : AI | Shelter</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
     
     <meta name="author" content="Donald Wu">
@@ -36,7 +36,8 @@
 
     <body>
       <header>
-        <div>
+        
+<div>
 		
 			<div id="imglogo">
 				<a href="/"><img src="/img/logo.png" alt="Shelter" title="Shelter"/></a>
@@ -46,7 +47,7 @@
 				<h1 class="site-name"><a href="/" title="Shelter">Shelter</a></h1>
 				<h2 class="blog-motto"></h2>
 			</div>
-			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜單">
 			</a></div>
 			<nav class="animated">
 				<ul>
@@ -109,7 +110,7 @@
 	
 	<section class="info">
 		<p> wuyihao. ^_^ <br/>
-			Mjr in Sftwr. Fncy4 Algrthm, Info&#39;Sec. Cmptr Ntwrk.</p>
+			Major in Network Engineering. Fancy 4 Algorithm, Infomation Security. Computer Network. etc</p>
 	</section>
 	 
 	<div class="social-font" class="clearfix">
@@ -130,7 +131,7 @@
 		<p class="copyright">
 		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2015 
 		
-		<a href="http://wuyihao14.github.io/about" target="_blank" title="Donald Wu">Donald Wu</a>
+		<a href="/about" target="_blank" title="Donald Wu">Donald Wu</a>
 		
 		
 		</p>
@@ -194,6 +195,27 @@ $(document).ready(function(){
 
 
 
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
 
 
 <!-- Analytics Begin -->
@@ -207,7 +229,7 @@ $(document).ready(function(){
 <!-- Totop Begin -->
 
 	<div id="totop">
-	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	<a title="返回頂部"><img src="/img/scrollup.png"/></a>
 	</div>
 	<script src="/js/totop.js"></script>
 

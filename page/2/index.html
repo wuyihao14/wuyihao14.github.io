@@ -36,7 +36,8 @@
 
   <body>
     <header>
-      <div>
+      
+<div>
 		
 			<div id="imglogo">
 				<a href="/"><img src="/img/logo.png" alt="Shelter" title="Shelter"/></a>
@@ -46,7 +47,7 @@
 				<h1 class="site-name"><a href="/" title="Shelter">Shelter</a></h1>
 				<h2 class="blog-motto"></h2>
 			</div>
-			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜單">
 			</a></div>
 			<nav class="animated">
 				<ul>
@@ -80,14 +81,223 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/2015/04/02/Matrix_枚举/" title="Matrix 枚举" itemprop="url">Matrix 枚举</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="Donald Wu" target="_blank" itemprop="author">Donald Wu</a>
+		
+  <p class="article-time">
+    <time datetime="2015-04-01T16:40:03.891Z" itemprop="datePublished"> 發表於 2015-04-02</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>Matrix<br>Time Limit: 10000MS        Memory Limit: 131072KB        64bit IO Format: %lld &amp; %llu<br>Submit</p>
+<p>Status</p>
+<p>Description<br>A N<em>M coordinate plane ((0, 0)~(n, m)). Initially the value of all N</em>M grids are 0.<br>An operation T(a, b, h, x, y) is defined as follow:</p>
+<ol>
+<li>Select the maximum value in the matrix (x, y) ~ (x+a, y+b), suppose the maximum value is max</li>
+<li>Change all the value in the matrix (x, y) ~ (x+a, y+b) into max+h<br>After C operations, please output the maximum value in the whole N*M coordinate.</li>
+</ol>
+<p>Input<br>The input consists of several cases.<br>For each case, the first line consists of three positive integers N , M and C (N ≤ 1000, M ≤ 1000, C ≤ 1000). In the following C lines, each line consists of 5 non-negative number, ai, bi, hi, xi, yi (0 ≤ hi ≤ 10000, 0 ≤ xi &lt; n, 0 ≤ yi &lt; m).</p>
+<p>Output<br>For each case, output the maximum height.</p>
+<p>Sample Input<br>3 2 2<br>2 1 9 1 1<br>1 1 2 2 1<br>Sample Output<br>11</p>
+<p>二重循环，前i-1个，对第i个造成影响。</p>
+<pre><code>#include &lt;cstdio&gt;
+
+const <span class="keyword">int</span> C = <span class="number">1010</span>;
+
+<span class="keyword">int</span> a[C],b[C],h[C],x[C],y[C];
+
+bool <span class="keyword">cross</span>(<span class="keyword">int</span> i,<span class="keyword">int</span> j){
+    <span class="keyword">int</span> l1 = x[i];
+    <span class="keyword">int</span> l2 = x[j];
+    <span class="keyword">int</span> r1 = x[i]+a[i]-<span class="number">1</span>;
+    <span class="keyword">int</span> r2 = x[j]+a[j]-<span class="number">1</span>;
+    <span class="keyword">int</span> t1 = y[i];
+    <span class="keyword">int</span> t2 = y[j];
+    <span class="keyword">int</span> b1 = y[i]+b[i]-<span class="number">1</span>;
+    <span class="keyword">int</span> b2 = y[j]+b[j]-<span class="number">1</span>;
+    <span class="keyword">return</span> r1&gt;=l2 &amp;&amp; r2&gt;=l1 &amp;&amp; b1&gt;=t2 &amp;&amp; b2&gt;=t1;
+}
+
+<span class="keyword">int</span> main(){
+    <span class="keyword">int</span> n,m,c;
+    <span class="keyword">while</span> (~scanf(<span class="string">"%d%d%d"</span>,&amp;n,&amp;m,&amp;c)){
+        <span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;c;i++){
+            scanf(<span class="string">"%d%d%d%d%d"</span>,a+i,b+i,h+i,x+i,y+i);
+            <span class="keyword">int</span> <span class="keyword">max</span> = h[i];
+            <span class="keyword">for</span> (<span class="keyword">int</span> j=<span class="number">0</span>;j&lt;i;j++){
+                <span class="keyword">if</span> (<span class="keyword">cross</span>(i,j) &amp;&amp; h[j]+h[i] &gt; <span class="keyword">max</span>){
+                    <span class="keyword">max</span> = h[j] + h[i];
+                }
+            }
+            h[i] = <span class="keyword">max</span>;
+        }
+        <span class="keyword">int</span> <span class="keyword">max</span> = <span class="number">0</span>;
+        <span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;c;i++){
+            <span class="keyword">max</span> = <span class="keyword">max</span>&lt;h[i]?h[i]:<span class="keyword">max</span>;
+        }
+        printf(<span class="string">"%d\n"</span>,<span class="keyword">max</span>);
+    }
+
+    <span class="keyword">return</span> <span class="number">0</span>;
+}
+</code></pre>
+        
+        
+        <p class="article-more-link">
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/ACM/">ACM</a>
+</div>
+
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2015/04/02/OsaisenChoudai/" title="Osaisen Choudai" itemprop="url">Osaisen Choudai</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="Donald Wu" target="_blank" itemprop="author">Donald Wu</a>
+		
+  <p class="article-time">
+    <time datetime="2015-04-01T16:40:03.891Z" itemprop="datePublished"> 發表於 2015-04-02</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>Osaisen Choudai!<br>Time Limit: 3000MS        Memory Limit: 65536KB        64bit IO Format: %lld &amp; %llu<br>Submit</p>
+<p>Status</p>
+<p>Description<br>A saisenbako (賽銭箱, offertory, or religious collection box) is situated in front of the hall of Hakurei Shrine. Hakurei Reimu (博麗霊夢), the miko of Hakurei Shrine, may ask the friends who are visting her to throw some saisen (賽銭, offerings, or coins) into it. Reimu wants as much saisen as possible. Howerver, she cannot ask for saisen too frequently, because this will make her friends refuse to offer any more. On the other hand, if she doesn’t ask for saisen for a very long period, her friends will become not be willing to offer any more. Generally, at the i-th day, if she asks for saisen, then she will get sisaisen, what’s more, she cannot ask again for xi days (including the i-th day), and she should ask again in yi days (including the i-th day).</p>
+<p>Given si, xi and yi for n days, how much saisen can Reimu get at most in these days if she asks saisen at the first day?</p>
+<p>Input<br>The are multiple cases. Each case begins with a line of integer 0 &lt; n &lt; 50000, then n lines, each contains 3 positive integers: si, and xi &lt; yi. Process to the end of file.</p>
+<p>Output<br>For each test cases, output an integer, the maximun amount of saisen Reimu can get, in a seperate line. It’s guaranteed that the answer always fit into a 32-bit signed integer.</p>
+<p>Sample Input<br>3<br>1 1 2<br>2 2 3<br>3 3 4<br>3<br>1 1 3<br>2 2 4<br>3 3 5<br>4<br>10 3 10<br>7 1 7<br>5 2 5<br>1 1 2<br>5<br>1 1 9<br>10 3 10<br>7 1 7<br>5 2 5<br>1 1 2<br>Sample Output<br>3<br>4<br>11<br>13</p>
+<p>线段树优化dp，可是二维暴力居然过了。</p>
+<pre><code>include &lt;cstdio&gt;
+
+<span class="keyword">int</span> f[<span class="number">50010</span>];
+<span class="keyword">int</span> s[<span class="number">50010</span>];
+<span class="keyword">int</span> x[<span class="number">50010</span>];
+<span class="keyword">int</span> y[<span class="number">50010</span>];
+
+<span class="function"><span class="keyword">inline</span> <span class="keyword">int</span> <span class="title">max</span><span class="params">(<span class="keyword">int</span> a,<span class="keyword">int</span> b)</span></span>{
+    <span class="keyword">return</span> a &gt; b?a : b;
+}
+
+<span class="function"><span class="keyword">inline</span> <span class="keyword">int</span> <span class="title">min</span><span class="params">(<span class="keyword">int</span> a,<span class="keyword">int</span> b)</span></span>{
+    <span class="keyword">return</span> a &lt; b?a : b;
+}
+
+<span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span>{
+    <span class="keyword">int</span> n;
+    <span class="comment">//freopen("fuck","w",stdout);</span>
+    <span class="keyword">while</span> (~<span class="built_in">scanf</span>(<span class="string">"%d"</span>,&amp;n)){
+        <span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;n;i++)
+            <span class="built_in">scanf</span>(<span class="string">"%d%d%d"</span>,s+i,x+i,y+i);
+
+        <span class="keyword">for</span> (<span class="keyword">int</span> i=n-<span class="number">1</span>;i&gt;-<span class="number">1</span>;i--)
+        {
+            <span class="keyword">int</span> lo = max(i+<span class="number">1</span>,i+x[i]);
+            f[i] = s[i];
+            <span class="keyword">for</span> (<span class="keyword">int</span> j=min(n-<span class="number">1</span>,i+y[i]-<span class="number">1</span>);j&gt;=lo;j--){
+                f[i] = max(f[i],f[j]+s[i]);
+            }
+        }
+
+        <span class="comment">/*
+           int ans = 0;
+           for (int i=0;i&lt;n;i++)
+           ans = max(ans,f[i]);
+         */</span>
+        <span class="keyword">int</span> ans = f[<span class="number">0</span>];
+        <span class="built_in">printf</span>(<span class="string">"%d\n"</span>,ans);
+    }
+
+    <span class="keyword">return</span> <span class="number">0</span>;
+}
+</code></pre>
+        
+        
+        <p class="article-more-link">
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/ACM/">ACM</a>
+</div>
+
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/2015/04/02/AttackTheNEETPrincess/" title="Attack the NEET princess 双连通分量" itemprop="url">Attack the NEET princess 双连通分量</a>
   </h1>
   <p class="article-author">By
        
-		<a href="http://wuyihao14.github.io/about" title="Donald Wu" target="_blank" itemprop="author">Donald Wu</a>
+		<a href="/about" title="Donald Wu" target="_blank" itemprop="author">Donald Wu</a>
 		
   <p class="article-time">
-    <time datetime="2015-04-01T16:40:03.887Z" itemprop="datePublished"> 发表于 2015-04-02</time>
+    <time datetime="2015-04-01T16:40:03.887Z" itemprop="datePublished"> 發表於 2015-04-02</time>
     
   </p>
 </header>
@@ -313,10 +523,10 @@ EDGE edge[M*<span class="number">2</span>],edge2[M*<span class="number">2</span>
   </h1>
   <p class="article-author">By
        
-		<a href="http://wuyihao14.github.io/about" title="Donald Wu" target="_blank" itemprop="author">Donald Wu</a>
+		<a href="/about" title="Donald Wu" target="_blank" itemprop="author">Donald Wu</a>
 		
   <p class="article-time">
-    <time datetime="2015-04-01T16:40:03.887Z" itemprop="datePublished"> 发表于 2015-04-02</time>
+    <time datetime="2015-04-01T16:40:03.887Z" itemprop="datePublished"> 發表於 2015-04-02</time>
     
   </p>
 </header>
@@ -395,357 +605,21 @@ EDGE edge[M*<span class="number">2</span>],edge2[M*<span class="number">2</span>
 
 
 
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2015/04/02/底层多进程实验记录/" title="底层多进程实验" itemprop="url">底层多进程实验</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="http://wuyihao14.github.io/about" title="Donald Wu" target="_blank" itemprop="author">Donald Wu</a>
-		
-  <p class="article-time">
-    <time datetime="2015-04-01T16:34:00.711Z" itemprop="datePublished"> 发表于 2015-04-02</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <p>做了几个实验，代码如下</p>
-<pre><code><span class="comment">#include &lt;unistd.h&gt; //fork&amp;wait&amp;getpid..</span>
-<span class="comment">#include &lt;stdlib.h&gt;</span>
-<span class="comment">#include &lt;signal.h&gt; //kill</span>
-<span class="comment">#include &lt;sys/types.h&gt;</span>
-<span class="comment">#include &lt;stdio.h&gt;</span>
-
-<span class="comment">#define NUM_THREADS 3</span>
-
-void tryfork(){
-    <span class="keyword">int</span> i;
-    pid_t <span class="sub"><span class="keyword">sub</span>[NUM_THREADS];</span>
-    <span class="keyword">for</span> (i=<span class="number">0</span>;i&lt;NUM_THREADS;i++){
-        <span class="sub"><span class="keyword">sub</span>[i] = fork();</span>
-        //<span class="keyword">printf</span>(<span class="string">"DEBUG <span class="variable">%d</span> , <span class="variable">%d</span>\n"</span>,i,<span class="sub"><span class="keyword">sub</span>[i]);</span>
-        <span class="keyword">if</span> (<span class="sub"><span class="keyword">sub</span>[i] == -1){</span>
-            fprintf(stderr, <span class="string">"ERROR while fork"</span>);
-        }<span class="keyword">else</span> <span class="keyword">if</span> (<span class="sub"><span class="keyword">sub</span>[i] == 0){</span> //子进程
-            <span class="keyword">sleep</span>(<span class="number">2</span>); <span class="regexp">//</span>测试<span class="keyword">wait</span>
-            <span class="keyword">printf</span>(<span class="string">"I am the child #<span class="variable">%d</span> pid=<span class="variable">%d</span>\n"</span>, i, getpid()); <span class="regexp">//fork</span>是多进程
-        }<span class="keyword">else</span>{
-            <span class="keyword">waitpid</span>(<span class="sub"><span class="keyword">sub</span>[i],NULL,0);</span> //只能是等待子进程，第三个参数很重要，回去再研究
-            <span class="keyword">printf</span>(<span class="string">"I am the father #<span class="variable">%d</span> pid=<span class="variable">%d</span> my son is <span class="variable">%d</span>\n"</span>,i, getpid(),<span class="sub"><span class="keyword">sub</span>[i]);</span>
-            <span class="keyword">return</span>; <span class="regexp">//</span>避免二叉树
-        }
-    }
-}
-
-void tryexec(){
-    execve(<span class="string">"./tryexec"</span>,NULL,NULL);
-}
-void trykill(){
-    <span class="keyword">int</span> pid = <span class="keyword">fork</span>();
-    <span class="keyword">if</span> (pid == -<span class="number">1</span>){
-        fprintf(stderr, <span class="string">"ERROR while fork"</span>);
-    }<span class="keyword">else</span> <span class="keyword">if</span> (pid == <span class="number">0</span>){
-        <span class="keyword">sleep</span>(<span class="number">1</span>);
-        <span class="keyword">printf</span>(<span class="string">"I am the child\n"</span>);
-    }<span class="keyword">else</span>{
-        <span class="keyword">kill</span>(pid,<span class="number">9</span>);<span class="regexp">//</span>回去再研究各种信号
-    }
-}
-
-void sigcat(){
-    <span class="keyword">printf</span>(<span class="string">"SIGNAL Triggered\n"</span>);
-}
-
-typedef void (*sighandler_t)(<span class="keyword">int</span>);
-
-void trypause(){
-    signal(SIGINT,(sighandler_t)sigcat);<span class="regexp">//</span>注册信号！！
-    <span class="keyword">int</span> pid = <span class="keyword">fork</span>();
-    <span class="keyword">if</span> (pid == -<span class="number">1</span>){
-        fprintf(stderr, <span class="string">"ERROR while fork"</span>);
-        <span class="keyword">exit</span>(EXIT_FAILURE);
-    }<span class="keyword">else</span> <span class="keyword">if</span> (pid == <span class="number">0</span>){
-        pause();
-        <span class="keyword">printf</span>(<span class="string">"I am the child\n"</span>);
-        <span class="keyword">exit</span>(EXIT_FAILURE);
-    }<span class="keyword">else</span>{
-        <span class="keyword">waitpid</span>(pid,NULL,<span class="number">0</span>);
-        <span class="keyword">if</span> (<span class="keyword">kill</span>(pid,SIGINT) &gt;= <span class="number">0</span>){
-            <span class="keyword">printf</span>(<span class="string">"Child woke up\n"</span>);
-    }
-}
-
-<span class="keyword">int</span> main(){
-    <span class="regexp">//tryfork</span>();
-    <span class="regexp">//tryexec</span>();
-    <span class="regexp">//trykill</span>();
-    trypause();
-    <span class="keyword">return</span> <span class="number">0</span>;
-}
-</code></pre><h3 id="1-_fork实验：">1. fork实验：</h3><p>一个父进程fork，只能编程两个进程，若要实现一个进程派生出多个进程，仅仅循环fork，或者连续fork，这样会变成一棵二叉树。可以用return的方法，主进程执行完自己的任务后，不再fork。<br>fork是多进程，而不是多线程，父进程可以维护子进程的pid，多进程可以用父子关系，也可以表示成兄弟关系，看具体实现方式。<br>wait和waitpid，要注意options选项，WNOHANG指定wait no hang，不阻塞，而子进程的状态存在第二个参数status中，可以由父进程轮训，小心这是默认选项，因此如果不处理，则会“看起来”不像wait。</p>
-<h3 id="2-_exec实验：">2. exec实验：</h3><p>exec家族一共有六个函数，分别是：<br>(1)int execl(const char <em>path, const char </em>arg, ……);<br>(2)int execle(const char <em>path, const char </em>arg, …… , char <em> const envp[]);<br>(3)int execv(const char </em>path, char <em>const argv[]);<br>(4)int execve(const char </em>filename, char <em>const argv[], char </em>const envp[]);<br>(5)int execvp(const char <em>file, char </em> const argv[]);<br>(6)int execlp(const char <em>file, const char </em>arg, ……);<br>其中只有execve是真正意义上的系统调用，其它都是在此基础上经过包装的库函数。<br>exec函数族的作用是根据指定的文件名找到可执行文件，并用它来取代调用进程的内容，换句话说，就是在调用进程内部执行一个可执行文件。这里的可执行文件既可以是二进制文件，也可以是任何Linux下可执行的脚本文件。若失败则返回-1，并继续执行原程序。<br>第一个区别是：<br>前四个取路径名做为参数，后两个取文件名做为参数，如果文件名中不包含 “/” 则从PATH环境变量中搜寻可执行文件， 如果找到了一个可执行文件，但是该文件不是连接编辑程序产生的可执行代码文件，则当做shell脚本处理。<br>第二个区别：<br>前两个和最后一个函数中都包括“ l ”这个字母 ，而另三个都包括“ v ”， “ l “代表 list即表 ，而” v “代表 vector即矢量，也是是前三个函数的参数都是以list的形式给出的，但最后要加一个空指针，如果用常数0来表示空指针，则必须将它强行转换成字符指针，否则有可能出错。，而后三个都是以矢量的形式给出，即数组。<br>最后一个区别：<br>与向新程序传递环境变量有关，如第二个和第四个以e结尾的函数，可以向函数传递一个指向环境字符串指针数组的指针。即自个定义各个环境变量，而其它四个则使用进程中的环境变量。</p>
-<h3 id="3-_kill实验">3. kill实验</h3><p>kill -l 列出信号<br>1) SIGHUP<br>本信号在用户终端连接(正常或非正常)结束时发出, 通常是在终端的控制进程结束时, 通知同一session内的各个作业, 这时它们与控制终端不再关联。</p>
-<p>登录Linux时，系统会分配给登录用户一个终端(Session)。在这个终端运行的所有程序，包括前台进程组和后台进程组，一般都属于这个 Session。当用户退出Linux登录时，前台进程组和后台有对终端输出的进程将会收到SIGHUP信号。这个信号的默认操作为终止进程，因此前台进 程组和后台有终端输出的进程就会中止。不过可以捕获这个信号，比如wget能捕获SIGHUP信号，并忽略它，这样就算退出了Linux登录，wget也 能继续下载。</p>
-<p>此外，对于与终端脱离关系的守护进程，这个信号用于通知它重新读取配置文件。<br>2) SIGINT<br>程序终止(interrupt)信号, 在用户键入INTR字符(通常是Ctrl-C)时发出，用于通知前台进程组终止进程。<br>3) SIGQUIT<br>和SIGINT类似, 但由QUIT字符(通常是Ctrl-)来控制. 进程在因收到SIGQUIT退出时会产生core文件, 在这个意义上类似于一个程序错误信号。<br>4) SIGILL<br>执行了非法指令. 通常是因为可执行文件本身出现错误, 或者试图执行数据段. 堆栈溢出时也有可能产生这个信号。<br>5) SIGTRAP<br>由断点指令或其它trap指令产生. 由debugger使用。<br>6) SIGABRT<br>调用abort函数生成的信号。<br>7) SIGBUS<br>非法地址, 包括内存地址对齐(alignment)出错。比如访问一个四个字长的整数, 但其地址不是4的倍数。它与SIGSEGV的区别在于后者是由于对合法存储地址的非法访问触发的(如访问不属于自己存储空间或只读存储空间)。<br>8) SIGFPE<br>在发生致命的算术运算错误时发出. 不仅包括浮点运算错误, 还包括溢出及除数为0等其它所有的算术的错误。<br>9) SIGKILL<br>用来立即结束程序的运行. 本信号不能被阻塞、处理和忽略。如果管理员发现某个进程终止不了，可尝试发送这个信号。<br>10) SIGUSR1<br>留给用户使用<br>11) SIGSEGV<br>试图访问未分配给自己的内存, 或试图往没有写权限的内存地址写数据.<br>12) SIGUSR2<br>留给用户使用<br>13) SIGPIPE<br>管道破裂。这个信号通常在进程间通信产生，比如采用FIFO(管道)通信的两个进程，读管道没打开或者意外终止就往管道写，写进程会收到SIGPIPE信号。此外用Socket通信的两个进程，写进程在写Socket的时候，读进程已经终止。<br>14) SIGALRM<br>时钟定时信号, 计算的是实际的时间或时钟时间. alarm函数使用该信号.<br>15) SIGTERM<br>程序结束(terminate)信号, 与SIGKILL不同的是该信号可以被阻塞和处理。通常用来要求程序自己正常退出，shell命令kill缺省产生这个信号。如果进程终止不了，我们才会尝试SIGKILL。<br>17) SIGCHLD<br>子进程结束时, 父进程会收到这个信号。</p>
-<p>如果父进程没有处理这个信号，也没有等待(wait)子进程，子进程虽然终止，但是还会在内核进程表中占有表项，这时的子进程称为僵尸进程。这种情 况我们应该避免(父进程或者忽略SIGCHILD信号，或者捕捉它，或者wait它派生的子进程，或者父进程先终止，这时子进程的终止自动由init进程来接管)。<br>18) SIGCONT<br>让一个停止(stopped)的进程继续执行. 本信号不能被阻塞. 可以用一个handler来让程序在由stopped状态变为继续执行时完成特定的工作. 例如, 重新显示提示符…<br>19) SIGSTOP<br>停止(stopped)进程的执行. 注意它和terminate以及interrupt的区别:该进程还未结束, 只是暂停执行. 本信号不能被阻塞, 处理或忽略.<br>20) SIGTSTP<br>停止进程的运行, 但该信号可以被处理和忽略. 用户键入SUSP字符时(通常是Ctrl-Z)发出这个信号<br>21) SIGTTIN<br>当后台作业要从用户终端读数据时, 该作业中的所有进程会收到SIGTTIN信号. 缺省时这些进程会停止执行.<br>22) SIGTTOU<br>类似于SIGTTIN, 但在写终端(或修改终端模式)时收到.<br>23) SIGURG<br>有”紧急”数据或out-of-band数据到达socket时产生.<br>24) SIGXCPU<br>超过CPU时间资源限制. 这个限制可以由getrlimit/setrlimit来读取/改变。<br>25) SIGXFSZ<br>当进程企图扩大文件以至于超过文件大小资源限制。<br>26) SIGVTALRM<br>虚拟时钟信号. 类似于SIGALRM, 但是计算的是该进程占用的CPU时间.<br>27) SIGPROF<br>类似于SIGALRM/SIGVTALRM, 但包括该进程用的CPU时间以及系统调用的时间.<br>28) SIGWINCH<br>窗口大小改变时发出.<br>29) SIGIO<br>文件描述符准备就绪, 可以开始进行输入/输出操作.<br>30) SIGPWR<br>Power failure<br>31) SIGSYS<br>非法的系统调用。</p>
-<p>并不知道大部分signal有什么用</p>
-<h3 id="4-_pause实验">4. pause实验</h3><p>pause()将程序挂起，直到有系统signal将其唤醒<br>typedef void (*sighandler_t)(int);类型的函数指针<br>signal(xxx,(sighandler_t)sigcat);注册信号<br>kill失败返回-1，成功返回0</p>
-<hr>
-<p>练习程序，实现主进程派生出两个进程，分别exec两个程序，其中ps优先执行（将它作为ls进程的父进程）</p>
-<pre><code><span class="preprocessor">#<span class="keyword">include</span> &lt;stdio.h&gt;</span>
-<span class="preprocessor">#<span class="keyword">include</span> &lt;signal.h&gt;</span>
-<span class="preprocessor">#<span class="keyword">include</span> &lt;sys/types.h&gt;</span>
-<span class="preprocessor">#<span class="keyword">include</span> &lt;unistd.h&gt;</span>
-<span class="preprocessor">#<span class="keyword">include</span> &lt;stdlib.h&gt;</span>
-
-<span class="preprocessor">#<span class="keyword">define</span> NUM_THREADS 2</span>
-
-pid_t pid[NUM_THREADS];
-<span class="keyword">char</span> * argv1[] = {<span class="string">"/bin/ls"</span>,<span class="string">"-a"</span>,NULL};
-<span class="keyword">char</span> * argv2[] = {<span class="string">"/bin/ps"</span>,<span class="string">"aux"</span>,NULL};
-
-<span class="function"><span class="keyword">void</span> <span class="title">work</span><span class="params">()</span></span>{
-    <span class="keyword">int</span> i;
-    <span class="keyword">for</span> (i=<span class="number">0</span>;i&lt;NUM_THREADS;i++){
-        pid[i] = fork();
-        <span class="keyword">if</span> (pid[i] == -<span class="number">1</span>){
-            <span class="built_in">fprintf</span>(stderr,<span class="string">"ERROR while fork\n"</span>);
-        }<span class="function"><span class="keyword">else</span> <span class="title">if</span> <span class="params">(pid[i] == 0)</span></span>{
-            <span class="keyword">if</span> (i == <span class="number">1</span>)
-                execve(argv2[<span class="number">0</span>],&amp;argv2,NULL);
-        }<span class="keyword">else</span>{
-            <span class="keyword">if</span> (i==<span class="number">1</span>){
-                waitpid(pid[<span class="number">1</span>],NULL,<span class="number">0</span>);
-                execve(argv1[<span class="number">0</span>],&amp;argv1,NULL);
-            }
-        }
-    }
-}
-
-<span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span>{
-    work();
-    <span class="keyword">return</span> <span class="number">0</span>;
-}
-</code></pre>
-        
-        
-        <p class="article-more-link">
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-<div class="article-categories">
-  <span></span>
-  <a class="article-category-link" href="/categories/HPC/">HPC</a>
-</div>
-
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2015/04/02/MayorsPoster_线段树/" title="Mayor&#39;s Poster 线段树" itemprop="url">Mayor&#39;s Poster 线段树</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="http://wuyihao14.github.io/about" title="Donald Wu" target="_blank" itemprop="author">Donald Wu</a>
-		
-  <p class="article-time">
-    <time datetime="2015-04-01T16:32:45.279Z" itemprop="datePublished"> 发表于 2015-04-02</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <p>Mayor’s posters<br>Time Limit: 1000MS        Memory Limit: 65536KB        64bit IO Format: %I64d &amp; %I64u<br>Submit</p>
-<p>Status</p>
-<p>Description<br>The citizens of Bytetown, AB, could not stand that the candidates in the mayoral election campaign have been placing their electoral posters at all places at their whim. The city council has finally decided to build an electoral wall for placing the posters and introduce the following rules:<br>Every candidate can place exactly one poster on the wall.<br>All posters are of the same height equal to the height of the wall; the width of a poster can be any integer number of bytes (byte is the unit of length in Bytetown).<br>The wall is divided into segments and the width of each segment is one byte.<br>Each poster must completely cover a contiguous number of wall segments.</p>
-<p>They have built a wall 10000000 bytes long (such that there is enough place for all candidates). When the electoral campaign was restarted, the candidates were placing their posters on the wall and their posters differed widely in width. Moreover, the candidates started placing their posters on wall segments already occupied by other posters. Everyone in Bytetown was curious whose posters will be visible (entirely or in part) on the last day before elections.<br>Your task is to find the number of visible posters when all the posters are placed given the information about posters’ size, their place and order of placement on the electoral wall.<br>Input<br>The first line of input contains a number c giving the number of cases that follow. The first line of data for a single case contains number 1 &lt;= n &lt;= 10000. The subsequent n lines describe the posters in the order in which they were placed. The i-th line among the n lines contains two integer numbers l i and ri which are the number of the wall segment occupied by the left end and the right end of the i-th poster, respectively. We know that for each 1 &lt;= i &lt;= n, 1 &lt;= l i &lt;= ri &lt;= 10000000. After the i-th poster is placed, it entirely covers all wall segments numbered l i, l i+1 ,… , ri.<br>Output<br>For each input data set print the number of visible posters after all the posters are placed. </p>
-<p>The picture below illustrates the case of the sample input. </p>
-<p>Sample Input<br>1<br>5<br>1 4<br>2 6<br>8 10<br>3 4<br>7 10<br>Sample Output<br>4<br>Source<br>Alberta Collegiate Programming Contest 2003.10.18</p>
-<hr>
-<p>线段树模板题<br>由于1 &lt;= l i &lt;= ri &lt;= 10000000条件的存在，导致建立线段树很困难。<br>然而1 &lt;= n &lt;= 10000，并且意识到两点之间的距离是无用的数据，因此进行离散化。<br>unique和sort是离散化的好帮手。</p>
-<pre><code><span class="flow">if</span> (<span class="built_in">tree</span>[i] != -<span class="number">1</span>){
-    <span class="built_in">tree</span>[i&lt;&lt;<span class="number">1</span>] = <span class="built_in">tree</span>[(i&lt;&lt;<span class="number">1</span>)+<span class="number">1</span>] = <span class="built_in">tree</span>[i];
-}
-</code></pre><p>线段树的lazy处理，一定不要忘了配对的向上传递和向下传递。<br>这样避免了父亲存储了儿子的数据，却把儿子的信息丢掉了的情况（即因为两个儿子数据的不一致而置位-1）</p>
-<pre><code><span class="preprocessor">#<span class="keyword">include</span> &lt;cstdio&gt;</span>
-<span class="preprocessor">#<span class="keyword">include</span> &lt;cstring&gt;</span>
-<span class="preprocessor">#<span class="keyword">include</span> &lt;algorithm&gt;</span>
-<span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;
-
-<span class="keyword">const</span> <span class="keyword">int</span> N = <span class="number">10300</span>;
-
-<span class="keyword">bool</span> mark[N];
-<span class="keyword">int</span> hash[<span class="number">10000010</span>];
-<span class="keyword">int</span> tree[N&lt;&lt;<span class="number">4</span>];
-
-<span class="keyword">struct</span> Edge{
-    <span class="keyword">int</span> l,r;
-}edge[N];
-
-<span class="keyword">int</span> point[N&lt;&lt;<span class="number">2</span>];
-<span class="keyword">int</span> psum;
-
-<span class="function"><span class="keyword">void</span> <span class="title">change</span><span class="params">(<span class="keyword">int</span> i,<span class="keyword">int</span> l,<span class="keyword">int</span> r,<span class="keyword">int</span> ll,<span class="keyword">int</span> rr,<span class="keyword">int</span> c)</span></span>{
-    <span class="keyword">int</span> mid = ((l+r)&gt;&gt;<span class="number">1</span>);
-
-    <span class="keyword">if</span> (l&gt;=ll &amp;&amp; r&lt;=rr){
-        tree[i] = c;
-        <span class="keyword">return</span>;
-    }
-    <span class="keyword">if</span> (tree[i] != -<span class="number">1</span>){
-        tree[i&lt;&lt;<span class="number">1</span>] = tree[(i&lt;&lt;<span class="number">1</span>)+<span class="number">1</span>] = tree[i];
-    }
-
-    <span class="keyword">if</span> (rr &lt;= mid){
-        change(i&lt;&lt;<span class="number">1</span>, l,mid, ll,rr,c);
-    } <span class="function"><span class="keyword">else</span> <span class="title">if</span> <span class="params">(ll &gt; mid)</span> </span>{
-        change((i&lt;&lt;<span class="number">1</span>)+<span class="number">1</span>, mid+<span class="number">1</span>,r, ll,rr,c);
-    } <span class="keyword">else</span> {
-        change(i&lt;&lt;<span class="number">1</span>, l,mid, ll,mid,c);
-        change((i&lt;&lt;<span class="number">1</span>)+<span class="number">1</span>,mid+<span class="number">1</span>,r,mid+<span class="number">1</span>,rr,c);
-    }
-    <span class="keyword">if</span> (tree[i&lt;&lt;<span class="number">1</span>] == tree[(i&lt;&lt;<span class="number">1</span>)+<span class="number">1</span>] &amp;&amp; tree[i&lt;&lt;<span class="number">1</span>]!=-<span class="number">1</span>){
-        tree[i] = tree[i&lt;&lt;<span class="number">1</span>];
-    }<span class="keyword">else</span>{
-        tree[i] = -<span class="number">1</span>;
-    }
-}
-
-<span class="function"><span class="keyword">void</span> <span class="title">find</span><span class="params">(<span class="keyword">int</span> i,<span class="keyword">int</span> l,<span class="keyword">int</span> r)</span></span>{
-    <span class="keyword">int</span> mid = ((l+r)&gt;&gt;<span class="number">1</span>);
-
-    <span class="keyword">if</span> (tree[i] != -<span class="number">1</span>){
-        mark[tree[i]] = <span class="keyword">true</span>;
-        <span class="keyword">return</span>;
-    }
-    find(i&lt;&lt;<span class="number">1</span>,l,mid);
-    find((i&lt;&lt;<span class="number">1</span>)+<span class="number">1</span>,mid+<span class="number">1</span>,r);
-}
-
-<span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span>{
-    <span class="keyword">int</span> c;
-    <span class="built_in">scanf</span>(<span class="string">"%d"</span>,&amp;c);
-    <span class="keyword">while</span> (c--){
-        <span class="built_in">memset</span>(mark,<span class="number">0</span>,<span class="keyword">sizeof</span> mark);
-        <span class="built_in">memset</span>(tree,<span class="number">0</span>,<span class="keyword">sizeof</span> tree);
-        <span class="built_in">memset</span>(hash,<span class="number">0</span>,<span class="keyword">sizeof</span> hash);
-        psum = <span class="number">0</span>;
-        <span class="keyword">int</span> n;
-
-        <span class="built_in">scanf</span>(<span class="string">"%d"</span>,&amp;n);
-        <span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;n;i++){
-            <span class="keyword">int</span> l,r;
-            <span class="built_in">scanf</span>(<span class="string">"%d%d"</span>,&amp;l,&amp;r);
-            point[psum++] = l;
-            point[psum++] = r;
-            edge[i].l = l;
-            edge[i].r = r;
-        }
-
-        sort(point,point+psum);
-        <span class="keyword">int</span> npsum = unique(point,point+psum)-point;
-
-        <span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;npsum;i++){
-            hash[point[i]] = i+<span class="number">1</span>;
-        }
-
-        <span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;n;i++){
-            edge[i].l = hash[edge[i].l];
-            edge[i].r = hash[edge[i].r];
-
-            change(<span class="number">1</span>,<span class="number">1</span>,npsum,edge[i].l,edge[i].r,i+<span class="number">1</span>);
-        }
-
-        find(<span class="number">1</span>,<span class="number">1</span>,npsum);
-
-        <span class="keyword">int</span> ans = <span class="number">0</span>;
-        <span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">1</span>;i&lt;n+<span class="number">1</span>;i++)
-            <span class="keyword">if</span> (mark[i])
-                ans ++;
-        <span class="built_in">printf</span>(<span class="string">"%d\n"</span>,ans);
-    }
-    <span class="keyword">return</span> <span class="number">0</span>;
-}
-</code></pre>
-        
-        
-        <p class="article-more-link">
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-<div class="article-categories">
-  <span></span>
-  <a class="article-category-link" href="/categories/ACM/">ACM</a>
-</div>
-
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
 
   <nav id="page-nav" class="clearfix">
     <a class="extend prev" rel="prev" href="/"><span></span>Prev</a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><span class="space">&hellip;</span><a class="page-number" href="/page/6/">6</a><a class="extend next" rel="next" href="/page/3/">Next<span></span></a>
   </nav>
 
 </div>
-      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+      <div class="openaside"><a class="navbutton" href="#" title="顯示側邊欄"></a></div>
 
 <div id="asidepart">
-<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<div class="closeaside"><a class="closebutton" href="#" title="隱藏側邊欄"></a></div>
 <aside class="clearfix">
 
   
 <div class="categorieslist">
-	<p class="asidetitle">分类</p>
+	<p class="asidetitle">分類</p>
 		<ul>
 		
 		  
@@ -777,6 +651,10 @@ pid_t pid[NUM_THREADS];
 		  
 		
 		  
+			<li><a href="/categories/Programming/" title="Programming">Programming<sup>1</sup></a></li>
+		  
+		
+		  
 			<li><a href="/categories/Security/" title="Security">Security<sup>1</sup></a></li>
 		  
 		
@@ -791,7 +669,7 @@ pid_t pid[NUM_THREADS];
   
 
   <div class="linkslist">
-  <p class="asidetitle">友情链接</p>
+  <p class="asidetitle">友情鏈接</p>
     <ul>
         
           <li>
@@ -813,7 +691,7 @@ pid_t pid[NUM_THREADS];
 
 
   <div class="rsspart">
-	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+	<a href="/atom.xml" target="_blank" title="rss">RSS 訂閱</a>
 </div>
 
 </aside>
@@ -829,7 +707,7 @@ pid_t pid[NUM_THREADS];
 	
 	<section class="info">
 		<p> wuyihao. ^_^ <br/>
-			Mjr in Sftwr. Fncy4 Algrthm, Info&#39;Sec. Cmptr Ntwrk.</p>
+			Major in Network Engineering. Fancy 4 Algorithm, Infomation Security. Computer Network. etc</p>
 	</section>
 	 
 	<div class="social-font" class="clearfix">
@@ -850,7 +728,7 @@ pid_t pid[NUM_THREADS];
 		<p class="copyright">
 		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2015 
 		
-		<a href="http://wuyihao14.github.io/about" target="_blank" title="Donald Wu">Donald Wu</a>
+		<a href="/about" target="_blank" title="Donald Wu">Donald Wu</a>
 		
 		
 		</p>
@@ -914,6 +792,27 @@ $(document).ready(function(){
 
 
 
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
 
 
 <!-- Analytics Begin -->
@@ -927,7 +826,7 @@ $(document).ready(function(){
 <!-- Totop Begin -->
 
 	<div id="totop">
-	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	<a title="返回頂部"><img src="/img/scrollup.png"/></a>
 	</div>
 	<script src="/js/totop.js"></script>
 
