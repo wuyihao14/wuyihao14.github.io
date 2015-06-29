@@ -81,6 +81,235 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/2015/04/02/AttackTheNEETPrincess/" title="Attack the NEET princess 双连通分量" itemprop="url">Attack the NEET princess 双连通分量</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="Donald Wu" target="_blank" itemprop="author">Donald Wu</a>
+		
+  <p class="article-time">
+    <time datetime="2015-04-01T16:40:03.887Z" itemprop="datePublished"> 發表於 2015-04-02</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>Attack the NEET Princess<br>Time Limit: 9000MS        Memory Limit: 65536KB        64bit IO Format: %lld &amp; %llu<br>Submit</p>
+<p>Status</p>
+<p>Description<br>Houraisan Kaguya (蓬萊山輝夜) is the NEET (not in education, employment or training) princess living in Eientei (永遠亭). She is an unemployed geek, who sits at home and surfs the Internet all day. But today is different, as the Hakurei Shrine Reitaisai Festival (博麗神社例大祭) will be hosted in Hakurei Shrine, Kaguya decides to go to buy some new doujin games.</p>
+<p>Fujiwara no Mokou (藤原妹紅) detests Kaguya, and has been planing to attack her for a long time. But she nerver got the chance before because Kaguya kept staying in Eientei, under the protection of Yagokoro Eirin (八意永琳). Knowing that Kaguya will go outside today, Mokou decides to wait on certain road and attack her once she passes there. Mokou don’t know which path Kaguya will choose, but she thinks that there always exits some roads where she can always meet Kaguya.</p>
+<p>Input<br>There are multiple cases. Each case begins with two integers 2 ≤ n ≤ 10000 — the number of villages and 2 ≤ m ≤ 100000 — the number of roads. Then m lines, each contains two integers a and b (0 ≤ a, b &lt; n), indicating a road connecting village a and village b. Village 0 is Eientei and Village n-1 is Hakurei Shrine. They are always connected by roads. There may be more than one roads between two villages.</p>
+<p>Output<br>Find out the roads where Mokou can always meet Kaguya. For each case, output the number of roads in the first line, then output the numbers of the roads in ascending order in the second line.</p>
+<p>Sample Input<br>3 2<br>0 1<br>1 2</p>
+<p>7 8<br>0 1<br>0 2<br>1 3<br>2 3<br>3 4<br>3 5<br>4 6<br>5 6</p>
+<p>Sample Output<br>2<br>0 1<br>0</p>
+<p>无向图找桥，再筛选一下桥，筛选的时候，注意到新的图变成了一棵树，因此遍历一次树即可，不需要回溯</p>
+<pre><code><span class="preprocessor">#<span class="keyword">include</span>&lt;cstdio&gt;</span>
+<span class="preprocessor">#<span class="keyword">include</span>&lt;algorithm&gt;</span>
+<span class="preprocessor">#<span class="keyword">include</span>&lt;cstring&gt;</span>
+<span class="keyword">using</span> std::sort;
+<span class="keyword">const</span> <span class="keyword">int</span> N=<span class="number">10010</span>;
+<span class="keyword">const</span> <span class="keyword">int</span> M=<span class="number">100010</span>;
+
+<span class="keyword">struct</span> EDGE
+{
+    <span class="keyword">int</span> v,next,i;
+};
+EDGE edge[M*<span class="number">2</span>],edge2[M*<span class="number">2</span>];
+<span class="keyword">bool</span> vis[N];
+
+<span class="keyword">int</span> first[N],low[N],dfn[N],belong[N],degree[N],sta[M],instack[M],first2[N];
+<span class="keyword">int</span> g,cnt,top,scc,g2;
+<span class="function"><span class="keyword">int</span> <span class="title">min</span><span class="params">(<span class="keyword">int</span> a,<span class="keyword">int</span> b)</span>
+</span>{
+    <span class="keyword">return</span> a&lt;b?a:b;
+}
+<span class="function"><span class="keyword">void</span> <span class="title">AddEdge</span><span class="params">(<span class="keyword">int</span> u,<span class="keyword">int</span> v)</span>
+</span>{
+    edge[g].v=v;
+    edge[g].next=first[u];
+    first[u]=g++;
+}
+<span class="function"><span class="keyword">void</span> <span class="title">AddEdge2</span><span class="params">(<span class="keyword">int</span> u,<span class="keyword">int</span> v,<span class="keyword">int</span> i)</span>
+</span>{
+    edge2[g2].v=v;
+    edge2[g2].i=i;
+    edge2[g2].next=first2[u];
+    first2[u]=g2++;
+}
+<span class="function"><span class="keyword">void</span> <span class="title">Tarjan</span><span class="params">(<span class="keyword">int</span> u,<span class="keyword">int</span> fa)</span>
+</span>{
+    <span class="keyword">int</span> i,v;
+    low[u]=dfn[u]=++cnt;
+    sta[++top]=u;
+    instack[u]=<span class="number">1</span>;
+    <span class="keyword">for</span>(i=first[u];i!=-<span class="number">1</span>;i=edge[i].next)
+    {
+        v=edge[i].v;
+        <span class="keyword">if</span>(i==(fa^<span class="number">1</span>))
+            <span class="keyword">continue</span>;
+        <span class="keyword">if</span>(!dfn[v])
+        {
+            Tarjan(v,i);
+            low[u]=min(low[u],low[v]);
+        }
+        <span class="function"><span class="keyword">else</span> <span class="title">if</span><span class="params">(instack[v])</span>
+            low[u]</span>=min(low[u],dfn[v]);
+    }
+    <span class="keyword">if</span>(dfn[u]==low[u])
+    {
+        scc++;
+        <span class="keyword">while</span>(<span class="number">1</span>)
+        {
+            v=sta[top--];
+            instack[v]=<span class="number">0</span>;
+            belong[v]=scc;
+            <span class="keyword">if</span>(v==u)
+                <span class="keyword">break</span>;
+        }
+    }
+}
+
+<span class="keyword">int</span> que[M];
+<span class="keyword">int</span> rear = <span class="number">0</span>;
+<span class="function"><span class="keyword">void</span> <span class="title">output</span><span class="params">(<span class="keyword">int</span> a)</span></span>{
+    que[rear++] = a;
+}
+
+<span class="keyword">int</span> n,m;
+<span class="function"><span class="keyword">bool</span> <span class="title">dfs</span><span class="params">(<span class="keyword">int</span> u,<span class="keyword">int</span> fa)</span></span>{
+    <span class="keyword">int</span> i,v;
+    vis[u] = <span class="keyword">true</span>;
+    <span class="keyword">if</span> (u == belong[n])
+        <span class="keyword">return</span> <span class="keyword">true</span>;
+    <span class="keyword">for</span>(i=first2[u];i!=-<span class="number">1</span>;i=edge2[i].next)
+    {
+        <span class="comment">//printf("%d\n",i);</span>
+        v=edge2[i].v;
+        <span class="keyword">if</span> (vis[v])
+            <span class="keyword">continue</span>;
+        <span class="keyword">if</span>(i==(fa^<span class="number">1</span>))
+            <span class="keyword">continue</span>;
+        <span class="keyword">if</span> (dfs(v,i)){
+            output(edge2[i].i);
+            <span class="keyword">return</span> <span class="keyword">true</span>;
+        }
+    }
+    <span class="keyword">return</span> <span class="keyword">false</span>;
+}
+
+<span class="keyword">int</span> _edge[M][<span class="number">2</span>];
+
+<span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span>
+</span>{
+    <span class="keyword">int</span> u,v,i;
+    <span class="keyword">while</span> (~<span class="built_in">scanf</span>(<span class="string">"%d%d"</span>,&amp;n,&amp;m)){
+        g=cnt=top=scc=<span class="number">0</span>;
+        <span class="built_in">memset</span>(first,-<span class="number">1</span>,<span class="keyword">sizeof</span>(first));
+        <span class="built_in">memset</span>(low,<span class="number">0</span>,<span class="keyword">sizeof</span>(low));
+        <span class="built_in">memset</span>(dfn,<span class="number">0</span>,<span class="keyword">sizeof</span>(dfn));
+        <span class="built_in">memset</span>(instack,<span class="number">0</span>,<span class="keyword">sizeof</span>(instack));
+        <span class="built_in">memset</span>(degree,<span class="number">0</span>,<span class="keyword">sizeof</span>(degree));
+        <span class="keyword">for</span>(i=<span class="number">0</span>;i&lt;m;i++)
+        {
+            <span class="built_in">scanf</span>(<span class="string">"%d%d"</span>,&amp;u,&amp;v);
+            {
+                u ++;
+                v ++;
+                _edge[i][<span class="number">0</span>] = u;
+                _edge[i][<span class="number">1</span>] = v;
+                AddEdge(u,v);
+                AddEdge(v,u);
+            }
+        }
+        <span class="keyword">for</span>(i=<span class="number">1</span>;i&lt;=n;i++)
+            <span class="keyword">if</span>(!dfn[i])
+                Tarjan(i,-<span class="number">1</span>);
+
+        <span class="comment">//printf("DEBUG %d\n",scc);</span>
+        <span class="built_in">memset</span>(first2,-<span class="number">1</span>,<span class="keyword">sizeof</span>(first2));
+        g2 = <span class="number">0</span>;
+        <span class="keyword">for</span> (i=<span class="number">0</span>;i&lt;m;i++){
+            <span class="keyword">int</span> u = belong[_edge[i][<span class="number">0</span>]];
+            <span class="keyword">int</span> v = belong[_edge[i][<span class="number">1</span>]];
+            AddEdge2(u,v,i);
+            AddEdge2(v,u,i);
+        }
+        <span class="built_in">memset</span>(vis,<span class="number">0</span>,<span class="keyword">sizeof</span> vis);
+        rear = <span class="number">0</span>;
+        dfs(belong[<span class="number">1</span>],-<span class="number">1</span>);
+
+        sort(que,que+rear);
+        <span class="built_in">printf</span>(<span class="string">"%d\n"</span>,rear);
+        <span class="comment">//if (rear &gt; 0)</span>
+        {
+            <span class="keyword">for</span> (i=<span class="number">0</span>;i&lt;rear;i++){
+                <span class="built_in">printf</span>(<span class="string">"%d"</span>,que[i]);
+                <span class="keyword">if</span> (i &lt; rear-<span class="number">1</span>)
+                    <span class="built_in">printf</span>(<span class="string">" "</span>);
+            }
+            <span class="built_in">printf</span>(<span class="string">"\n"</span>);
+        }
+    }
+    <span class="comment">/*
+       for(i=1;i&lt;=n;i++)
+       {
+       for(j=first[i];j!=-1;j=edge[j].next)
+       {
+       v=edge[j].v;
+       if(belong[i]!=belong[v])
+       degree[belong[i]]++;
+       }
+       }
+       int sum=0; for(i=1;i&lt;=n;i++)
+       if(degree[i]==1)
+       sum++;
+       int ans=(sum+1)/2;
+       printf("%d\n",ans);
+     */</span>
+    <span class="keyword">return</span> <span class="number">0</span>;
+}
+</code></pre>
+        
+        
+        <p class="article-more-link">
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/ACM/">ACM</a>
+</div>
+
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/2015/04/02/MayorsPoster_线段树/" title="Mayor&#39;s Poster 线段树" itemprop="url">Mayor&#39;s Poster 线段树</a>
   </h1>
   <p class="article-author">By
@@ -472,115 +701,6 @@ ll a[N],s[N],t[N];
 
 
 
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2015/04/02/Intel-Xeon-Phi协处理器高性能编程指南-总结/" title="Intel Xeon Phi协处理器高性能编程指南" itemprop="url">Intel Xeon Phi协处理器高性能编程指南</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="Donald Wu" target="_blank" itemprop="author">Donald Wu</a>
-		
-  <p class="article-time">
-    <time datetime="2015-04-01T16:32:10.871Z" itemprop="datePublished"> 發表於 2015-04-02</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <p>对读过的章节稍微做一下总结</p>
-<h2 id="第二章">第二章</h2><p>线程和亲缘性：线程并不是越多越好，但至少要保证每核2个线程，因为根据现在xeon phi的设计，一个周期两条指令，预取的时候，不能用当前线程来预取。性能会减半。<br>亲缘性最好是scatter，负载均衡。</p>
-<font size="1px" color="grey">这两者都既可以在程序中设置，也可以在环境变量中设置</font>
-
-<p>内存带宽：增加核的使用，以增加内存缓冲区，但是核上线程增加可能是会牺牲内存带宽的，可以增加内存页大小</p>
-<h2 id="第三章">第三章</h2><h3 id="向量化">向量化</h3><p>向量化是MIC优化的主题。</p>
-<p>-O2 -O3 中实现了自动向量化<br>而ivdep补充说明了哪些块可以向量化</p>
-<p>要用OpenMP扩展到多核也必须满足可向量化才行</p>
-<h3 id="对齐">对齐</h3><p>前端对齐:_mm_malloc和_mm_free。（如数组首地址）<br>补白：（如二维数组行首）（注意一级cache大小)</p>
-<h3 id="流存储">流存储</h3><p>写入前不读取#pragma vector nontemporal</p>
-<h3 id="2MB大内存页">2MB大内存页</h3><p>mmap()</p>
-<h2 id="第四章">第四章</h2><h3 id="代码扩展">代码扩展</h3><p>#pragma omp for collapse(2) 循环合并</p>
-<h3 id="向量化-1">向量化</h3><p>#pragma simd 比 #pragma ivdep更强制</p>
-<h3 id="剥离">剥离</h3><p>一个循环拆分成两个，以消除分支判断</p>
-<h3 id="切片">切片</h3><p>多重循环的时候，不宜某一维度过长。如3维，y过长，则不能利用数据局部性，因为处理完一个x-y平面之后，才会z++，进入到下一个x-y平面，此时最前面的数据可能已经不在L2Cache中了。优化的方法是切片，并且把个切片y轴上的长度设为参数，调优。</p>
-<h2 id="第五章">第五章</h2><h3 id="向量化的五种方法">向量化的五种方法</h3><ul>
-<li>Cilk Plus</li>
-<li>Array Notations</li>
-<li>Auto-vectorization</li>
-<li>SIMD Directives</li>
-<li>MKL</li>
-</ul>
-<h3 id="六步方法论">六步方法论</h3><ul>
-<li>测试基准版性能</li>
-<li>用Intel Vtune Amplifier XE确定热点</li>
-<li>使用英特尔编译器vec-report确定可向量化循环</li>
-<li>使用英特尔编译器GAP报告和工具资源获得建议<font color="red">这是什么？还没用过</font></li>
-<li>GAP实线意见及其他建议（如使用基本函数和/或数组符号）</li>
-<li>重复</li>
-</ul>
-<h3 id="Cache流标题和下面的内容的关系是什么？">Cache流<font color="red">标题和下面的内容的关系是什么？</font></h3><ul>
-<li>数据布局</li>
-<li>数据对齐</li>
-<li>预取 <font color="red">还不太熟悉</font><ul>
-<li>硬件到L2缓存的自动预取（见第八章）</li>
-<li>编译器到L1缓存的自动软件预取指令</li>
-<li>编译器生成的预取（可从程序员提供的信息中获取帮助）</li>
-<li>程序员通过L2和L1的预取能力进行的手动预取</li>
-</ul>
-</li>
-<li>流存储 <ul>
-<li>条件。可向量化，非时间局部性。<font color="red">还不太理解，书的翻译也不好</font></li>
-<li>编译器生成clevicts。它告知硬件不预取将被彻底删除的数据，判断发生在编译时。分别讨论了处理器和协处理器上。</li>
-</ul>
-</li>
-</ul>
-<h3 id="编译器技巧一些杂技巧">编译器技巧<font color="red">一些杂技巧</font></h3><ul>
-<li>避免手动展开。使用#pragma unroll。以直接了当的方式书写</li>
-<li>编译器向量化的要求。几点容易理解的，和一些特殊情况。<ul>
-<li>更杂的建议。可作为优化后复审的参考，这是一个总结，前面都提到过</li>
-</ul>
-</li>
-<li>内联<br>  最内层的循环函数被自动内联很重要，用-opt-report-phase-ipo_inl观察是否内联，因为有的行为会关闭自动内联（如-pg 的性能分析功能）</li>
-</ul>
-<h3 id="编译器选项（同样是一些技巧）没看太懂，书写得有点混乱">编译器选项（同样是一些技巧）<font color="red">没看太懂，书写得有点混乱</font></h3><font color="red">这有一段不知所云，而且此处还没有涉及到预取</font><br>- 解决不明确，可能存在的隐含的混叠<font color="red">实际上这也是数据相关性的一种表现</font><br>    - 用restricted关键字说明指针具有独立性（即不混叠）<br>    - #pragma ivdep，允许编译器消除一些假定的相关性（而SIMD是强制性的）<br>    - 换用数组表示法或元素函数<br><br><br>###编译器指导指令，这部分内容很多<br>- SIMD<br>    - 使用的要求（底线，比ivdep的要求低），有一点比较奇怪但是也容易理解，就是循环体不能过大。另外一个奇怪的地方是，不要和快速浮点模式一起用<br><br><br><br>无主题（通用）<br>—-<br>source inte/composer**/bin/comiplervars.sh ia32/intel64 自动建立环境<br>#pragma omp master常用在输出调试信息上，只使用一个节点输出<br>private(xxx) 表示mic里和host上是独立的，不共享<br>各种优化后都要尝试不同线程数<br>在修改的时候要注意可扩展性和移植性<br><br><font color="red">明天继续补充</font>
-
-        
-        
-        <p class="article-more-link">
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-<div class="article-categories">
-  <span></span>
-  <a class="article-category-link" href="/categories/HPC/">HPC</a>
-</div>
-
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
 
   <nav id="page-nav" class="clearfix">
     <a class="extend prev" rel="prev" href="/page/2/"><span></span>Prev</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/page/4/">4</a><a class="page-number" href="/page/5/">5</a><a class="page-number" href="/page/6/">6</a><a class="extend next" rel="next" href="/page/4/">Next<span></span></a>
@@ -636,6 +756,10 @@ ll a[N],s[N],t[N];
 		
 		  
 			<li><a href="/categories/Server/" title="Server">Server<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/programming/" title="programming">programming<sup>1</sup></a></li>
 		  
 		
 		</ul>

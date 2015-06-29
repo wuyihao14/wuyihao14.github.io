@@ -1,0 +1,535 @@
+
+ <!DOCTYPE HTML>
+<html >
+<head>
+  <meta charset="UTF-8">
+  
+    <title>Aria2源代码笔记——2.md | Shelter</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="Donald Wu">
+    
+
+    
+    <meta name="description" content="从0.2.0看到了0.2.1的所有commits，到后面就比较略了，因为框架形成后，无聊的细节就开始变得很多。学习了程序开发的迭代过程，之后就每次看一个release吧，这样也可以避免陷入无聊的细节中，节约时间。
+commit 1
+独立出Socket的实现模块SocketCore
+将原来的实现封装进getSockfd()，establishConnection()，setNonBlockingMo">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Aria2源代码笔记——2.md">
+<meta property="og:url" content="http://wuyihao14.github.io/2015/06/29/Aria2源代码笔记——2/index.html">
+<meta property="og:site_name" content="Shelter">
+<meta property="og:description" content="从0.2.0看到了0.2.1的所有commits，到后面就比较略了，因为框架形成后，无聊的细节就开始变得很多。学习了程序开发的迭代过程，之后就每次看一个release吧，这样也可以避免陷入无聊的细节中，节约时间。
+commit 1
+独立出Socket的实现模块SocketCore
+将原来的实现封装进getSockfd()，establishConnection()，setNonBlockingMo">
+<meta property="og:updated_time" content="2015-06-29T09:15:07.878Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Aria2源代码笔记——2.md">
+<meta name="twitter:description" content="从0.2.0看到了0.2.1的所有commits，到后面就比较略了，因为框架形成后，无聊的细节就开始变得很多。学习了程序开发的迭代过程，之后就每次看一个release吧，这样也可以避免陷入无聊的细节中，节约时间。
+commit 1
+独立出Socket的实现模块SocketCore
+将原来的实现封装进getSockfd()，establishConnection()，setNonBlockingMo">
+
+    
+    <link rel="alternative" href="/atom.xml" title="Shelter" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="Shelter" title="Shelter"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="Shelter">Shelter</a></h1>
+				<h2 class="blog-motto"></h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜單">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+						<li><a href="/about">About</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:wuyihao14.github.io">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2015/06/29/Aria2源代码笔记——2/" title="Aria2源代码笔记——2.md" itemprop="url">Aria2源代码笔记——2.md</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="Donald Wu" target="_blank" itemprop="author">Donald Wu</a>
+		
+  <p class="article-time">
+    <time datetime="2015-06-29T09:14:02.000Z" itemprop="datePublished"> 發表於 2015-06-29</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目錄</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#commit_1"><span class="toc-number">1.</span> <span class="toc-text">commit 1</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#commit_2"><span class="toc-number">2.</span> <span class="toc-text">commit 2</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#commit_3"><span class="toc-number">3.</span> <span class="toc-text">commit 3</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#commit_4"><span class="toc-number">4.</span> <span class="toc-text">commit 4</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#commit_5"><span class="toc-number">5.</span> <span class="toc-text">commit 5</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#commit_6"><span class="toc-number">6.</span> <span class="toc-text">commit 6</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#commit_7"><span class="toc-number">7.</span> <span class="toc-text">commit 7</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#commit_8"><span class="toc-number">8.</span> <span class="toc-text">commit 8</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#commit_9"><span class="toc-number">9.</span> <span class="toc-text">commit 9</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#commit_10"><span class="toc-number">10.</span> <span class="toc-text">commit 10</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#commit_11"><span class="toc-number">11.</span> <span class="toc-text">commit 11</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#commit_12"><span class="toc-number">12.</span> <span class="toc-text">commit 12</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#commit_13"><span class="toc-number">13.</span> <span class="toc-text">commit 13</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#commit_14"><span class="toc-number">14.</span> <span class="toc-text">commit 14</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#commit_15"><span class="toc-number">15.</span> <span class="toc-text">commit 15</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#记"><span class="toc-number">16.</span> <span class="toc-text">记</span></a></li></ol>
+		
+		</div>
+		
+		<p>从0.2.0看到了0.2.1的所有commits，到后面就比较略了，因为框架形成后，无聊的细节就开始变得很多。学习了程序开发的迭代过程，之后就每次看一个release吧，这样也可以避免陷入无聊的细节中，节约时间。</p>
+<h1 id="commit_1">commit 1</h1><ol>
+<li>独立出Socket的实现模块SocketCore</li>
+<li>将原来的实现封装进getSockfd()，establishConnection()，setNonBlockingMode()，closeConnection()，isWritable()，isReadable()，writeData()，readData()，peekData()。</li>
+<li>取消了dup的使用，变成了内部的计数器，因为不需要两个不同的fd，不需要别名，使用计数器更快。</li>
+</ol>
+<h1 id="commit_2">commit 2</h1><ol>
+<li>添加SSL的支持。（需要过两天单独学习SSL的架构？？？)<ol>
+<li>configure文件系列</li>
+<li>HttpConnection.cc里getHost()支持443端口了。</li>
+<li>HttpRequestCommand.cc里executeInternal()，在建立httpConnection之前，判断如果req的协议是https（首先要系统支持，根据预定义宏判断），则initiateSecureConnection()        <strong>Http又忘了，需要复习一下书？？？</strong>    HttpInitiateConnectionCommand.cc里createInitiateConnectionCommand()；Request.cc里Request()。类似。</li>
+<li>Socket.cc，SocketCore.cc提供支持。SocketCore.cc</li>
+<li><strong>SocketCore.cc这是重点</strong>，writeData()和readData()单纯地把添加了SSL_write和SSL_read和SSL_peek，和send和recv和peek并排。<strong>closeConnection()的顺序是SSL_shutdown，然后是socket的close，然后是SSL_free，然后是SSL_CTX_free。当然这都是建立在SocketCore中secure开关打开的情况下</strong>。    initiateSecureConnection是新的函数，secure开关表示是否已经配置好ssl，一堆OpenSSL的api和定义的异常。需要学习？？？</li>
+<li>main.cc中也有OpenSSL的初始化的api。SSL_load_error_strings();和SSL_library_init();</li>
+</ol>
+</li>
+<li>common.h里是一些常用头文件</li>
+<li>ChunkedEncoding的缓冲区变大。减少了addBuffer里冗余的strlen函数。</li>
+<li>HttpResponseCommand里createHttpResponseCommand()，把transferEncoding写入了引擎的map映射表里（之前真的是没有用呢）</li>
+<li>修正有/无ChunkEncoding时，真实下载的字节数不同bug。</li>
+</ol>
+<h1 id="commit_3">commit 3</h1><ol>
+<li>检测ssl宏的使用逻辑错误。即使不支持ssl也要检测https，也该预留接口。<strong>只有在真正调用了api的时候，才是判断是否支持ssl的正确场合</strong></li>
+</ol>
+<h1 id="commit_4">commit 4</h1><ol>
+<li>支持Referer。首先添加currentUrl和previousUrl，两者在resetUrl和redirectUrl时更新，第一次的referer由req自己指定。以后都是previousUrl，因为url会在Request之间通过Referer传递。main函数里，addCommand增加referer参数，和识别referer选项。</li>
+</ol>
+<h1 id="commit_5">commit 5</h1><p>略</p>
+<ol>
+<li>AbstractCommand的execute()的错误输出加上cuid，方便调试。</li>
+<li>AbstractCommand的execute()收到重试异常时，不resetUrl，这样可以保留Referer。并且不立马向工厂请求createInitiateConnectionCommand。而是先加入SleepCommand，延迟后再去请求。睡眠的时间从引擎的option里查（如果是0就不加入SleepCommand了）。这个做法之前已在DownloadCommand中有，现将它上升到AbstractCommand，DownloadCommand只调用基类方法。</li>
+<li>可变参数直接列表直接写va_list，不用…的记法，更方便，不需要在函数体内，再写va_list，va_start，va_end。</li>
+<li>把SleepCommand的wait变成成员变量。并且加入程序选项。</li>
+<li>main里proxy_port之前没有转成数字</li>
+</ol>
+<h1 id="commit_6">commit 6</h1><ol>
+<li>有的服务器不支持相对路径，所以在HttpConnection在createRequest时，用parse了url得出来的结果来生成绝对路径。？？？</li>
+</ol>
+<h1 id="commit_7">commit 7</h1><ol>
+<li>只有previousUrl不为空时才加入Referer</li>
+</ol>
+<h1 id="commit_8">commit 8</h1><ol>
+<li>又是一堆看不懂的configure。还要学习make和configure？？？</li>
+</ol>
+<h1 id="commit_9">commit 9</h1><ol>
+<li>string的字符的位置p规范成string::size_type，而不是unsigned int。因为会有和string::npos的比较。</li>
+</ol>
+<h1 id="commit_10">commit 10</h1><ol>
+<li>AbstractCommand太短的TIMEOUT_SEC</li>
+<li>把AbstractCommand的addSocketForXXXCheck和deletSocketForXXXCheck，统一用setXXXdCheckSocket封装。并且把管理sockets的任务从DownloadEngine下放到AbstractCommand，原因我还没想明白？？？。而且之前其实是半双工的，Write之前要删掉Read的socket。</li>
+<li>DownloadComman的onAbort中(本commit中从onError改成onAbort)，从段管理器中卸载该段Id。</li>
+<li>DownloadEngine.cc的更改？？？</li>
+<li>HttpConnection.cc中createRequest，如果协议是ftp，则GET的url直接使用相对路径？？？</li>
+<li>HttpConnection.cc的receiveResponse中header的实现改成string，没有必要使用自己定义的缓冲区扩充方案。</li>
+<li>把可以改成const函数的改成const函数</li>
+<li>httpConnection的req是固定的，因此在构造函数初始化，并且写成const</li>
+<li>不再使用map作为headers，独立成HttpHeader类。</li>
+<li>预留ftp接口</li>
+<li>用const_iterator替代iterator</li>
+<li>在Socket中封装beginListen，getAddrInfo，acceptConnection，establishConnection</li>
+<li>一些ssl的bug修正</li>
+</ol>
+<h1 id="commit_11">commit 11</h1><ol>
+<li>实现ftp。有了前面Http的经验，能看出作者开发ftp的时候顺利得多。FtpInitiateConnectionCommand发现里面还是http。不太懂，去学习一下ftp协议？？？</li>
+</ol>
+<h1 id="commit_12">commit 12</h1><ol>
+<li>把常数都变成option</li>
+</ol>
+<h1 id="commit_13">commit 13</h1><ol>
+<li>Ftp实现的一些非法情况的检查？？？</li>
+</ol>
+<h1 id="commit_14">commit 14</h1><ol>
+<li>计算速度</li>
+<li>预留SegmentSplitter新类</li>
+</ol>
+<h1 id="commit_15">commit 15</h1><ol>
+<li>把原先的实现移动到SegmentSplitter新类中</li>
+</ol>
+<h1 id="记">记</h1><p>用git来研究一个项目成长过程太爽了！<br>作者在调试的时候用的cppunit，看起来很厉害的样子！可以学一下单元测试？？？<br>养成写// TODO的习惯</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/programming/">programming</a>
+</div>
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://wuyihao14.github.io/2015/06/29/Aria2源代码笔记——2/" data-title="Aria2源代码笔记——2.md | Shelter" data-tsina="null" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+
+<div class="next">
+<a href="/2015/06/23/Aria2源代码笔记——1/"  title="Aria2源代码笔记——1">
+ <strong>下一篇：</strong><br/> 
+ <span>Aria2源代码笔记——1
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="顯示側邊欄"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目錄</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#commit_1"><span class="toc-number">1.</span> <span class="toc-text">commit 1</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#commit_2"><span class="toc-number">2.</span> <span class="toc-text">commit 2</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#commit_3"><span class="toc-number">3.</span> <span class="toc-text">commit 3</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#commit_4"><span class="toc-number">4.</span> <span class="toc-text">commit 4</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#commit_5"><span class="toc-number">5.</span> <span class="toc-text">commit 5</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#commit_6"><span class="toc-number">6.</span> <span class="toc-text">commit 6</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#commit_7"><span class="toc-number">7.</span> <span class="toc-text">commit 7</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#commit_8"><span class="toc-number">8.</span> <span class="toc-text">commit 8</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#commit_9"><span class="toc-number">9.</span> <span class="toc-text">commit 9</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#commit_10"><span class="toc-number">10.</span> <span class="toc-text">commit 10</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#commit_11"><span class="toc-number">11.</span> <span class="toc-text">commit 11</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#commit_12"><span class="toc-number">12.</span> <span class="toc-text">commit 12</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#commit_13"><span class="toc-number">13.</span> <span class="toc-text">commit 13</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#commit_14"><span class="toc-number">14.</span> <span class="toc-text">commit 14</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#commit_15"><span class="toc-number">15.</span> <span class="toc-text">commit 15</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#记"><span class="toc-number">16.</span> <span class="toc-text">记</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隱藏側邊欄"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分類</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/ACM/" title="ACM">ACM<sup>7</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/AI/" title="AI">AI<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/CTF/" title="CTF">CTF<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/HPC/" title="HPC">HPC<sup>5</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Just4Fun/" title="Just4Fun">Just4Fun<sup>4</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Math/" title="Math">Math<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Networking/" title="Networking">Networking<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Programming/" title="Programming">Programming<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Security/" title="Security">Security<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Server/" title="Server">Server<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/programming/" title="programming">programming<sup>1</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+
+  <div class="linkslist">
+  <p class="asidetitle">友情鏈接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://blog.ikow.cn" target="_blank" title="k神">k神</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://nlfox.sinaapp.com" target="_blank" title="狐神">狐神</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 訂閱</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> wuyihao. ^_^ <br/>
+			Major in Network Engineering. Fancy 4 Algorithm, Infomation Security. Computer Network. etc</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2015 
+		
+		<a href="/about" target="_blank" title="Donald Wu">Donald Wu</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#nothing"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});     
+</script>
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回頂部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>

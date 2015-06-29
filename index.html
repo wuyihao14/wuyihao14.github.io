@@ -81,6 +81,139 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/2015/06/29/Aria2源代码笔记——2/" title="Aria2源代码笔记——2.md" itemprop="url">Aria2源代码笔记——2.md</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="Donald Wu" target="_blank" itemprop="author">Donald Wu</a>
+		
+  <p class="article-time">
+    <time datetime="2015-06-29T09:14:02.000Z" itemprop="datePublished"> 發表於 2015-06-29</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>从0.2.0看到了0.2.1的所有commits，到后面就比较略了，因为框架形成后，无聊的细节就开始变得很多。学习了程序开发的迭代过程，之后就每次看一个release吧，这样也可以避免陷入无聊的细节中，节约时间。</p>
+<h1 id="commit_1">commit 1</h1><ol>
+<li>独立出Socket的实现模块SocketCore</li>
+<li>将原来的实现封装进getSockfd()，establishConnection()，setNonBlockingMode()，closeConnection()，isWritable()，isReadable()，writeData()，readData()，peekData()。</li>
+<li>取消了dup的使用，变成了内部的计数器，因为不需要两个不同的fd，不需要别名，使用计数器更快。</li>
+</ol>
+<h1 id="commit_2">commit 2</h1><ol>
+<li>添加SSL的支持。（需要过两天单独学习SSL的架构？？？)<ol>
+<li>configure文件系列</li>
+<li>HttpConnection.cc里getHost()支持443端口了。</li>
+<li>HttpRequestCommand.cc里executeInternal()，在建立httpConnection之前，判断如果req的协议是https（首先要系统支持，根据预定义宏判断），则initiateSecureConnection()        <strong>Http又忘了，需要复习一下书？？？</strong>    HttpInitiateConnectionCommand.cc里createInitiateConnectionCommand()；Request.cc里Request()。类似。</li>
+<li>Socket.cc，SocketCore.cc提供支持。SocketCore.cc</li>
+<li><strong>SocketCore.cc这是重点</strong>，writeData()和readData()单纯地把添加了SSL_write和SSL_read和SSL_peek，和send和recv和peek并排。<strong>closeConnection()的顺序是SSL_shutdown，然后是socket的close，然后是SSL_free，然后是SSL_CTX_free。当然这都是建立在SocketCore中secure开关打开的情况下</strong>。    initiateSecureConnection是新的函数，secure开关表示是否已经配置好ssl，一堆OpenSSL的api和定义的异常。需要学习？？？</li>
+<li>main.cc中也有OpenSSL的初始化的api。SSL_load_error_strings();和SSL_library_init();</li>
+</ol>
+</li>
+<li>common.h里是一些常用头文件</li>
+<li>ChunkedEncoding的缓冲区变大。减少了addBuffer里冗余的strlen函数。</li>
+<li>HttpResponseCommand里createHttpResponseCommand()，把transferEncoding写入了引擎的map映射表里（之前真的是没有用呢）</li>
+<li>修正有/无ChunkEncoding时，真实下载的字节数不同bug。</li>
+</ol>
+<h1 id="commit_3">commit 3</h1><ol>
+<li>检测ssl宏的使用逻辑错误。即使不支持ssl也要检测https，也该预留接口。<strong>只有在真正调用了api的时候，才是判断是否支持ssl的正确场合</strong></li>
+</ol>
+<h1 id="commit_4">commit 4</h1><ol>
+<li>支持Referer。首先添加currentUrl和previousUrl，两者在resetUrl和redirectUrl时更新，第一次的referer由req自己指定。以后都是previousUrl，因为url会在Request之间通过Referer传递。main函数里，addCommand增加referer参数，和识别referer选项。</li>
+</ol>
+<h1 id="commit_5">commit 5</h1><p>略</p>
+<ol>
+<li>AbstractCommand的execute()的错误输出加上cuid，方便调试。</li>
+<li>AbstractCommand的execute()收到重试异常时，不resetUrl，这样可以保留Referer。并且不立马向工厂请求createInitiateConnectionCommand。而是先加入SleepCommand，延迟后再去请求。睡眠的时间从引擎的option里查（如果是0就不加入SleepCommand了）。这个做法之前已在DownloadCommand中有，现将它上升到AbstractCommand，DownloadCommand只调用基类方法。</li>
+<li>可变参数直接列表直接写va_list，不用…的记法，更方便，不需要在函数体内，再写va_list，va_start，va_end。</li>
+<li>把SleepCommand的wait变成成员变量。并且加入程序选项。</li>
+<li>main里proxy_port之前没有转成数字</li>
+</ol>
+<h1 id="commit_6">commit 6</h1><ol>
+<li>有的服务器不支持相对路径，所以在HttpConnection在createRequest时，用parse了url得出来的结果来生成绝对路径。？？？</li>
+</ol>
+<h1 id="commit_7">commit 7</h1><ol>
+<li>只有previousUrl不为空时才加入Referer</li>
+</ol>
+<h1 id="commit_8">commit 8</h1><ol>
+<li>又是一堆看不懂的configure。还要学习make和configure？？？</li>
+</ol>
+<h1 id="commit_9">commit 9</h1><ol>
+<li>string的字符的位置p规范成string::size_type，而不是unsigned int。因为会有和string::npos的比较。</li>
+</ol>
+<h1 id="commit_10">commit 10</h1><ol>
+<li>AbstractCommand太短的TIMEOUT_SEC</li>
+<li>把AbstractCommand的addSocketForXXXCheck和deletSocketForXXXCheck，统一用setXXXdCheckSocket封装。并且把管理sockets的任务从DownloadEngine下放到AbstractCommand，原因我还没想明白？？？。而且之前其实是半双工的，Write之前要删掉Read的socket。</li>
+<li>DownloadComman的onAbort中(本commit中从onError改成onAbort)，从段管理器中卸载该段Id。</li>
+<li>DownloadEngine.cc的更改？？？</li>
+<li>HttpConnection.cc中createRequest，如果协议是ftp，则GET的url直接使用相对路径？？？</li>
+<li>HttpConnection.cc的receiveResponse中header的实现改成string，没有必要使用自己定义的缓冲区扩充方案。</li>
+<li>把可以改成const函数的改成const函数</li>
+<li>httpConnection的req是固定的，因此在构造函数初始化，并且写成const</li>
+<li>不再使用map作为headers，独立成HttpHeader类。</li>
+<li>预留ftp接口</li>
+<li>用const_iterator替代iterator</li>
+<li>在Socket中封装beginListen，getAddrInfo，acceptConnection，establishConnection</li>
+<li>一些ssl的bug修正</li>
+</ol>
+<h1 id="commit_11">commit 11</h1><ol>
+<li>实现ftp。有了前面Http的经验，能看出作者开发ftp的时候顺利得多。FtpInitiateConnectionCommand发现里面还是http。不太懂，去学习一下ftp协议？？？</li>
+</ol>
+<h1 id="commit_12">commit 12</h1><ol>
+<li>把常数都变成option</li>
+</ol>
+<h1 id="commit_13">commit 13</h1><ol>
+<li>Ftp实现的一些非法情况的检查？？？</li>
+</ol>
+<h1 id="commit_14">commit 14</h1><ol>
+<li>计算速度</li>
+<li>预留SegmentSplitter新类</li>
+</ol>
+<h1 id="commit_15">commit 15</h1><ol>
+<li>把原先的实现移动到SegmentSplitter新类中</li>
+</ol>
+<h1 id="记">记</h1><p>用git来研究一个项目成长过程太爽了！<br>作者在调试的时候用的cppunit，看起来很厉害的样子！可以学一下单元测试？？？<br>养成写// TODO的习惯</p>
+
+        
+        
+        <p class="article-more-link">
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/programming/">programming</a>
+</div>
+
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/2015/06/23/Aria2源代码笔记——1/" title="Aria2源代码笔记——1" itemprop="url">Aria2源代码笔记——1</a>
   </h1>
   <p class="article-author">By
@@ -681,74 +814,6 @@ int main(int argc,char * argv[]){
 
 
 
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2015/04/09/第一次撸站笔记/" title="第一次撸站记录" itemprop="url">第一次撸站记录</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="Donald Wu" target="_blank" itemprop="author">Donald Wu</a>
-		
-  <p class="article-time">
-    <time datetime="2015-04-09T09:55:30.135Z" itemprop="datePublished"> 發表於 2015-04-09</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <p>其实不算第一次，上次是imo系统脑残到找回密码时只需前台验证就可以，直接绕过了。</p>
-<p>一直想搞某学校的网站。于是稍微多学了一点东西之后，又来这个网站逛。我想应该首先找留言、登录、上传的地方，上一次在主站登录的地方失利，这一次就找一找别的地方。</p>
-<p>找到一个”教学资源库管理”，不过是另一个地址了，估计是另一个主机吧。进去之后发现很酷炫，有很多不该有的功能（一个教学资源库管理平台为什么要还有山寨vmware workstation呢？）去查了一下，是一个厦门大学的硕士生写的。OrZ。</p>
-<p>弱密码admin,admin，OrZ，我总是不相信会有这些不可思议的傻逼。</p>
-<p>可以上传文件。试了一下，可以上传php文件。含有xss代码的html文件是可以正常访问的，但是没有意义，因为这个数据库是和主站独立的，并且这个网站根本没人用。但是不能正确获取上传上去的php文件的地址（确认是上传成功的，因为能下载下来，只是访问的时候显示404）。于是我去找这个系统的源码，打算审计一下，无奈下载下来的代码和实际的这个很不一样。</p>
-<p>于是另寻他路，这个系统有太多功能了，于是我一个一个地看。。看到有预览功能，还可以自己改代码。。我就添加了一项php，发现它的预览功能其实是用html来包装，所以感觉没什么余地。</p>
-<p>我想是不是.htaccess限制了不能跨域访问php文件（其实是我想多了，高估了这个网管），于是我想是不是要上传一个写了ajax的html上去，那样的话，就有点麻烦了。</p>
-<p>后来得到室友的提醒（其实他也只是说了是不是限制了可以执行的类型，不过不知为何我的脑洞被打开了）。其实只是这台服务器没有装php，运行不了而已，所以显示404，不是限制了。这个系统也是asp的。于是上传了一个asp的web shell上去，能成功打开了。</p>
-<p>nmap扫描了一下，发现3389端口开着。</p>
-<p>kow用菜刀帮我建立了管理员账号，我自己用这个web shell老是不成功，不知道为什么。并且在他的vps上连接上了。貌似一般没有开3389端口时都需要lcx反弹来远控（也就是端口转发。在远端运行一个lcx的监听进程）</p>
-<p>kow告诉我这些webshell都是有后门的，以后只好再另寻他路。</p>
-<p>第一次撸站成功，好有成就感。</p>
-<hr>
-<p>“( ゜- ゜)つロ </p>
-
-        
-        
-        <p class="article-more-link">
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-<div class="article-categories">
-  <span></span>
-  <a class="article-category-link" href="/categories/Security/">Security</a>
-</div>
-
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
 
   <nav id="page-nav" class="clearfix">
     <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/6/">6</a><a class="extend next" rel="next" href="/page/2/">Next<span></span></a>
@@ -804,6 +869,10 @@ int main(int argc,char * argv[]){
 		
 		  
 			<li><a href="/categories/Server/" title="Server">Server<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/programming/" title="programming">programming<sup>1</sup></a></li>
 		  
 		
 		</ul>
