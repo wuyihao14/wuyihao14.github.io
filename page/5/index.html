@@ -81,6 +81,88 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/2015/06/23/Aria2源代码笔记——1/" title="Aria2源代码笔记——1" itemprop="url">Aria2源代码笔记——1</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="Donald Wu" target="_blank" itemprop="author">Donald Wu</a>
+		
+  <p class="article-time">
+    <time datetime="2015-06-23T05:44:50.000Z" itemprop="datePublished"> 發表於 2015-06-23</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>最近对downloader比较感兴趣，于是读了aria2的06年的第一个版本的代码。分几篇日志来总结。总结完之后，再阅读最新版本。<br>还有很多有问号的地方是还有疑问的地方，之后再来更新。要期末考试啦～～</p>
+<h1 id="Command">Command</h1><p>Command依附于Engine（存在于Engine中的commands向量中），同时，Command中存有Engine的指针。<br>包含一个cuid，一个纯虚execute()函数。<br><strong>Command子类</strong>：<em>AbstractCommand，DownloadCommand，HttpDownloadCommand，HttpdInitialConnectionCommand，HttpProxyRequestCommand，HttpProxyResponseCommand，HttpRequestCommand，HttpResponseCommand，SleepCommand</em></p>
+<p>(DownloadCommand，HttpInitiateConnectionCommand等是AbstractCommand的子类，而SleepCommand是Command的直接子类。这两者都包含一个Engine类对象指针)</p>
+<p>Command之间？？？</p>
+<h1 id="HttpInitiateConnectionCommand">HttpInitiateConnectionCommand</h1><p><em>executeInternal()</em>根据下载引擎的参数来建立socket连接，并由之创建HttpProxyRequestCommand或HttpRequestCommand，然后放入队列 </p>
+<h1 id="InitiateConnectionCommandFactory">InitiateConnectionCommandFactory</h1><p>为什么要单独给InitiateConnectionCommand设置工厂呢？？？<br>！只有在初始化的时候需要判断创建什么连接，等从工厂出产后，就可以自主了。<br>在已知下载引擎和请求的协议的时候，从工厂中产生InitateConnectionCommand</p>
+<h1 id="SegmentMan">SegmentMan</h1><p>Object Pool模式。管理所有的段。 Segment结构体有finish变量。<br><strong>isSplitable</strong>决定是否可以分段，应该对于选择是否多线程比较有用。<br>内涵一个Logger？？？，k<br><strong>openSegFile()</strong>打开SegFile，read()来读取并加入segments向量。<br><strong>getSegment()</strong>得到指定cuid的segment。如果segments是空的，则添加一个全集。如果已经存在直接返回。否则，假如可以划分并且有空闲的segment，则分配它。否则切割当前的大块。</p>
+<h1 id="Socket">Socket</h1><p><strong>拷贝构造函数</strong>使用dup函数复用socket文件描述符。<br><strong>=</strong>则要先关闭当前文件，再dup。<br><strong>setNonBlockingMode</strong>基于fcntl来操作socket文件描述符。<br><strong>isWritable(),isReadable()</strong>基于select，支持timeout。select可以从一个集合中选择一个空闲的fd，此处开头三句话是定义、清空、加入，因此集合中只有一个fd。<br><strong>writeData()、readData()、peekData()</strong>都是，先判断可写/读否然后写/读操作，失败抛出异常。</p>
+<p>socket里面自带了一些异常信息，因此throw new DlRetryEx(strerror(errno));</p>
+<h1 id="AbstractCommand">AbstractCommand</h1><p><strong>构造函数</strong><br>socket默认为空，即在HttpInitiateConnectionCommand构造的时候，还没有建立socket连接。如果参数不为空，则会根据Socket的构造函数，利用dup复用fd。接下来addSocketForReadCheck，把它添加进engine的sockets列表。<br><strong>excecute()</strong><br>查看是否可以读/写，如果没有超时则放回队列，直到可以操作或超时为止。<br>如果Engine中的SegmentMan有可用的segment，就excecuteInternal(seg)？？？<br>DownloadAborted异常：resetUrl<br>RestartingDownload异常：只有没超过重试上限，就prepareForRetry()</p>
+<p>这样来看，实际上Engine的功能都在Command里实现了。等一下来区分一下Command和Engine？？？</p>
+<h1 id="DownloadCommand">DownloadCommand</h1><p><strong>getTransferEncoding</strong>纯虚函数<br><strong>executeInternal()</strong></p>
+<p><strong>prepareForRetry()</strong>先resetUrl？？，然后放入一个nextCommand为createInitiateConnectionCommand的SleepCommand。<br><strong>prepareForNextSegment()</strong>先resetUrl？？？，询问SegmentMan是否所有的segment都完成，没有的话prepareForRetry，否则返回True？？？。<br>cuid哪来的？？？</p>
+<p><strong>prepareForRetry()</strong><br>利用当前的信息重新向Factory申请</p>
+<h1 id="HttpDownloadCommand">HttpDownloadCommand</h1><p>继承DownloadCommand，增加ChunkedEncoding成员作为TransferEncoding</p>
+<h1 id="SleepCommand">SleepCommand</h1><p>构造时记录下nextCommand。如果睡眠时间没到，则把SleepCommand(*this)放回engine的commands列表。否则，把nextCommand放回engine的commands列表。</p>
+<h1 id="TransferEncoding/ChunckedEncoding">TransferEncoding/ChunckedEncoding</h1><p>好像在项目中还没有被实际使用？？<br><strong>readDataEOL()</strong><br>判断是否到了文件尾，和跳过\r\n。<br><strong>addBuffer()</strong>添加内容到缓冲区，可以扩容，但是有上限。不知道为什么这里不用string了。<br><strong>inflate</strong>()最主要的方法，先把内容加进缓冲区，根据当前状态是READ_SIZE还是READ_DATA读不同东西。没有读完？？？</p>
+<h1 id="CookieBox">CookieBox</h1><p>简单的解析、查询、设置、转换成字符串功能</p>
+<h1 id="DlAbortEx">DlAbortEx</h1><p>可变参数,利用va_list,va_start,va_end.</p>
+<h1 id="HttpRequestCommand">HttpRequestCommand</h1><p><strong>构造函数</strong>建立连接时，断开下载引擎的read的socket（不是全双工吗？？？）<br><strong>executeInternal()</strong>。设置成非阻塞模式，然后建立连接，发送请求，然后把同一个cuid的ResponseCommand放回队列。</p>
+<h1 id="HttpResponseCommand">HttpResponseCommand</h1><p>比HttpRequestCommand复杂。<br><strong>构造函数</strong> 只需要设置checkSocketIsReadable为true？？？<br><strong>executeInternal()</strong><br>判断是否重复？？？<br>建立连接<br>receiveResponse？？？<br>检查是否正常状态<br>解析Cookie存入CookieBox（CookieBox隶属于一次请求）<br>检查有没有Location重定向，有就处理。<br>查看下载引擎的块管理器，下载是否开始。如果已经开始，查看请求的文件名和块管理器里存的是不是同一个，不匹配的话就抛出不匹配异常，否则createHttpDownloadCommand ？？？。如果没有开始，就查看编码（Transfer-Encoding），并决定使用handleDefaultEncoding还是handleOtherEncoding？？？</p>
+<h1 id="HttpProxyRequestCommand">HttpProxyRequestCommand</h1><p><strong>构造函数</strong>建立连接时，断开下载引擎的read的socket（不是全双工吗？？？），checkSocketIsWritable设为true？？？<br><strong>executeInternal()</strong> 与HttpRequestCommand类似。</p>
+<h1 id="HttpProxyResponseCommand">HttpProxyResponseCommand</h1><p><strong>构造函数</strong>建立连接时，断开下载引擎的read的socket（不是全双工吗？？？怎么还是read？？？），checkSocketIsWritable设为true？？？<br><strong>executeInternal()</strong> 和HttpResponseCommand模型一致，因此直接创建一个临时HttpResponseCommand对象，最后同样是把一个HttpProxyRequestCommand放回队列。</p>
+<h1 id="HttpConnection">HttpConnection</h1><p>使用cuid，socket，option，logger来建立。<br><strong>sendRequest</strong> 构造出request字符串，通过socket发送<br><strong>sendProxyRequest</strong> 类似，用connect而不是get。<br><strong>receiveResponse</strong> 一开始以256作为缓冲区大小，一直增大试探（用peek），直到能存下为止，然后read。把状态号记录下来作为返回值，状态键值对存进headers引用参数。</p>
+<h1 id="DownloadEngine">DownloadEngine</h1><p>一系列add和delete操作就是维护两个queue<br><strong>waitData</strong> 从并发的socket里（写和读是独立的）选择一个空闲的。<br><strong>run</strong> 每次从队列中取出一个命令执行并删掉，如果不是noWait并且队列不为空，则选择一个空闲的socket并计算一下下载进度。把noWait设为False？？？如果队列为空了则跳出循环（要么是因为出错，要么是完成），如果下载完成，删除块管理器，关闭文件，输出信息。</p>
+<h1 id="PreAllocationForDiskWriter">PreAllocationForDiskWriter</h1><p>继承AbstractDiskWriter。<br>分配的时候根据页大小（getpagesize()），和内存对齐（posix_memalign）？？？</p>
+<h1 id="Request">Request</h1><p><strong>parseUrl</strong>存储url，解析url并存进Request对象成员变量里。<br><strong>resetUrl</strong>重新解析url<br><strong>setUrl</strong>修改url并解析</p>
+<h1 id="Main-cc">Main.cc</h1><p>getopt_long这个函数好像处理选项比较方便，怎么用？？？<br>daemon函数怎么用？？？<br>为了统一简单，不设置logger的时候，也设置一个定位到/dev/null<br>创建引擎，块管理器，logger。<br>添加SIGINT异常处理程序（保存进度，关闭文件），预防意外。<br>引擎启动。<br>善后工作</p>
+
+        
+        
+        <p class="article-more-link">
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Programming/">Programming</a>
+</div>
+
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/2015/03/26/Omnetpp-4-6折腾笔记/" title="Omnetpp-4.6折腾笔记" itemprop="url">Omnetpp-4.6折腾笔记</a>
   </h1>
   <p class="article-author">By
@@ -270,66 +352,9 @@
 
 
 
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2015/02/27/简易配置NFS/" title="简易配置NFS" itemprop="url">简易配置NFS</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="Donald Wu" target="_blank" itemprop="author">Donald Wu</a>
-		
-  <p class="article-time">
-    <time datetime="2015-02-27T03:33:14.000Z" itemprop="datePublished"> 發表於 2015-02-27</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <p>在安装Intel编译器和调试器的时候，虚拟机内存不够了，du -s发现需要7.9g，我只有6g。然而安装包iso特别大，于是用nfs把iso挂在host上</p>
-<p>安装nfs-common、rpcbind(原名portmap)、nfs-kernel-server<br>dpkg-reconfig rpcbind<br>建立/home/nfs<br>修改/etc/exports，对NFS卷的访问是由exports来批准, 它枚举了若干有权访问NFS服务器上文件系统的主机名.<br>添加一行<br>    /home/nfs        *(rw,sync,no_root_squash)<br>service nfs-kernel-server restart<br>netstate -tnp查看端口是否打开了</p>
-<p>在客户端上mount -t nfs username@host /media/nfs 即可</p>
-
-        
-        
-        <p class="article-more-link">
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-<div class="article-categories">
-  <span></span>
-  <a class="article-category-link" href="/categories/Server/">Server</a>
-</div>
-
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
 
   <nav id="page-nav" class="clearfix">
-    <a class="extend prev" rel="prev" href="/page/4/"><span></span>Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><span class="page-number current">5</span><a class="page-number" href="/page/6/">6</a><a class="extend next" rel="next" href="/page/6/">Next<span></span></a>
+    <a class="extend prev" rel="prev" href="/page/4/"><span></span>Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><span class="page-number current">5</span><a class="page-number" href="/page/6/">6</a><a class="page-number" href="/page/7/">7</a><a class="extend next" rel="next" href="/page/6/">Next<span></span></a>
   </nav>
 
 </div>
@@ -452,7 +477,7 @@
 		
 
 		<p class="copyright">
-		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2015 
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2016 
 		
 		<a href="/about" target="_blank" title="Donald Wu">Donald Wu</a>
 		
