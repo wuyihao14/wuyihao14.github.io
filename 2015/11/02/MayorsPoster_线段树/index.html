@@ -248,18 +248,18 @@ DescriptionThe citizens of Bytetown, AB, could not stand that the candidates in 
 <nav class="article-nav clearfix">
  
  <div class="prev" >
- <a href="/2015/11/02/在Github上建立我的博客-二/" title="在Github上建立我的博客(二)——主题">
+ <a href="/2015/11/02/Alictf2015Writeup/" title="Alictf 2015 盗窃Writeup">
   <strong>上一篇：</strong><br/>
   <span>
-  在Github上建立我的博客(二)——主题</span>
+  Alictf 2015 盗窃Writeup</span>
 </a>
 </div>
 
 
 <div class="next">
-<a href="/2015/11/02/在Github上建立我的博客-一/"  title="在Github上建立我的博客(一)——基本">
+<a href="/2015/11/02/第一次撸站笔记/"  title="第一次撸站记录">
  <strong>下一篇：</strong><br/> 
- <span>在Github上建立我的博客(一)——基本
+ <span>第一次撸站记录
 </span>
 </a>
 </div>
@@ -297,6 +297,10 @@ DescriptionThe citizens of Bytetown, AB, could not stand that the candidates in 
 		
 		  
 			<li><a href="/categories/CTF/" title="CTF">CTF<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Cryptography/" title="Cryptography">Cryptography<sup>1</sup></a></li>
 		  
 		
 		  
@@ -568,5 +572,35 @@ $(document).ready(function(){
 
 <!-- Tiny_search End -->
 
-  </body>
+  <!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+</body>
 </html>

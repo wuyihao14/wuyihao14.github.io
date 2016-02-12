@@ -4,22 +4,29 @@
 <head>
   <meta charset="UTF-8">
   
-    <title>Shelter</title>
+    <title>160212密码学总结 | Shelter</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
     
     <meta name="author" content="Donald Wu">
     
 
     
-    <meta name="description">
-<meta property="og:type" content="website">
-<meta property="og:title" content="Shelter">
-<meta property="og:url" content="http://wuyihao14.github.io/index.html">
+    <meta name="description" content="SharifCTF2016
+Smooth As Silkp &amp;gt; q
+n = p*q = 114615328185252517758699943699566283254374785104852727304198433205179406018085975529256294517956119903726515687701818722825903098941878150911916499148332">
+<meta property="og:type" content="article">
+<meta property="og:title" content="160212密码学总结">
+<meta property="og:url" content="http://wuyihao14.github.io/2016/02/12/160212密码学总结/index.html">
 <meta property="og:site_name" content="Shelter">
-<meta property="og:description">
+<meta property="og:description" content="SharifCTF2016
+Smooth As Silkp &amp;gt; q
+n = p*q = 114615328185252517758699943699566283254374785104852727304198433205179406018085975529256294517956119903726515687701818722825903098941878150911916499148332">
+<meta property="og:updated_time" content="2016-02-12T13:04:44.376Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Shelter">
-<meta name="twitter:description">
+<meta name="twitter:title" content="160212密码学总结">
+<meta name="twitter:description" content="SharifCTF2016
+Smooth As Silkp &amp;gt; q
+n = p*q = 114615328185252517758699943699566283254374785104852727304198433205179406018085975529256294517956119903726515687701818722825903098941878150911916499148332">
 
     
     <link rel="alternative" href="/atom.xml" title="Shelter" type="application/atom+xml">
@@ -73,72 +80,10 @@
 </div>
     </header>
     <div id="container">
-      <div id="main">
-
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2016/02/12/Sharif其它无聊的题解/" title="Sharif其它无聊的题解" itemprop="url">Sharif其它无聊的题解</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="Donald Wu" target="_blank" itemprop="author">Donald Wu</a>
-		
-  <p class="article-time">
-    <time datetime="2016-02-12T05:44:15.000Z" itemprop="datePublished"> 發表於 2016-02-12</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <h2 id="Login_to_System">Login to System</h2><p>栈溢出，标志位覆盖</p>
-<h2 id="Kick_Tort_Teen">Kick Tort Teen</h2><p>VBA宏，写了一个ELF文件</p>
-<h2 id="uagent">uagent</h2><p>流量分析，useragent里的base64。用dshell或dpkt来分析。</p>
-<h2 id="DUMPED">DUMPED</h2><p>dump文件，不需要用windbg来找，内存在dump文件里是原始字节，直接grep Sharif即可</p>
-<h2 id="WE_LOST_THE_FASHION_FLAG">WE LOST THE FASHION FLAG</h2><p>解压缩</p>
-<h2 id="Android_App">Android App</h2><p>把.so里的那串hash输进去就可以了，脑残没有反应过来。</p>
-<h2 id="Asian_Cheetah">Asian Cheetah</h2><p>LSB</p>
-<h2 id="dMd">dMd</h2><p>按字节比较</p>
-<h2 id="SRM">SRM</h2><p>按字节比较</p>
-<h2 id="Serial">Serial</h2><p>已经忘了。。</p>
-<h2 id="SecCoding">SecCoding</h2><p>换成string</p>
-
-        
-        
-        <p class="article-more-link">
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
   <h1 itemprop="name">
     
       <a href="/2016/02/12/160212密码学总结/" title="160212密码学总结" itemprop="url">160212密码学总结</a>
@@ -152,9 +97,16 @@
     
   </p>
 </header>
-    <div class="article-content">
-        
-        <p>SharifCTF2016</p>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目錄</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Smooth_As_Silk"><span class="toc-number">1.</span> <span class="toc-text">Smooth As Silk</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Pollard_p-1因子分解法"><span class="toc-number">1.0.1.</span> <span class="toc-text">Pollard p-1因子分解法</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#实际的Pollard_p-1"><span class="toc-number">1.0.2.</span> <span class="toc-text">实际的Pollard p-1</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Rail_Fence_Cipher"><span class="toc-number">2.</span> <span class="toc-text">Rail Fence Cipher</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#URE"><span class="toc-number">3.</span> <span class="toc-text">URE</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#High-speed_RSA_Keygen"><span class="toc-number">4.</span> <span class="toc-text">High-speed RSA Keygen</span></a></li></ol>
+		
+		</div>
+		
+		<p>SharifCTF2016</p>
 <h2 id="Smooth_As_Silk">Smooth As Silk</h2><pre><code><span class="tag">p</span> &gt; <span class="tag">q</span>
 n = p*<span class="tag">q</span> = <span class="number">11461532818525251775869994369956628325437478510485272730419843320517940601808597552925629451795611990372651568770181872282590309894187815091191649914833274805419432525386234876477307472337026966745408507004000948112191973777090407558162018558945596691322909404307420094584606103206490426551745910268138393804043641876816598599064856358266650339178617149833032309379858059729179857419751093138295863034844253827963</span>
 flag = <span class="function"><span class="title">md5</span><span class="params">(str(p)</span></span>)
@@ -410,14 +362,9 @@ for kp in range(1, 2<span class="keyword">*</span><span class="keyword">*</span>
 <p>因为H(p|n) = H(kp,tp|n) = H(kp)。根据kp和n能算出tp。</p>
 <p>原因就是n能够还原出kpkq，kqtp_p_kptq，tptq。假设p不再这样计算，而是p=kp*pi+tp，q同理，那么是不能只根据一个数n，计算出这三个“系数”的。此时可以是因为加法仅仅相当于连接。</p>
 <p>应该参考经典的素数生成算法。上面分析的可能只是最表面的原因。</p>
-
-        
-        
-        <p class="article-more-link">
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
+  
+	</div>
+		<footer class="article-footer clearfix">
 <div class="article-catetags">
 
 <div class="article-categories">
@@ -430,162 +377,51 @@ for kp in range(1, 2<span class="keyword">*</span><span class="keyword">*</span>
 
 
 
-
-<div class="comments-count">
+	<div class="article-share" id="share">
 	
-</div>
+	  <div data-url="http://wuyihao14.github.io/2016/02/12/160212密码学总结/" data-title="160212密码学总结 | Shelter" data-tsina="null" class="share clearfix">
+	  </div>
+	
+	</div>
+
 
 </footer>
 
-
-    </article>
-
-
-
-
-
-
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2016/02/12/160212近期总结/" title="160212近期总结" itemprop="url">160212近期总结</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="Donald Wu" target="_blank" itemprop="author">Donald Wu</a>
-		
-  <p class="article-time">
-    <time datetime="2016-02-11T17:38:55.000Z" itemprop="datePublished"> 發表於 2016-02-12</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <p>由于发现不记录，思考就变得肤浅，于是重启了博客。</p>
-<h1 id="最近一个月做的事情">最近一个月做的事情</h1><p>两场失败的Codeforce<br>SharifCTF<br>ZCTF<br>读完的几本书：Fortran、CUDA绿皮书、深入理解Nginx<br>图像细化算法的三个优化，数据测试和论文<br>Autodafe的bugfix和代码阅读<br>阅读去年ASC15的Gridding的并行异构的别的队伍的范例。<br>ASC16的不佳的尝试<br>还未录完的Turbomole 6.6破解教程<br>明天即将到来的Sharif的AI challenge</p>
-<p>大概没有干别的事情了。</p>
-
-        
-        
-        <p class="article-more-link">
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-
-</div>
-
-
-
-
-<div class="comments-count">
+   	       
+	</article>
 	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2015/11/02/Alictf2015Writeup/" title="Alictf 2015 盗窃Writeup" itemprop="url">Alictf 2015 盗窃Writeup</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="Donald Wu" target="_blank" itemprop="author">Donald Wu</a>
-		
-  <p class="article-time">
-    <time datetime="2015-11-02T10:42:59.331Z" itemprop="datePublished"> 發表於 2015-11-02</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <h2 id="0x00_Cake">0x00 Cake</h2><p>异或加密</p>
-<h2 id="0x01_绕过云WAF1">0x01 绕过云WAF1</h2><p>总结别人的思路：</p>
-<h3 id="域名md5解码后是cdn，暗示此题要求找出背后真正的IP。">域名md5解码后是cdn，暗示此题要求找出背后真正的IP。</h3><ol>
-<li>方法一: <a href="http://zone.wooyun.org/content/18058" target="_blank" rel="external">http://zone.wooyun.org/content/18058</a>.<ol>
-<li>上apnic上过滤出全中国的ip段</li>
-<li>使用zmap扫描所有ip的80端口</li>
-<li>使用zmap的example的banner-grab对扫描出来的ip进行banner抓取.由于是要绕过cdn,因此http-req里host应该填对外的这个域名(我不知道改怎么叫它).</li>
-<li>过滤出banner相似的页面,用一定关键字,比如alictf<br>这样大面积撒网找到真正的ip.缺点是太慢,而且apnic上抓的数据要求够新.而且我至今没有得到一个正确的结果。。。</li>
-</ol>
-</li>
-<li>方法二:<ol>
-<li>由于提示说了在.alictf.com的子域名下,所以可以尝试fuzz子域名.</li>
-<li>我找了一个什么基于google的什么鬼字典,3w条记录.fuzz到video.alictf.com.和前一种方法结果差不多.<br>找到之后还可以放进hosts解析.<br>还有一种方法叫全球ping,算是一种暴力方法吧,按照cdn的本质.<br>绕过了WAF之后,可以sqlmap注入,不知道为什么我一直不成功.</li>
-</ol>
-</li>
-</ol>
-<h2 id="0x02_前端初赛题1:_http://drops-wooyun-org/tips/3059">0x02 前端初赛题1: <a href="http://drops.wooyun.org/tips/3059" target="_blank" rel="external">http://drops.wooyun.org/tips/3059</a></h2><p>xss。点号，括号，等于号都被过滤掉，html标签不会被过滤。\<svg\>\</svg\>标签内的内容会被解html编码,于是我们用svg来包装.由于我不明白的原因(也许是仍然会被过滤),还需要再把中间的内容urlencode一次.</p>
-<h2 id="0x03_前端初赛题2:_http://drops-wooyun-org/tips/2924">0x03 前端初赛题2: <a href="http://drops.wooyun.org/tips/2924" target="_blank" rel="external">http://drops.wooyun.org/tips/2924</a></h2><p>要导致url手工解析和库函数解析的结果不同</p>
-<ol>
-<li>思路一：不通过url传参，用html加载flash，用FlashVars传参，我没有尝试过。不能成功。</li>
-<li>思路二：<a href="http://drops.wooyun.org/papers/948。flash会丢弃两个出现在%后面的无效十六进制字符。这样可以导致手工通过找%来parse的方法比正常情况多出几个字符。" target="_blank" rel="external">http://drops.wooyun.org/papers/948。flash会丢弃两个出现在%后面的无效十六进制字符。这样可以导致手工通过找%来parse的方法比正常情况多出几个字符。</a><br>由于swf运行在虚拟机上，异常会显示在console里，我们可以根据这个反馈信息来构造我们的xss，首先闭合掉括号，然后append一个img，然后补上catch，然后注释掉剩余字符。</li>
-</ol>
-<h2 id="0x04_前端初赛题3:">0x04 前端初赛题3:</h2><p>审计js代码。首先很容易实现认证为notexist.example.com，而url为更长的内容。<br>我尝试构造出notexist.example.com，而url为xss，失败了。<br>原来是利用@的功能，@之前用:隔开用户名和密码。会被自动截掉，剩余部分是最终url。<br>同样可以根据console来修改xss。<br>参考别人的writeup分析流程:<br>    将第一个@前面的内容作为基础认证信息，之后的内容作为域名:端口。<br>    但是如果最后一个:之后不是数字，而是@domain.com，浏览器会把这一部分作为域名，之前的部分作为基础认证信息，绕过检查，加载自己域名下的JS。</p>
-<h2 id="0x05_简单业务逻辑:">0x05 简单业务逻辑:</h2><p>注册覆盖Admin，购买的时候抓包，修改数量为负数。</p>
-<h2 id="0x06_谁偷了你的站内短信">0x06 谁偷了你的站内短信</h2><p>这道题相当简单了，格式化字符串漏洞。可惜getFlag函数被我忽略了。<br>格式化字符串有点麻烦的地方是，不能出现0x0，即使是高位为0的整数。<br>不过这道题不用考虑这么多，我的ROP链也不知到哪里不对，不能越过DEP。这道题只需要跳到getflag，甚至不用恢复栈。<br>参考别人的代码时，发现用readUntil比我写的sleep好多了，这样更有可控性。zio也是一个挺好的工具。</p>
-<h2 id="0x07_密码宝宝">0x07 密码宝宝</h2><p>upx -d脱壳后任然不能调试。（有人说在xp下就能调试了。。。什么时候研究一下根据esp手动脱壳。。）。花指令很多，很难静态分析。在GetWindowTextA下断点，然后跟到用户代码。别人好多都是关注堆的变化，最后flag明文写在堆里。这样的话，我确实走了很多弯路，最后是根据逻辑算出来的flag。</p>
-<h2 id="0x08_渗透绕过WAF2">0x08 渗透绕过WAF2</h2><p>提示需要内部访问，于是 fuzz IP：<br>. 192.168.x.x<br>. 10.x.x.x<br>. 172.16.x.x<br>这个叫什么特殊ip，最近课上学了。还没太搞明白。<br>10开头的可以访问，然后注入，不知道为什么一直不能获得information_schema里的信息，然而版本又是&gt;=5.5，不懂了。T_T。。</p>
-<font color="red">好多题比赛结束后就做不了了，有的题很好，可惜了。以后需要多看一下知识库。</font>
-
-        
-        
-        <p class="article-more-link">
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-<div class="article-categories">
-  <span></span>
-  <a class="article-category-link" href="/categories/CTF/">CTF</a>
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2016/02/12/Sharif其它无聊的题解/" title="Sharif其它无聊的题解">
+  <strong>上一篇：</strong><br/>
+  <span>
+  Sharif其它无聊的题解</span>
+</a>
 </div>
 
 
+<div class="next">
+<a href="/2016/02/12/160212近期总结/"  title="160212近期总结">
+ <strong>下一篇：</strong><br/> 
+ <span>160212近期总结
+</span>
+</a>
 </div>
 
+</nav>
 
-
-
-<div class="comments-count">
 	
-</div>
 
-</footer>
-
-
-    </article>
-
-
-
-
-
-
-
-  <nav id="page-nav" class="clearfix">
-    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/7/">7</a><a class="extend next" rel="next" href="/page/2/">Next<span></span></a>
-  </nav>
-
-</div>
+</div>  
       <div class="openaside"><a class="navbutton" href="#" title="顯示側邊欄"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目錄</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Smooth_As_Silk"><span class="toc-number">1.</span> <span class="toc-text">Smooth As Silk</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Pollard_p-1因子分解法"><span class="toc-number">1.0.1.</span> <span class="toc-text">Pollard p-1因子分解法</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#实际的Pollard_p-1"><span class="toc-number">1.0.2.</span> <span class="toc-text">实际的Pollard p-1</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Rail_Fence_Cipher"><span class="toc-number">2.</span> <span class="toc-text">Rail Fence Cipher</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#URE"><span class="toc-number">3.</span> <span class="toc-text">URE</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#High-speed_RSA_Keygen"><span class="toc-number">4.</span> <span class="toc-text">High-speed RSA Keygen</span></a></li></ol>
+ 
+  </div>
 
 <div id="asidepart">
 <div class="closeaside"><a class="closebutton" href="#" title="隱藏側邊欄"></a></div>
@@ -759,12 +595,69 @@ $(document).ready(function(){
       m.removeClass('moveMain');
       a.css('display', 'block').removeClass('fadeOut');
       o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
         
     }
   });
 });
 </script>
 
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#nothing"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});     
+</script>
 
 
 
@@ -855,4 +748,4 @@ $(document).ready(function(){
 <script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
 </script>
 </body>
- </html>
+</html>

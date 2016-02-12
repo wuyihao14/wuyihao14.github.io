@@ -154,18 +154,18 @@ title: post">
 <nav class="article-nav clearfix">
  
  <div class="prev" >
- <a href="/2015/11/02/Matrix_枚举/" title="Matrix 枚举">
+ <a href="/2015/11/02/第一次撸站笔记/" title="第一次撸站记录">
   <strong>上一篇：</strong><br/>
   <span>
-  Matrix 枚举</span>
+  第一次撸站记录</span>
 </a>
 </div>
 
 
 <div class="next">
-<a href="/2015/11/02/MayorsPoster_线段树/"  title="Mayor&#39;s Poster 线段树">
+<a href="/2015/11/02/AttackTheNEETPrincess/"  title="Attack the NEET princess 双连通分量">
  <strong>下一篇：</strong><br/> 
- <span>Mayor&#39;s Poster 线段树
+ <span>Attack the NEET princess 双连通分量
 </span>
 </a>
 </div>
@@ -203,6 +203,10 @@ title: post">
 		
 		  
 			<li><a href="/categories/CTF/" title="CTF">CTF<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Cryptography/" title="Cryptography">Cryptography<sup>1</sup></a></li>
 		  
 		
 		  
@@ -474,5 +478,35 @@ $(document).ready(function(){
 
 <!-- Tiny_search End -->
 
-  </body>
+  <!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+</body>
 </html>

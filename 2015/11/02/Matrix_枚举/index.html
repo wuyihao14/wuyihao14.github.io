@@ -197,9 +197,9 @@ bool <span class="keyword">cross</span>(<span class="keyword">int</span> i,<span
 
 
 <div class="next">
-<a href="/2015/11/02/在Github上建立我的博客-二/"  title="在Github上建立我的博客(二)——主题">
+<a href="/2015/11/02/MonteCarlo优化实操/"  title="MonteCarlo优化实操">
  <strong>下一篇：</strong><br/> 
- <span>在Github上建立我的博客(二)——主题
+ <span>MonteCarlo优化实操
 </span>
 </a>
 </div>
@@ -237,6 +237,10 @@ bool <span class="keyword">cross</span>(<span class="keyword">int</span> i,<span
 		
 		  
 			<li><a href="/categories/CTF/" title="CTF">CTF<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Cryptography/" title="Cryptography">Cryptography<sup>1</sup></a></li>
 		  
 		
 		  
@@ -508,5 +512,35 @@ $(document).ready(function(){
 
 <!-- Tiny_search End -->
 
-  </body>
+  <!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+</body>
 </html>

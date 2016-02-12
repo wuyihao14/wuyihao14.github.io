@@ -4,26 +4,38 @@
 <head>
   <meta charset="UTF-8">
   
-    <title>简易配置NFS | Shelter</title>
+    <title>Sharif其它无聊的题解 | Shelter</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
     
     <meta name="author" content="Donald Wu">
     
 
     
-    <meta name="description" content="在安装Intel编译器和调试器的时候，虚拟机内存不够了，du -s发现需要7.9g，我只有6g。然而安装包iso特别大，于是用nfs把iso挂在host上
-安装nfs-common、rpcbind(原名portmap)、nfs-kernel-serverdpkg-reconfig rpcbind建立/home/nfs修改/etc/exports，对NFS卷的访问是由exports来批准, 它枚举了">
+    <meta name="description" content="Login to System栈溢出，标志位覆盖
+Kick Tort TeenVBA宏，写了一个ELF文件
+uagent流量分析，useragent里的base64。用dshell或dpkt来分析。
+DUMPEDdump文件，不需要用windbg来找，内存在dump文件里是原始字节，直接grep Sharif即可
+WE LOST THE FASHION FLAG解压缩
+Android App把.s">
 <meta property="og:type" content="article">
-<meta property="og:title" content="简易配置NFS">
-<meta property="og:url" content="http://wuyihao14.github.io/2015/02/27/简易配置NFS/index.html">
+<meta property="og:title" content="Sharif其它无聊的题解">
+<meta property="og:url" content="http://wuyihao14.github.io/2016/02/12/Sharif其它无聊的题解/index.html">
 <meta property="og:site_name" content="Shelter">
-<meta property="og:description" content="在安装Intel编译器和调试器的时候，虚拟机内存不够了，du -s发现需要7.9g，我只有6g。然而安装包iso特别大，于是用nfs把iso挂在host上
-安装nfs-common、rpcbind(原名portmap)、nfs-kernel-serverdpkg-reconfig rpcbind建立/home/nfs修改/etc/exports，对NFS卷的访问是由exports来批准, 它枚举了">
-<meta property="og:updated_time" content="2015-07-18T07:15:27.767Z">
+<meta property="og:description" content="Login to System栈溢出，标志位覆盖
+Kick Tort TeenVBA宏，写了一个ELF文件
+uagent流量分析，useragent里的base64。用dshell或dpkt来分析。
+DUMPEDdump文件，不需要用windbg来找，内存在dump文件里是原始字节，直接grep Sharif即可
+WE LOST THE FASHION FLAG解压缩
+Android App把.s">
+<meta property="og:updated_time" content="2016-02-12T13:08:02.835Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="简易配置NFS">
-<meta name="twitter:description" content="在安装Intel编译器和调试器的时候，虚拟机内存不够了，du -s发现需要7.9g，我只有6g。然而安装包iso特别大，于是用nfs把iso挂在host上
-安装nfs-common、rpcbind(原名portmap)、nfs-kernel-serverdpkg-reconfig rpcbind建立/home/nfs修改/etc/exports，对NFS卷的访问是由exports来批准, 它枚举了">
+<meta name="twitter:title" content="Sharif其它无聊的题解">
+<meta name="twitter:description" content="Login to System栈溢出，标志位覆盖
+Kick Tort TeenVBA宏，写了一个ELF文件
+uagent流量分析，useragent里的base64。用dshell或dpkt来分析。
+DUMPEDdump文件，不需要用windbg来找，内存在dump文件里是原始字节，直接grep Sharif即可
+WE LOST THE FASHION FLAG解压缩
+Android App把.s">
 
     
     <link rel="alternative" href="/atom.xml" title="Shelter" type="application/atom+xml">
@@ -83,14 +95,14 @@
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/2015/02/27/简易配置NFS/" title="简易配置NFS" itemprop="url">简易配置NFS</a>
+      <a href="/2016/02/12/Sharif其它无聊的题解/" title="Sharif其它无聊的题解" itemprop="url">Sharif其它无聊的题解</a>
   </h1>
   <p class="article-author">By
        
 		<a href="/about" title="Donald Wu" target="_blank" itemprop="author">Donald Wu</a>
 		
   <p class="article-time">
-    <time datetime="2015-02-27T03:33:14.000Z" itemprop="datePublished"> 發表於 2015-02-27</time>
+    <time datetime="2016-02-12T05:44:15.000Z" itemprop="datePublished"> 發表於 2016-02-12</time>
     
   </p>
 </header>
@@ -99,22 +111,25 @@
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目錄</strong>
 		
-			
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Login_to_System"><span class="toc-number">1.</span> <span class="toc-text">Login to System</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Kick_Tort_Teen"><span class="toc-number">2.</span> <span class="toc-text">Kick Tort Teen</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#uagent"><span class="toc-number">3.</span> <span class="toc-text">uagent</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#DUMPED"><span class="toc-number">4.</span> <span class="toc-text">DUMPED</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#WE_LOST_THE_FASHION_FLAG"><span class="toc-number">5.</span> <span class="toc-text">WE LOST THE FASHION FLAG</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Android_App"><span class="toc-number">6.</span> <span class="toc-text">Android App</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Asian_Cheetah"><span class="toc-number">7.</span> <span class="toc-text">Asian Cheetah</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#dMd"><span class="toc-number">8.</span> <span class="toc-text">dMd</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SRM"><span class="toc-number">9.</span> <span class="toc-text">SRM</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Serial"><span class="toc-number">10.</span> <span class="toc-text">Serial</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SecCoding"><span class="toc-number">11.</span> <span class="toc-text">SecCoding</span></a></li></ol>
 		
 		</div>
 		
-		<p>在安装Intel编译器和调试器的时候，虚拟机内存不够了，du -s发现需要7.9g，我只有6g。然而安装包iso特别大，于是用nfs把iso挂在host上</p>
-<p>安装nfs-common、rpcbind(原名portmap)、nfs-kernel-server<br>dpkg-reconfig rpcbind<br>建立/home/nfs<br>修改/etc/exports，对NFS卷的访问是由exports来批准, 它枚举了若干有权访问NFS服务器上文件系统的主机名.<br>添加一行<br>    /home/nfs        *(rw,sync,no_root_squash)<br>service nfs-kernel-server restart<br>netstate -tnp查看端口是否打开了</p>
-<p>在客户端上mount -t nfs username@host /media/nfs 即可</p>
+		<h2 id="Login_to_System">Login to System</h2><p>栈溢出，标志位覆盖</p>
+<h2 id="Kick_Tort_Teen">Kick Tort Teen</h2><p>VBA宏，写了一个ELF文件</p>
+<h2 id="uagent">uagent</h2><p>流量分析，useragent里的base64。用dshell或dpkt来分析。</p>
+<h2 id="DUMPED">DUMPED</h2><p>dump文件，不需要用windbg来找，内存在dump文件里是原始字节，直接grep Sharif即可</p>
+<h2 id="WE_LOST_THE_FASHION_FLAG">WE LOST THE FASHION FLAG</h2><p>解压缩</p>
+<h2 id="Android_App">Android App</h2><p>把.so里的那串hash输进去就可以了，脑残没有反应过来。</p>
+<h2 id="Asian_Cheetah">Asian Cheetah</h2><p>LSB</p>
+<h2 id="dMd">dMd</h2><p>按字节比较</p>
+<h2 id="SRM">SRM</h2><p>按字节比较</p>
+<h2 id="Serial">Serial</h2><p>已经忘了。。</p>
+<h2 id="SecCoding">SecCoding</h2><p>换成string</p>
   
 	</div>
 		<footer class="article-footer clearfix">
 <div class="article-catetags">
-
-<div class="article-categories">
-  <span></span>
-  <a class="article-category-link" href="/categories/Server/">Server</a>
-</div>
 
 
 </div>
@@ -123,7 +138,7 @@
 
 	<div class="article-share" id="share">
 	
-	  <div data-url="http://wuyihao14.github.io/2015/02/27/简易配置NFS/" data-title="简易配置NFS | Shelter" data-tsina="null" class="share clearfix">
+	  <div data-url="http://wuyihao14.github.io/2016/02/12/Sharif其它无聊的题解/" data-title="Sharif其它无聊的题解 | Shelter" data-tsina="null" class="share clearfix">
 	  </div>
 	
 	</div>
@@ -136,19 +151,11 @@
 	
 <nav class="article-nav clearfix">
  
- <div class="prev" >
- <a href="/2015/03/07/MPI实验记录/" title="MPI实验记录">
-  <strong>上一篇：</strong><br/>
-  <span>
-  MPI实验记录</span>
-</a>
-</div>
-
 
 <div class="next">
-<a href="/2015/02/20/在Github上建立我的博客-四/"  title="在Github上建立我的博客(四)——添加Latex支持">
+<a href="/2016/02/12/160212密码学总结/"  title="160212密码学总结">
  <strong>下一篇：</strong><br/> 
- <span>在Github上建立我的博客(四)——添加Latex支持
+ <span>160212密码学总结
 </span>
 </a>
 </div>
@@ -163,7 +170,7 @@
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目錄</strong>
  
- 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Login_to_System"><span class="toc-number">1.</span> <span class="toc-text">Login to System</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Kick_Tort_Teen"><span class="toc-number">2.</span> <span class="toc-text">Kick Tort Teen</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#uagent"><span class="toc-number">3.</span> <span class="toc-text">uagent</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#DUMPED"><span class="toc-number">4.</span> <span class="toc-text">DUMPED</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#WE_LOST_THE_FASHION_FLAG"><span class="toc-number">5.</span> <span class="toc-text">WE LOST THE FASHION FLAG</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Android_App"><span class="toc-number">6.</span> <span class="toc-text">Android App</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Asian_Cheetah"><span class="toc-number">7.</span> <span class="toc-text">Asian Cheetah</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#dMd"><span class="toc-number">8.</span> <span class="toc-text">dMd</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SRM"><span class="toc-number">9.</span> <span class="toc-text">SRM</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Serial"><span class="toc-number">10.</span> <span class="toc-text">Serial</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SecCoding"><span class="toc-number">11.</span> <span class="toc-text">SecCoding</span></a></li></ol>
  
   </div>
 

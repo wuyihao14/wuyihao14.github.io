@@ -146,18 +146,18 @@ mkdir blog 建立文件夹cd blog/echo “# wuyihao14.github.io” &amp;gt;&amp;
 <nav class="article-nav clearfix">
  
  <div class="prev" >
- <a href="/2015/11/02/MayorsPoster_线段树/" title="Mayor&#39;s Poster 线段树">
+ <a href="/2015/11/02/AttackTheNEETPrincess/" title="Attack the NEET princess 双连通分量">
   <strong>上一篇：</strong><br/>
   <span>
-  Mayor&#39;s Poster 线段树</span>
+  Attack the NEET princess 双连通分量</span>
 </a>
 </div>
 
 
 <div class="next">
-<a href="/2015/11/02/Intel-Xeon-Phi协处理器高性能编程指南-总结/"  title="Intel Xeon Phi协处理器高性能编程指南">
+<a href="/2015/11/02/CountTheLength/"  title="Count the Length 数学">
  <strong>下一篇：</strong><br/> 
- <span>Intel Xeon Phi协处理器高性能编程指南
+ <span>Count the Length 数学
 </span>
 </a>
 </div>
@@ -195,6 +195,10 @@ mkdir blog 建立文件夹cd blog/echo “# wuyihao14.github.io” &amp;gt;&amp;
 		
 		  
 			<li><a href="/categories/CTF/" title="CTF">CTF<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Cryptography/" title="Cryptography">Cryptography<sup>1</sup></a></li>
 		  
 		
 		  
@@ -466,5 +470,35 @@ $(document).ready(function(){
 
 <!-- Tiny_search End -->
 
-  </body>
+  <!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+</body>
 </html>

@@ -81,171 +81,6 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/2015/11/02/MayorsPoster_线段树/" title="Mayor&#39;s Poster 线段树" itemprop="url">Mayor&#39;s Poster 线段树</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="Donald Wu" target="_blank" itemprop="author">Donald Wu</a>
-		
-  <p class="article-time">
-    <time datetime="2015-11-02T10:42:59.331Z" itemprop="datePublished"> 發表於 2015-11-02</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <p>Mayor’s posters<br>Time Limit: 1000MS        Memory Limit: 65536KB        64bit IO Format: %I64d &amp; %I64u<br>Submit</p>
-<p>Status</p>
-<p>Description<br>The citizens of Bytetown, AB, could not stand that the candidates in the mayoral election campaign have been placing their electoral posters at all places at their whim. The city council has finally decided to build an electoral wall for placing the posters and introduce the following rules:<br>Every candidate can place exactly one poster on the wall.<br>All posters are of the same height equal to the height of the wall; the width of a poster can be any integer number of bytes (byte is the unit of length in Bytetown).<br>The wall is divided into segments and the width of each segment is one byte.<br>Each poster must completely cover a contiguous number of wall segments.</p>
-<p>They have built a wall 10000000 bytes long (such that there is enough place for all candidates). When the electoral campaign was restarted, the candidates were placing their posters on the wall and their posters differed widely in width. Moreover, the candidates started placing their posters on wall segments already occupied by other posters. Everyone in Bytetown was curious whose posters will be visible (entirely or in part) on the last day before elections.<br>Your task is to find the number of visible posters when all the posters are placed given the information about posters’ size, their place and order of placement on the electoral wall.<br>Input<br>The first line of input contains a number c giving the number of cases that follow. The first line of data for a single case contains number 1 &lt;= n &lt;= 10000. The subsequent n lines describe the posters in the order in which they were placed. The i-th line among the n lines contains two integer numbers l i and ri which are the number of the wall segment occupied by the left end and the right end of the i-th poster, respectively. We know that for each 1 &lt;= i &lt;= n, 1 &lt;= l i &lt;= ri &lt;= 10000000. After the i-th poster is placed, it entirely covers all wall segments numbered l i, l i+1 ,… , ri.<br>Output<br>For each input data set print the number of visible posters after all the posters are placed. </p>
-<p>The picture below illustrates the case of the sample input. </p>
-<p>Sample Input<br>1<br>5<br>1 4<br>2 6<br>8 10<br>3 4<br>7 10<br>Sample Output<br>4<br>Source<br>Alberta Collegiate Programming Contest 2003.10.18</p>
-<hr>
-<p>线段树模板题<br>由于1 &lt;= l i &lt;= ri &lt;= 10000000条件的存在，导致建立线段树很困难。<br>然而1 &lt;= n &lt;= 10000，并且意识到两点之间的距离是无用的数据，因此进行离散化。<br>unique和sort是离散化的好帮手。</p>
-<pre><code><span class="flow">if</span> (<span class="built_in">tree</span>[i] != -<span class="number">1</span>){
-    <span class="built_in">tree</span>[i&lt;&lt;<span class="number">1</span>] = <span class="built_in">tree</span>[(i&lt;&lt;<span class="number">1</span>)+<span class="number">1</span>] = <span class="built_in">tree</span>[i];
-}
-</code></pre><p>线段树的lazy处理，一定不要忘了配对的向上传递和向下传递。<br>这样避免了父亲存储了儿子的数据，却把儿子的信息丢掉了的情况（即因为两个儿子数据的不一致而置位-1）</p>
-<pre><code><span class="preprocessor">#<span class="keyword">include</span> &lt;cstdio&gt;</span>
-<span class="preprocessor">#<span class="keyword">include</span> &lt;cstring&gt;</span>
-<span class="preprocessor">#<span class="keyword">include</span> &lt;algorithm&gt;</span>
-<span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;
-
-<span class="keyword">const</span> <span class="keyword">int</span> N = <span class="number">10300</span>;
-
-<span class="keyword">bool</span> mark[N];
-<span class="keyword">int</span> hash[<span class="number">10000010</span>];
-<span class="keyword">int</span> tree[N&lt;&lt;<span class="number">4</span>];
-
-<span class="keyword">struct</span> Edge{
-    <span class="keyword">int</span> l,r;
-}edge[N];
-
-<span class="keyword">int</span> point[N&lt;&lt;<span class="number">2</span>];
-<span class="keyword">int</span> psum;
-
-<span class="function"><span class="keyword">void</span> <span class="title">change</span><span class="params">(<span class="keyword">int</span> i,<span class="keyword">int</span> l,<span class="keyword">int</span> r,<span class="keyword">int</span> ll,<span class="keyword">int</span> rr,<span class="keyword">int</span> c)</span></span>{
-    <span class="keyword">int</span> mid = ((l+r)&gt;&gt;<span class="number">1</span>);
-
-    <span class="keyword">if</span> (l&gt;=ll &amp;&amp; r&lt;=rr){
-        tree[i] = c;
-        <span class="keyword">return</span>;
-    }
-    <span class="keyword">if</span> (tree[i] != -<span class="number">1</span>){
-        tree[i&lt;&lt;<span class="number">1</span>] = tree[(i&lt;&lt;<span class="number">1</span>)+<span class="number">1</span>] = tree[i];
-    }
-
-    <span class="keyword">if</span> (rr &lt;= mid){
-        change(i&lt;&lt;<span class="number">1</span>, l,mid, ll,rr,c);
-    } <span class="function"><span class="keyword">else</span> <span class="title">if</span> <span class="params">(ll &gt; mid)</span> </span>{
-        change((i&lt;&lt;<span class="number">1</span>)+<span class="number">1</span>, mid+<span class="number">1</span>,r, ll,rr,c);
-    } <span class="keyword">else</span> {
-        change(i&lt;&lt;<span class="number">1</span>, l,mid, ll,mid,c);
-        change((i&lt;&lt;<span class="number">1</span>)+<span class="number">1</span>,mid+<span class="number">1</span>,r,mid+<span class="number">1</span>,rr,c);
-    }
-    <span class="keyword">if</span> (tree[i&lt;&lt;<span class="number">1</span>] == tree[(i&lt;&lt;<span class="number">1</span>)+<span class="number">1</span>] &amp;&amp; tree[i&lt;&lt;<span class="number">1</span>]!=-<span class="number">1</span>){
-        tree[i] = tree[i&lt;&lt;<span class="number">1</span>];
-    }<span class="keyword">else</span>{
-        tree[i] = -<span class="number">1</span>;
-    }
-}
-
-<span class="function"><span class="keyword">void</span> <span class="title">find</span><span class="params">(<span class="keyword">int</span> i,<span class="keyword">int</span> l,<span class="keyword">int</span> r)</span></span>{
-    <span class="keyword">int</span> mid = ((l+r)&gt;&gt;<span class="number">1</span>);
-
-    <span class="keyword">if</span> (tree[i] != -<span class="number">1</span>){
-        mark[tree[i]] = <span class="keyword">true</span>;
-        <span class="keyword">return</span>;
-    }
-    find(i&lt;&lt;<span class="number">1</span>,l,mid);
-    find((i&lt;&lt;<span class="number">1</span>)+<span class="number">1</span>,mid+<span class="number">1</span>,r);
-}
-
-<span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span>{
-    <span class="keyword">int</span> c;
-    <span class="built_in">scanf</span>(<span class="string">"%d"</span>,&amp;c);
-    <span class="keyword">while</span> (c--){
-        <span class="built_in">memset</span>(mark,<span class="number">0</span>,<span class="keyword">sizeof</span> mark);
-        <span class="built_in">memset</span>(tree,<span class="number">0</span>,<span class="keyword">sizeof</span> tree);
-        <span class="built_in">memset</span>(hash,<span class="number">0</span>,<span class="keyword">sizeof</span> hash);
-        psum = <span class="number">0</span>;
-        <span class="keyword">int</span> n;
-
-        <span class="built_in">scanf</span>(<span class="string">"%d"</span>,&amp;n);
-        <span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;n;i++){
-            <span class="keyword">int</span> l,r;
-            <span class="built_in">scanf</span>(<span class="string">"%d%d"</span>,&amp;l,&amp;r);
-            point[psum++] = l;
-            point[psum++] = r;
-            edge[i].l = l;
-            edge[i].r = r;
-        }
-
-        sort(point,point+psum);
-        <span class="keyword">int</span> npsum = unique(point,point+psum)-point;
-
-        <span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;npsum;i++){
-            hash[point[i]] = i+<span class="number">1</span>;
-        }
-
-        <span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;n;i++){
-            edge[i].l = hash[edge[i].l];
-            edge[i].r = hash[edge[i].r];
-
-            change(<span class="number">1</span>,<span class="number">1</span>,npsum,edge[i].l,edge[i].r,i+<span class="number">1</span>);
-        }
-
-        find(<span class="number">1</span>,<span class="number">1</span>,npsum);
-
-        <span class="keyword">int</span> ans = <span class="number">0</span>;
-        <span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">1</span>;i&lt;n+<span class="number">1</span>;i++)
-            <span class="keyword">if</span> (mark[i])
-                ans ++;
-        <span class="built_in">printf</span>(<span class="string">"%d\n"</span>,ans);
-    }
-    <span class="keyword">return</span> <span class="number">0</span>;
-}
-</code></pre>
-        
-        
-        <p class="article-more-link">
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-<div class="article-categories">
-  <span></span>
-  <a class="article-category-link" href="/categories/ACM/">ACM</a>
-</div>
-
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
       <a href="/2015/11/02/在Github上建立我的博客-一/" title="在Github上建立我的博客(一)——基本" itemprop="url">在Github上建立我的博客(一)——基本</a>
   </h1>
   <p class="article-author">By
@@ -309,75 +144,58 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/2015/11/02/Intel-Xeon-Phi协处理器高性能编程指南-总结/" title="Intel Xeon Phi协处理器高性能编程指南" itemprop="url">Intel Xeon Phi协处理器高性能编程指南</a>
+      <a href="/2015/11/02/CountTheLength/" title="Count the Length 数学" itemprop="url">Count the Length 数学</a>
   </h1>
   <p class="article-author">By
        
 		<a href="/about" title="Donald Wu" target="_blank" itemprop="author">Donald Wu</a>
 		
   <p class="article-time">
-    <time datetime="2015-11-02T10:42:59.327Z" itemprop="datePublished"> 發表於 2015-11-02</time>
+    <time datetime="2015-11-02T10:42:59.331Z" itemprop="datePublished"> 發表於 2015-11-02</time>
     
   </p>
 </header>
     <div class="article-content">
         
-        <p>对读过的章节稍微做一下总结</p>
-<h2 id="第二章">第二章</h2><p>线程和亲缘性：线程并不是越多越好，但至少要保证每核2个线程，因为根据现在xeon phi的设计，一个周期两条指令，预取的时候，不能用当前线程来预取。性能会减半。<br>亲缘性最好是scatter，负载均衡。</p>
-<font size="1px" color="grey">这两者都既可以在程序中设置，也可以在环境变量中设置</font>
+        <p>Count the Length<br>Time Limit: 2000MS        Memory Limit: 65536KB        64bit IO Format: %lld &amp; %llu<br>Submit</p>
+<p>Status</p>
+<p>Description<br>You are given a board of m<em>n, so there are m</em>n unit squares(1*1) in the board. Suppose all unit squares are colored red or blue, and no adjacent(have common edge) unit squares share the same color. Consider the diagonal D of the board from left bottom to right top, D is a segment with color too, a point in D is red(or blue) if it falls in a red(or blue) unit square. Assume the left bottom square’s color is red, then what is the total length of red part of the diagonal D?</p>
+<p>the sample of 2 * 4 board</p>
+<p>the total length of red part of the diagonal is 2.236068<br>Input<br>There are multiple test cases(less than 10000). Each case is a line containing two integers m,n(1 ≤ m,n ≤ 2^31-1).</p>
+<p>Output<br>For each case, output a single line containing the right answer(rounded up to 3 digits after the decimal point).</p>
+<p>Sample Input<br>2 4<br>1 3<br>Sample Output<br>2.236<br>2.108</p>
+<p>最大公约数</p>
+<pre><code><span class="preprocessor">#<span class="keyword">include</span> &lt;cstdio&gt;</span>
+<span class="preprocessor">#<span class="keyword">include</span> &lt;cmath&gt;</span>
 
-<p>内存带宽：增加核的使用，以增加内存缓冲区，但是核上线程增加可能是会牺牲内存带宽的，可以增加内存页大小</p>
-<h2 id="第三章">第三章</h2><h3 id="向量化">向量化</h3><p>向量化是MIC优化的主题。</p>
-<p>-O2 -O3 中实现了自动向量化<br>而ivdep补充说明了哪些块可以向量化</p>
-<p>要用OpenMP扩展到多核也必须满足可向量化才行</p>
-<h3 id="对齐">对齐</h3><p>前端对齐:_mm_malloc和_mm_free。（如数组首地址）<br>补白：（如二维数组行首）（注意一级cache大小)</p>
-<h3 id="流存储">流存储</h3><p>写入前不读取#pragma vector nontemporal</p>
-<h3 id="2MB大内存页">2MB大内存页</h3><p>mmap()</p>
-<h2 id="第四章">第四章</h2><h3 id="代码扩展">代码扩展</h3><p>#pragma omp for collapse(2) 循环合并</p>
-<h3 id="向量化-1">向量化</h3><p>#pragma simd 比 #pragma ivdep更强制</p>
-<h3 id="剥离">剥离</h3><p>一个循环拆分成两个，以消除分支判断</p>
-<h3 id="切片">切片</h3><p>多重循环的时候，不宜某一维度过长。如3维，y过长，则不能利用数据局部性，因为处理完一个x-y平面之后，才会z++，进入到下一个x-y平面，此时最前面的数据可能已经不在L2Cache中了。优化的方法是切片，并且把个切片y轴上的长度设为参数，调优。</p>
-<h2 id="第五章">第五章</h2><h3 id="向量化的五种方法">向量化的五种方法</h3><ul>
-<li>Cilk Plus</li>
-<li>Array Notations</li>
-<li>Auto-vectorization</li>
-<li>SIMD Directives</li>
-<li>MKL</li>
-</ul>
-<h3 id="六步方法论">六步方法论</h3><ul>
-<li>测试基准版性能</li>
-<li>用Intel Vtune Amplifier XE确定热点</li>
-<li>使用英特尔编译器vec-report确定可向量化循环</li>
-<li>使用英特尔编译器GAP报告和工具资源获得建议<font color="red">这是什么？还没用过</font></li>
-<li>GAP实线意见及其他建议（如使用基本函数和/或数组符号）</li>
-<li>重复</li>
-</ul>
-<h3 id="Cache流标题和下面的内容的关系是什么？">Cache流<font color="red">标题和下面的内容的关系是什么？</font></h3><ul>
-<li>数据布局</li>
-<li>数据对齐</li>
-<li>预取 <font color="red">还不太熟悉</font><ul>
-<li>硬件到L2缓存的自动预取（见第八章）</li>
-<li>编译器到L1缓存的自动软件预取指令</li>
-<li>编译器生成的预取（可从程序员提供的信息中获取帮助）</li>
-<li>程序员通过L2和L1的预取能力进行的手动预取</li>
-</ul>
-</li>
-<li>流存储 <ul>
-<li>条件。可向量化，非时间局部性。<font color="red">还不太理解，书的翻译也不好</font></li>
-<li>编译器生成clevicts。它告知硬件不预取将被彻底删除的数据，判断发生在编译时。分别讨论了处理器和协处理器上。</li>
-</ul>
-</li>
-</ul>
-<h3 id="编译器技巧一些杂技巧">编译器技巧<font color="red">一些杂技巧</font></h3><ul>
-<li>避免手动展开。使用#pragma unroll。以直接了当的方式书写</li>
-<li>编译器向量化的要求。几点容易理解的，和一些特殊情况。<ul>
-<li>更杂的建议。可作为优化后复审的参考，这是一个总结，前面都提到过</li>
-</ul>
-</li>
-<li>内联<br>  最内层的循环函数被自动内联很重要，用-opt-report-phase-ipo_inl观察是否内联，因为有的行为会关闭自动内联（如-pg 的性能分析功能）</li>
-</ul>
-<h3 id="编译器选项（同样是一些技巧）没看太懂，书写得有点混乱">编译器选项（同样是一些技巧）<font color="red">没看太懂，书写得有点混乱</font></h3><font color="red">这有一段不知所云，而且此处还没有涉及到预取</font><br>- 解决不明确，可能存在的隐含的混叠<font color="red">实际上这也是数据相关性的一种表现</font><br>    - 用restricted关键字说明指针具有独立性（即不混叠）<br>    - #pragma ivdep，允许编译器消除一些假定的相关性（而SIMD是强制性的）<br>    - 换用数组表示法或元素函数<br><br><br>###编译器指导指令，这部分内容很多<br>- SIMD<br>    - 使用的要求（底线，比ivdep的要求低），有一点比较奇怪但是也容易理解，就是循环体不能过大。另外一个奇怪的地方是，不要和快速浮点模式一起用<br><br><br><br>无主题（通用）<br>—-<br>source inte/composer**/bin/comiplervars.sh ia32/intel64 自动建立环境<br>#pragma omp master常用在输出调试信息上，只使用一个节点输出<br>private(xxx) 表示mic里和host上是独立的，不共享<br>各种优化后都要尝试不同线程数<br>在修改的时候要注意可扩展性和移植性<br><br><font color="red">明天继续补充</font>
+<span class="function"><span class="keyword">int</span> <span class="title">GCD</span><span class="params">(<span class="keyword">int</span> a, <span class="keyword">int</span> b)</span>
+</span>{
+    <span class="keyword">while</span>(b != <span class="number">0</span>)
+    {
+        <span class="keyword">int</span> r = b;
+        b = a % b;
+        a = r;
+    }
+    <span class="keyword">return</span> a;
+}
 
+
+<span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span>{
+    <span class="keyword">int</span> m,n;
+    <span class="keyword">while</span> (~<span class="built_in">scanf</span>(<span class="string">"%d%d"</span>,&amp;m,&amp;n)){
+        <span class="keyword">int</span> gcd = GCD(m,n);
+        m /= gcd;
+        n /= gcd;
+        <span class="keyword">double</span> mm = m;
+        <span class="keyword">double</span> nn = n;
+        <span class="keyword">double</span> sum = mm*nn;
+        <span class="keyword">double</span> ans = <span class="built_in">sqrt</span>(mm*mm + nn*nn) * (<span class="keyword">double</span>)gcd;
+        ans = ans*<span class="built_in">ceil</span>(sum/<span class="number">2.0</span>)/sum;
+        <span class="built_in">printf</span>(<span class="string">"%.3lf\n"</span>,ans);
+    }
+    <span class="keyword">return</span> <span class="number">0</span>;
+}
+</code></pre>
         
         
         <p class="article-more-link">
@@ -389,7 +207,7 @@
 
 <div class="article-categories">
   <span></span>
-  <a class="article-category-link" href="/categories/HPC/">HPC</a>
+  <a class="article-category-link" href="/categories/ACM/">ACM</a>
 </div>
 
 
@@ -418,65 +236,66 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/2015/11/02/OsaisenChoudai/" title="Osaisen Choudai" itemprop="url">Osaisen Choudai</a>
+      <a href="/2015/11/02/Matrix_枚举/" title="Matrix 枚举" itemprop="url">Matrix 枚举</a>
   </h1>
   <p class="article-author">By
        
 		<a href="/about" title="Donald Wu" target="_blank" itemprop="author">Donald Wu</a>
 		
   <p class="article-time">
-    <time datetime="2015-11-02T10:42:59.327Z" itemprop="datePublished"> 發表於 2015-11-02</time>
+    <time datetime="2015-11-02T10:42:59.331Z" itemprop="datePublished"> 發表於 2015-11-02</time>
     
   </p>
 </header>
     <div class="article-content">
         
-        <p>Osaisen Choudai!<br>Time Limit: 3000MS        Memory Limit: 65536KB        64bit IO Format: %lld &amp; %llu<br>Submit</p>
+        <p>Matrix<br>Time Limit: 10000MS        Memory Limit: 131072KB        64bit IO Format: %lld &amp; %llu<br>Submit</p>
 <p>Status</p>
-<p>Description<br>A saisenbako (賽銭箱, offertory, or religious collection box) is situated in front of the hall of Hakurei Shrine. Hakurei Reimu (博麗霊夢), the miko of Hakurei Shrine, may ask the friends who are visting her to throw some saisen (賽銭, offerings, or coins) into it. Reimu wants as much saisen as possible. Howerver, she cannot ask for saisen too frequently, because this will make her friends refuse to offer any more. On the other hand, if she doesn’t ask for saisen for a very long period, her friends will become not be willing to offer any more. Generally, at the i-th day, if she asks for saisen, then she will get sisaisen, what’s more, she cannot ask again for xi days (including the i-th day), and she should ask again in yi days (including the i-th day).</p>
-<p>Given si, xi and yi for n days, how much saisen can Reimu get at most in these days if she asks saisen at the first day?</p>
-<p>Input<br>The are multiple cases. Each case begins with a line of integer 0 &lt; n &lt; 50000, then n lines, each contains 3 positive integers: si, and xi &lt; yi. Process to the end of file.</p>
-<p>Output<br>For each test cases, output an integer, the maximun amount of saisen Reimu can get, in a seperate line. It’s guaranteed that the answer always fit into a 32-bit signed integer.</p>
-<p>Sample Input<br>3<br>1 1 2<br>2 2 3<br>3 3 4<br>3<br>1 1 3<br>2 2 4<br>3 3 5<br>4<br>10 3 10<br>7 1 7<br>5 2 5<br>1 1 2<br>5<br>1 1 9<br>10 3 10<br>7 1 7<br>5 2 5<br>1 1 2<br>Sample Output<br>3<br>4<br>11<br>13</p>
-<p>线段树优化dp，可是二维暴力居然过了。</p>
-<pre><code>include &lt;cstdio&gt;
+<p>Description<br>A N<em>M coordinate plane ((0, 0)~(n, m)). Initially the value of all N</em>M grids are 0.<br>An operation T(a, b, h, x, y) is defined as follow:</p>
+<ol>
+<li>Select the maximum value in the matrix (x, y) ~ (x+a, y+b), suppose the maximum value is max</li>
+<li>Change all the value in the matrix (x, y) ~ (x+a, y+b) into max+h<br>After C operations, please output the maximum value in the whole N*M coordinate.</li>
+</ol>
+<p>Input<br>The input consists of several cases.<br>For each case, the first line consists of three positive integers N , M and C (N ≤ 1000, M ≤ 1000, C ≤ 1000). In the following C lines, each line consists of 5 non-negative number, ai, bi, hi, xi, yi (0 ≤ hi ≤ 10000, 0 ≤ xi &lt; n, 0 ≤ yi &lt; m).</p>
+<p>Output<br>For each case, output the maximum height.</p>
+<p>Sample Input<br>3 2 2<br>2 1 9 1 1<br>1 1 2 2 1<br>Sample Output<br>11</p>
+<p>二重循环，前i-1个，对第i个造成影响。</p>
+<pre><code>#include &lt;cstdio&gt;
 
-<span class="keyword">int</span> f[<span class="number">50010</span>];
-<span class="keyword">int</span> s[<span class="number">50010</span>];
-<span class="keyword">int</span> x[<span class="number">50010</span>];
-<span class="keyword">int</span> y[<span class="number">50010</span>];
+const <span class="keyword">int</span> C = <span class="number">1010</span>;
 
-<span class="function"><span class="keyword">inline</span> <span class="keyword">int</span> <span class="title">max</span><span class="params">(<span class="keyword">int</span> a,<span class="keyword">int</span> b)</span></span>{
-    <span class="keyword">return</span> a &gt; b?a : b;
+<span class="keyword">int</span> a[C],b[C],h[C],x[C],y[C];
+
+bool <span class="keyword">cross</span>(<span class="keyword">int</span> i,<span class="keyword">int</span> j){
+    <span class="keyword">int</span> l1 = x[i];
+    <span class="keyword">int</span> l2 = x[j];
+    <span class="keyword">int</span> r1 = x[i]+a[i]-<span class="number">1</span>;
+    <span class="keyword">int</span> r2 = x[j]+a[j]-<span class="number">1</span>;
+    <span class="keyword">int</span> t1 = y[i];
+    <span class="keyword">int</span> t2 = y[j];
+    <span class="keyword">int</span> b1 = y[i]+b[i]-<span class="number">1</span>;
+    <span class="keyword">int</span> b2 = y[j]+b[j]-<span class="number">1</span>;
+    <span class="keyword">return</span> r1&gt;=l2 &amp;&amp; r2&gt;=l1 &amp;&amp; b1&gt;=t2 &amp;&amp; b2&gt;=t1;
 }
 
-<span class="function"><span class="keyword">inline</span> <span class="keyword">int</span> <span class="title">min</span><span class="params">(<span class="keyword">int</span> a,<span class="keyword">int</span> b)</span></span>{
-    <span class="keyword">return</span> a &lt; b?a : b;
-}
-
-<span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span>{
-    <span class="keyword">int</span> n;
-    <span class="comment">//freopen("fuck","w",stdout);</span>
-    <span class="keyword">while</span> (~<span class="built_in">scanf</span>(<span class="string">"%d"</span>,&amp;n)){
-        <span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;n;i++)
-            <span class="built_in">scanf</span>(<span class="string">"%d%d%d"</span>,s+i,x+i,y+i);
-
-        <span class="keyword">for</span> (<span class="keyword">int</span> i=n-<span class="number">1</span>;i&gt;-<span class="number">1</span>;i--)
-        {
-            <span class="keyword">int</span> lo = max(i+<span class="number">1</span>,i+x[i]);
-            f[i] = s[i];
-            <span class="keyword">for</span> (<span class="keyword">int</span> j=min(n-<span class="number">1</span>,i+y[i]-<span class="number">1</span>);j&gt;=lo;j--){
-                f[i] = max(f[i],f[j]+s[i]);
+<span class="keyword">int</span> main(){
+    <span class="keyword">int</span> n,m,c;
+    <span class="keyword">while</span> (~scanf(<span class="string">"%d%d%d"</span>,&amp;n,&amp;m,&amp;c)){
+        <span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;c;i++){
+            scanf(<span class="string">"%d%d%d%d%d"</span>,a+i,b+i,h+i,x+i,y+i);
+            <span class="keyword">int</span> <span class="keyword">max</span> = h[i];
+            <span class="keyword">for</span> (<span class="keyword">int</span> j=<span class="number">0</span>;j&lt;i;j++){
+                <span class="keyword">if</span> (<span class="keyword">cross</span>(i,j) &amp;&amp; h[j]+h[i] &gt; <span class="keyword">max</span>){
+                    <span class="keyword">max</span> = h[j] + h[i];
+                }
             }
+            h[i] = <span class="keyword">max</span>;
         }
-
-        <span class="comment">/*
-           int ans = 0;
-           for (int i=0;i&lt;n;i++)
-           ans = max(ans,f[i]);
-         */</span>
-        <span class="keyword">int</span> ans = f[<span class="number">0</span>];
-        <span class="built_in">printf</span>(<span class="string">"%d\n"</span>,ans);
+        <span class="keyword">int</span> <span class="keyword">max</span> = <span class="number">0</span>;
+        <span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;c;i++){
+            <span class="keyword">max</span> = <span class="keyword">max</span>&lt;h[i]?h[i]:<span class="keyword">max</span>;
+        }
+        printf(<span class="string">"%d\n"</span>,<span class="keyword">max</span>);
     }
 
     <span class="keyword">return</span> <span class="number">0</span>;
@@ -494,6 +313,102 @@
 <div class="article-categories">
   <span></span>
   <a class="article-category-link" href="/categories/ACM/">ACM</a>
+</div>
+
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2015/11/02/MonteCarlo优化实操/" title="MonteCarlo优化实操" itemprop="url">MonteCarlo优化实操</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="Donald Wu" target="_blank" itemprop="author">Donald Wu</a>
+		
+  <p class="article-time">
+    <time datetime="2015-11-02T10:42:59.331Z" itemprop="datePublished"> 發表於 2015-11-02</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>学习Intel练习课<br>Hands-on Lab: Optimize Your Code for the Latest Intel®<br>XeonTM Processors and Intel® Xeon PhiTM Coprocessor<br>using Intel® Parallel Studio XE for Linux*</p>
+<h1 id="Stage_1">Stage 1</h1><p>暂时不用考虑MonteCarlo的原理。Stage 1先后使用了gcc和icpc，并没有显著的进步。给我们的练习是使用mkl的并行随机数生成器。其目的就是对比mkl和串行随机数生成器的效率。mkl历史悠久，具有很高的可靠性，我们优化的时候，首先应该考虑这种集成度高的方式。</p>
+<p>Intel的Developer Zone上有在线的API文档，查阅很方便。</p>
+<pre><code>typedef <span class="symbol">std:</span><span class="symbol">:tr1</span><span class="symbol">:</span><span class="symbol">:mt19937</span>                     <span class="constant">ENG</span>;    <span class="regexp">//</span> <span class="constant">Mersenne</span> <span class="constant">Twister</span>
+typedef <span class="symbol">std:</span><span class="symbol">:tr1</span><span class="symbol">:</span><span class="symbol">:normal_distribution&lt;float&gt;</span> <span class="constant">DIST</span>;   <span class="regexp">//</span> <span class="constant">Normal</span> <span class="constant">Distribution</span>
+typedef <span class="symbol">std:</span><span class="symbol">:tr1</span><span class="symbol">:</span><span class="symbol">:variate_generator&lt;ENG</span>,<span class="constant">DIST</span>&gt; <span class="constant">GEN</span>;    <span class="regexp">//</span> <span class="constant">Variate</span> generator
+</code></pre><p>这些声明替换为如下：</p>
+<pre><code><span class="attribute">float</span> myrand<span class="attr_selector">[RAND_N]</span>;
+VSLStreamStatePtr stream;
+<span class="function">vslNewStream</span>(&amp;stream, VSL_BRNG_MT19937, 777);
+</code></pre><p>一开始的时候，我一次性生成了两重循环需要的所有随机数，没有发现OPT_N<em>RAND_N已经达十亿。不得已，只能在内层循环外生成OPT_N</em>RAND_N个随机数。</p>
+<pre><code><span class="title">vsRngGaussian(VSL_RNG_METHOD_GAUSSIAN_ICDF,stream,RAND_N,myrand,0</span><span class="number">.0</span>,<span class="number">1.0</span>);
+</code></pre><p>vRngGaussian有double版和float版，分别是vdRngGaussian和vsRngGaussian。</p>
+<p>在外层循环外删掉stream。</p>
+<pre><code><span class="function">vslDeleteStream</span>(&amp;stream);
+</code></pre><p>链接的时候又遇到了障碍，需要的所有库都得链接。</p>
+<pre><code>icc .<span class="regexp">/MonteCarloStep1.cpp ./</span>Driver.cpp -I<span class="regexp">/opt/i</span>ntel<span class="regexp">/composerxe/m</span>kl<span class="regexp">/include -L/</span>opt<span class="regexp">/intel/</span>composexe<span class="regexp">/mkl/</span>lib<span class="regexp">/intel64 -lmkl_intel_lp64 -lmkl_intel_thread -lmkl_core -lmkl_lapack95_lp64 -liomp5 -lpthread -O2 -o MonteCarlo</span>
+</code></pre><p>结果如下：总算是完成了。</p>
+<pre><code>Monte Carlo European <span class="keyword">Option</span> Pricinig <span class="keyword">in</span> <span class="built_in">Single</span> Precision
+Pricing <span class="number">32768</span> <span class="keyword">Option</span> <span class="keyword">with</span> path length <span class="keyword">of</span> <span class="number">262144.</span>
+Completed <span class="keyword">in</span> <span class="number">151.4866</span> seconds.
+Computation rate - <span class="number">216.3096</span>.
+</code></pre><p>对照答案，发现答案有一点问题，每一次蒙特卡洛的模拟的随机变量是相同的，这样我觉得貌似失去了重复实验的意义，不排除是我对蒙特卡洛的理解出了问题。但是在效率上，仅一次生成RAND_N个随机数，的确提高了速度。</p>
+<h1 id="Stage_2">Stage 2</h1><p>这几种优化手段都是第一次见到。float常量后面加上f，区分float和double对应的数学函数，减少冗余计算，避免类型转换，利用intel的计算比较快的数学函数。我对照答案修改之后的运行结果：（不过不是在同一个集群，没有参照性）</p>
+<p>Monte Carlo European Option Pricinig in Single Precision<br>Pricing 32768 Option with path length of 262144.<br>Completed in  33.9102 seconds.<br>Computation rate - 966.3183.</p>
+<p>而不用我的这些优化（不明白为什么答案没有优化这些地方，也许是我搞错了），时间是77s</p>
+<p>对照答案，不明白为什么有的float常量后面写了f，有的没有。把强制转换预处理计算了，或者去掉了。为什么有个地方没有使用exp2f。为什么要把除法拿出来？为什么有的冗余计算给提前了，有的（如(<font color="blue">RISKFREE - 0.5 <em> VOLATILITY </em> VOLATILITY)*M_LOG2E</font>）则没有？static_cast和普通类型转换的区别？</p>
+<h1 id="Stage_3">Stage 3</h1><p>由于向量化是书上着重讲的部分，于是我先自己实验，再看步骤。</p>
+<p>-vec-report=3显示内层循环被向量化了，外层没有<br>使用#pragma ivdep没有用<br>观察发现，貌似并没有数据依赖，于是#pragma simd，时间从原来的77s变成了57s<br>进行到这里，感觉对我来说，已经完成了向量化工作。。。于是看资料</p>
+<p>原来此文把内核级优化的内容也放到了该vectorization小节里。继续自己做实验。</p>
+<p><strong>切片</strong>，由于L2 cache是256KB，而RAND_N是2^18，l_Random是float数组，float是4字节，切成4块刚好每一块装满L2 cache，对于每个opt，处理长度为RAND_N/4的pos区间，这样提高了命中率，还不至于使内层循环并行度过低。时间从57s减少到了49s。<br><strong>对齐</strong>，我有点犯晕，是否只有动态生成的内存才在这个问题上可控？<br><strong>函数</strong>，这些函数应该都有对应的SIMD版本，会自动使用吧</p>
+<p>又没有思路了。</p>
+<p><strong>reduction</strong>，如果不使用reduction，当数据量大了之后，可能出现竞争的问题，导致结果出错，reduction会给每一个线程一个副本，使用了reduction之后，外层循环不能向量化了，但是时间减为了14s。这是怎么回事？遂去掉了#pragma simd</p>
+<hr>
+<p>照答案重做一遍<br>原始77s<br><strong>向量对齐</strong> 声明数组时<strong>attribute</strong>((aligne(64)) float l_Random[RAND_N]，第一维的首地址对齐。<font color="red">我想知道多维数组有什么不同。</font><br>然后#pragma vector aligned，声明向量已对齐<br>#pragma simd reduction(+:val) reduction(+:val2)用编译器自己向量化即可，不用openmp<font color="red">我还不明白openmp到底是干嘛的</font><br>#pragma unroll(4)，展开了四次，因为里面加了一句话（因为max里计算了两次复杂表达式，手动展开了）总共四句<br>时间13s</p>
+<h1 id="Stage_4">Stage 4</h1><p>计算是独立的，外层确实应该是可以向量化的<br>用openmp并行化外层循环<br>#pragma omp parallel for<br>平均时间1s</p>
+<font color="red">我不明白为什么可以用openmp而不能用simd。我确实需要复习openmp了，至少搞懂它到底是啥</font>
+
+<h1 id="Stage_5">Stage 5</h1><p>mic的native模式，平均时间0.5s</p>
+<font color="red">明天继续补充，对照答案检查</font>
+
+<p>我想自己做一点激进的实验，可是又没办法保证结果的正确，希望能找到什么资料讨论这个问题<br>当各个部件都熟悉了，问题会变成如何构建多级异构，如何使OpenMP、MPI等协调工作。</p>
+
+        
+        
+        <p class="article-more-link">
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/HPC/">HPC</a>
 </div>
 
 
@@ -543,6 +458,10 @@
 		
 		  
 			<li><a href="/categories/CTF/" title="CTF">CTF<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Cryptography/" title="Cryptography">Cryptography<sup>1</sup></a></li>
 		  
 		
 		  

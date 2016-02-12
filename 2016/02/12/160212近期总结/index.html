@@ -19,7 +19,7 @@
 <meta property="og:site_name" content="Shelter">
 <meta property="og:description" content="由于发现不记录，思考就变得肤浅，于是重启了博客。
 最近一个月做的事情两场失败的CodeforceSharifCTFZCTF读完的几本书：Fortran、CUDA绿皮书、深入理解Nginx图像细化算法的三个优化，数据测试和论文Autodafe的bugfix和代码阅读阅读去年ASC15的Gridding的并行异构的别的队伍的范例。ASC16的不佳的尝试还未录完的Turbomole 6.6破解教程明天即">
-<meta property="og:updated_time" content="2016-02-11T17:59:49.124Z">
+<meta property="og:updated_time" content="2016-02-12T05:12:48.956Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="160212近期总结">
 <meta name="twitter:description" content="由于发现不记录，思考就变得肤浅，于是重启了博客。
@@ -99,18 +99,13 @@
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目錄</strong>
 		
-			<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#最近一个月做的事情"><span class="toc-number">1.</span> <span class="toc-text">最近一个月做的事情</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#SharifCTF"><span class="toc-number">1.1.</span> <span class="toc-text">SharifCTF</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Smooth_As_Silk"><span class="toc-number">1.1.1.</span> <span class="toc-text">Smooth As Silk</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Polar_p-1因子分解法"><span class="toc-number">1.1.1.1.</span> <span class="toc-text">Polar p-1因子分解法</span></a></li></ol></li></ol></li></ol></li></ol>
+			<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#最近一个月做的事情"><span class="toc-number">1.</span> <span class="toc-text">最近一个月做的事情</span></a></li></ol>
 		
 		</div>
 		
 		<p>由于发现不记录，思考就变得肤浅，于是重启了博客。</p>
 <h1 id="最近一个月做的事情">最近一个月做的事情</h1><p>两场失败的Codeforce<br>SharifCTF<br>ZCTF<br>读完的几本书：Fortran、CUDA绿皮书、深入理解Nginx<br>图像细化算法的三个优化，数据测试和论文<br>Autodafe的bugfix和代码阅读<br>阅读去年ASC15的Gridding的并行异构的别的队伍的范例。<br>ASC16的不佳的尝试<br>还未录完的Turbomole 6.6破解教程<br>明天即将到来的Sharif的AI challenge</p>
 <p>大概没有干别的事情了。</p>
-<h2 id="SharifCTF">SharifCTF</h2><h3 id="Smooth_As_Silk">Smooth As Silk</h3><pre><code><span class="tag">p</span> &gt; <span class="tag">q</span>
-n = p\*<span class="tag">q</span> = <span class="number">11461532818525251775869994369956628325437478510485272730419843320517940601808597552925629451795611990372651568770181872282590309894187815091191649914833274805419432525386234876477307472337026966745408507004000948112191973777090407558162018558945596691322909404307420094584606103206490426551745910268138393804043641876816598599064856358266650339178617149833032309379858059729179857419751093138295863034844253827963</span>
-flag = <span class="function"><span class="title">md5</span><span class="params">(str(p)</span></span>)
-</code></pre><p>题解说用Pollar p-1因子分解法，然而这几种因子分解法我都忘记了。必须得复习Stinson的书了。看懂方法，看懂证明，会用方法，看到方法就能想出证明的大致思路，能轻松写出代码。我想就是这几个步骤。否则就会像之前一样，连欧拉公式的证明，欧几里德定理三种形式的证明都不会。<br>趁此机会复习Pollar p-1</p>
-<h4 id="Polar_p-1因子分解法">Polar p-1因子分解法</h4><p>a </p>
   
 	</div>
 		<footer class="article-footer clearfix">
@@ -136,11 +131,19 @@ flag = <span class="function"><span class="title">md5</span><span class="params"
 	
 <nav class="article-nav clearfix">
  
+ <div class="prev" >
+ <a href="/2016/02/12/160212密码学总结/" title="160212密码学总结">
+  <strong>上一篇：</strong><br/>
+  <span>
+  160212密码学总结</span>
+</a>
+</div>
+
 
 <div class="next">
-<a href="/2015/11/02/MonteCarlo优化实操/"  title="MonteCarlo优化实操">
+<a href="/2015/11/02/Alictf2015Writeup/"  title="Alictf 2015 盗窃Writeup">
  <strong>下一篇：</strong><br/> 
- <span>MonteCarlo优化实操
+ <span>Alictf 2015 盗窃Writeup
 </span>
 </a>
 </div>
@@ -155,7 +158,7 @@ flag = <span class="function"><span class="title">md5</span><span class="params"
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目錄</strong>
  
- <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#最近一个月做的事情"><span class="toc-number">1.</span> <span class="toc-text">最近一个月做的事情</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#SharifCTF"><span class="toc-number">1.1.</span> <span class="toc-text">SharifCTF</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Smooth_As_Silk"><span class="toc-number">1.1.1.</span> <span class="toc-text">Smooth As Silk</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Polar_p-1因子分解法"><span class="toc-number">1.1.1.1.</span> <span class="toc-text">Polar p-1因子分解法</span></a></li></ol></li></ol></li></ol></li></ol>
+ <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#最近一个月做的事情"><span class="toc-number">1.</span> <span class="toc-text">最近一个月做的事情</span></a></li></ol>
  
   </div>
 
@@ -178,6 +181,10 @@ flag = <span class="function"><span class="title">md5</span><span class="params"
 		
 		  
 			<li><a href="/categories/CTF/" title="CTF">CTF<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Cryptography/" title="Cryptography">Cryptography<sup>1</sup></a></li>
 		  
 		
 		  
@@ -449,5 +456,35 @@ $(document).ready(function(){
 
 <!-- Tiny_search End -->
 
-  </body>
+  <!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+</body>
 </html>
