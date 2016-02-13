@@ -21,7 +21,7 @@ n = p*q = 1146153281852525177586999436995662832543747851048527273041984332051794
 <meta property="og:description" content="SharifCTF2016
 Smooth As Silkp &amp;gt; q
 n = p*q = 114615328185252517758699943699566283254374785104852727304198433205179406018085975529256294517956119903726515687701818722825903098941878150911916499148332">
-<meta property="og:updated_time" content="2016-02-12T13:04:44.376Z">
+<meta property="og:updated_time" content="2016-02-13T13:56:34.410Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="160212密码学总结">
 <meta name="twitter:description" content="SharifCTF2016
@@ -102,7 +102,7 @@ n = p*q = 1146153281852525177586999436995662832543747851048527273041984332051794
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目錄</strong>
 		
-			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Smooth_As_Silk"><span class="toc-number">1.</span> <span class="toc-text">Smooth As Silk</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Pollard_p-1因子分解法"><span class="toc-number">1.0.1.</span> <span class="toc-text">Pollard p-1因子分解法</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#实际的Pollard_p-1"><span class="toc-number">1.0.2.</span> <span class="toc-text">实际的Pollard p-1</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Rail_Fence_Cipher"><span class="toc-number">2.</span> <span class="toc-text">Rail Fence Cipher</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#URE"><span class="toc-number">3.</span> <span class="toc-text">URE</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#High-speed_RSA_Keygen"><span class="toc-number">4.</span> <span class="toc-text">High-speed RSA Keygen</span></a></li></ol>
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Smooth_As_Silk"><span class="toc-number">1.</span> <span class="toc-text">Smooth As Silk</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Pollard_p-1因子分解法"><span class="toc-number">1.0.1.</span> <span class="toc-text">Pollard p-1因子分解法</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#实际的Pollard_p-1"><span class="toc-number">1.0.2.</span> <span class="toc-text">实际的Pollard p-1</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Rail_Fence_Cipher"><span class="toc-number">2.</span> <span class="toc-text">Rail Fence Cipher</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#URE"><span class="toc-number">3.</span> <span class="toc-text">URE</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#High-speed_RSA_Keygen"><span class="toc-number">4.</span> <span class="toc-text">High-speed RSA Keygen</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Impossible_Game"><span class="toc-number">5.</span> <span class="toc-text">Impossible Game</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Hail_Zeus"><span class="toc-number">6.</span> <span class="toc-text">Hail Zeus</span></a></li></ol>
 		
 		</div>
 		
@@ -362,6 +362,8 @@ for kp in range(1, 2<span class="keyword">*</span><span class="keyword">*</span>
 <p>因为H(p|n) = H(kp,tp|n) = H(kp)。根据kp和n能算出tp。</p>
 <p>原因就是n能够还原出kpkq，kqtp_p_kptq，tptq。假设p不再这样计算，而是p=kp*pi+tp，q同理，那么是不能只根据一个数n，计算出这三个“系数”的。此时可以是因为加法仅仅相当于连接。</p>
 <p>应该参考经典的素数生成算法。上面分析的可能只是最表面的原因。</p>
+<h2 id="Impossible_Game">Impossible Game</h2><p>题解里有提到100囚犯问题，是一个置换群上的概率问题，50次测试内成功求解概率30.7%。<br>而这里的空间只有$2^{22}$，直接枚举即可，甚至不需要了解散列函数</p>
+<h2 id="Hail_Zeus">Hail Zeus</h2><p>海明码和矩阵螺旋交织器，都是通信系统的东西，要逆向求解明文。这道题不知道有什么意思，并不熟悉这些东西。</p>
   
 	</div>
 		<footer class="article-footer clearfix">
@@ -419,7 +421,7 @@ for kp in range(1, 2<span class="keyword">*</span><span class="keyword">*</span>
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目錄</strong>
  
- <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Smooth_As_Silk"><span class="toc-number">1.</span> <span class="toc-text">Smooth As Silk</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Pollard_p-1因子分解法"><span class="toc-number">1.0.1.</span> <span class="toc-text">Pollard p-1因子分解法</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#实际的Pollard_p-1"><span class="toc-number">1.0.2.</span> <span class="toc-text">实际的Pollard p-1</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Rail_Fence_Cipher"><span class="toc-number">2.</span> <span class="toc-text">Rail Fence Cipher</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#URE"><span class="toc-number">3.</span> <span class="toc-text">URE</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#High-speed_RSA_Keygen"><span class="toc-number">4.</span> <span class="toc-text">High-speed RSA Keygen</span></a></li></ol>
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Smooth_As_Silk"><span class="toc-number">1.</span> <span class="toc-text">Smooth As Silk</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Pollard_p-1因子分解法"><span class="toc-number">1.0.1.</span> <span class="toc-text">Pollard p-1因子分解法</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#实际的Pollard_p-1"><span class="toc-number">1.0.2.</span> <span class="toc-text">实际的Pollard p-1</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Rail_Fence_Cipher"><span class="toc-number">2.</span> <span class="toc-text">Rail Fence Cipher</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#URE"><span class="toc-number">3.</span> <span class="toc-text">URE</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#High-speed_RSA_Keygen"><span class="toc-number">4.</span> <span class="toc-text">High-speed RSA Keygen</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Impossible_Game"><span class="toc-number">5.</span> <span class="toc-text">Impossible Game</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Hail_Zeus"><span class="toc-number">6.</span> <span class="toc-text">Hail Zeus</span></a></li></ol>
  
   </div>
 
