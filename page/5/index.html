@@ -81,7 +81,7 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/2015/11/02/AlicesPrintSerive_二分/" title="Alice&#39;s Print Service 二分" itemprop="url">Alice&#39;s Print Service 二分</a>
+      <a href="/2015/11/02/OsaisenChoudai/" title="Osaisen Choudai" itemprop="url">Osaisen Choudai</a>
   </h1>
   <p class="article-author">By
        
@@ -94,51 +94,189 @@
 </header>
     <div class="article-content">
         
-        <p>Alice’s Print Service<br>Time Limit: 1000MS        Memory Limit: 32768KB        64bit IO Format: %I64d &amp; %I64u<br>Submit</p>
+        <p>Osaisen Choudai!<br>Time Limit: 3000MS        Memory Limit: 65536KB        64bit IO Format: %lld &amp; %llu<br>Submit</p>
 <p>Status</p>
-<p>Description<br>Alice is providing print service, while the pricing doesn’t seem to be reasonable, so people using her print service found some tricks to save money.<br>For example, the price when printing less than 100 pages is 20 cents per page, but when printing not less than 100 pages, you just need to pay only 10 cents per page. It’s easy to figure out that if you want to print 99 pages, the best choice is to print an extra blank page so that the money you need to pay is 100 × 10 cents instead of 99 × 20 cents.<br>Now given the description of pricing strategy and some queries, your task is to figure out the best ways to complete those queries in order to save money.</p>
-<p>Input<br>The first line contains an integer T (≈ 10) which is the number of test cases. Then T cases follow.<br>Each case contains 3 lines. The first line contains two integers n, m (0 &lt; n, m ≤ 10 5 ). The second line contains 2n integers s 1, p 1 , s 2, p 2 , …, s n, p n (0=s 1 &lt; s 2 &lt; … &lt; s n ≤ 10 9 , 10 9 ≥ p 1 ≥ p 2 ≥ … ≥ p n ≥ 0).. The price when printing no less than s i but less than s i+1 pages is p i cents per page (for i=1..n-1). The price when printing no less than s n pages is p n cents per page. The third line containing m integers q 1 .. q m (0 ≤ q i ≤ 10 9 ) are the queries.</p>
-<p>Output<br>For each query q i, you should output the minimum amount of money (in cents) to pay if you want to print q i pages, one output in one line.</p>
-<p>Sample Input<br> 1<br>2 3<br>0 20 100 10<br>0 99 100 </p>
-<p>Sample Output<br> 0<br>1000<br>1000 </p>
-<p>Source<br>2013 Asia Changsha Regional Contest</p>
-<p>打印必须选择页数大于q的方案，如果选择页数刚好大于q的方案（即s[i]&lt;=q&lt;s[i+1]）方案，可以只打印q页，否则必须打印s[i]页（价格为s[i]*p[i]）。后者是区间最小值问题，用二分解决。再与前者比较选较小即可。</p>
-<pre><code><span class="preprocessor">#<span class="keyword">include</span> &lt;cstdio&gt;</span>
-<span class="preprocessor">#<span class="keyword">include</span> &lt;algorithm&gt;</span>
-<span class="preprocessor">#<span class="keyword">include</span> &lt;iostream&gt;</span>
-<span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;
+<p>Description<br>A saisenbako (賽銭箱, offertory, or religious collection box) is situated in front of the hall of Hakurei Shrine. Hakurei Reimu (博麗霊夢), the miko of Hakurei Shrine, may ask the friends who are visting her to throw some saisen (賽銭, offerings, or coins) into it. Reimu wants as much saisen as possible. Howerver, she cannot ask for saisen too frequently, because this will make her friends refuse to offer any more. On the other hand, if she doesn’t ask for saisen for a very long period, her friends will become not be willing to offer any more. Generally, at the i-th day, if she asks for saisen, then she will get sisaisen, what’s more, she cannot ask again for xi days (including the i-th day), and she should ask again in yi days (including the i-th day).</p>
+<p>Given si, xi and yi for n days, how much saisen can Reimu get at most in these days if she asks saisen at the first day?</p>
+<p>Input<br>The are multiple cases. Each case begins with a line of integer 0 &lt; n &lt; 50000, then n lines, each contains 3 positive integers: si, and xi &lt; yi. Process to the end of file.</p>
+<p>Output<br>For each test cases, output an integer, the maximun amount of saisen Reimu can get, in a seperate line. It’s guaranteed that the answer always fit into a 32-bit signed integer.</p>
+<p>Sample Input<br>3<br>1 1 2<br>2 2 3<br>3 3 4<br>3<br>1 1 3<br>2 2 4<br>3 3 5<br>4<br>10 3 10<br>7 1 7<br>5 2 5<br>1 1 2<br>5<br>1 1 9<br>10 3 10<br>7 1 7<br>5 2 5<br>1 1 2<br>Sample Output<br>3<br>4<br>11<br>13</p>
+<p>线段树优化dp，可是二维暴力居然过了。</p>
+<pre><code>include &lt;cstdio&gt;
 
-<span class="keyword">typedef</span> <span class="keyword">long</span> <span class="keyword">long</span> ll;
+<span class="keyword">int</span> f[<span class="number">50010</span>];
+<span class="keyword">int</span> s[<span class="number">50010</span>];
+<span class="keyword">int</span> x[<span class="number">50010</span>];
+<span class="keyword">int</span> y[<span class="number">50010</span>];
 
-<span class="keyword">const</span> <span class="keyword">int</span> N = <span class="number">100010</span>;
-<span class="keyword">int</span> n,m;
-ll a[N],s[N],t[N];
+<span class="function"><span class="keyword">inline</span> <span class="keyword">int</span> <span class="title">max</span><span class="params">(<span class="keyword">int</span> a,<span class="keyword">int</span> b)</span></span>{
+    <span class="keyword">return</span> a &gt; b?a : b;
+}
+
+<span class="function"><span class="keyword">inline</span> <span class="keyword">int</span> <span class="title">min</span><span class="params">(<span class="keyword">int</span> a,<span class="keyword">int</span> b)</span></span>{
+    <span class="keyword">return</span> a &lt; b?a : b;
+}
 
 <span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span>{
-    <span class="keyword">int</span> T;
-    <span class="built_in">scanf</span>(<span class="string">"%d"</span>,&amp;T);
-    <span class="keyword">while</span> (T--){
-        <span class="built_in">scanf</span>(<span class="string">"%d%d"</span>,&amp;n,&amp;m);
-        <span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;n;i++){
-            <span class="built_in">scanf</span>(<span class="string">"%lld%lld"</span>,s+i,t+i);
-            a[i] = s[i]*t[i];
-        }
-        a[n] = <span class="number">0x3f3f3f3f3f3f3f3f</span>ll;
-        <span class="keyword">for</span> (<span class="keyword">int</span> i=n-<span class="number">2</span>;i&gt;-<span class="number">1</span>;i--){
-            a[i] = a[i]&lt;a[i+<span class="number">1</span>]?a[i]:a[i+<span class="number">1</span>];
-        }
-        <span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;m;i++){
-            ll q;
-            <span class="built_in">scanf</span>(<span class="string">"%lld"</span>,&amp;q);
-            <span class="keyword">int</span> ind = upper_bound(s,s+n,q)-s;
-            ll ans = t[ind-<span class="number">1</span>]*q;
-            <span class="keyword">if</span> (ans &gt; a[ind]) ans = a[ind];
+    <span class="keyword">int</span> n;
+    <span class="comment">//freopen("fuck","w",stdout);</span>
+    <span class="keyword">while</span> (~<span class="built_in">scanf</span>(<span class="string">"%d"</span>,&amp;n)){
+        <span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;n;i++)
+            <span class="built_in">scanf</span>(<span class="string">"%d%d%d"</span>,s+i,x+i,y+i);
 
-            <span class="built_in">printf</span>(<span class="string">"%lld\n"</span>,ans);
+        <span class="keyword">for</span> (<span class="keyword">int</span> i=n-<span class="number">1</span>;i&gt;-<span class="number">1</span>;i--)
+        {
+            <span class="keyword">int</span> lo = max(i+<span class="number">1</span>,i+x[i]);
+            f[i] = s[i];
+            <span class="keyword">for</span> (<span class="keyword">int</span> j=min(n-<span class="number">1</span>,i+y[i]-<span class="number">1</span>);j&gt;=lo;j--){
+                f[i] = max(f[i],f[j]+s[i]);
+            }
         }
+
+        <span class="comment">/*
+           int ans = 0;
+           for (int i=0;i&lt;n;i++)
+           ans = max(ans,f[i]);
+         */</span>
+        <span class="keyword">int</span> ans = f[<span class="number">0</span>];
+        <span class="built_in">printf</span>(<span class="string">"%d\n"</span>,ans);
     }
+
     <span class="keyword">return</span> <span class="number">0</span>;
 }
+</code></pre>
+        
+        
+        <p class="article-more-link">
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/ACM/">ACM</a>
+</div>
+
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2015/11/02/CityHorizon_矩形切割/" title="City Horizon" itemprop="url">City Horizon</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="Donald Wu" target="_blank" itemprop="author">Donald Wu</a>
+		
+  <p class="article-time">
+    <time datetime="2015-11-02T10:42:59.327Z" itemprop="datePublished"> 發表於 2015-11-02</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>Description<br>Farmer John has taken his cows on a trip to the city! As the sun sets, the cows gaze at the city horizon and observe the beautiful silhouettes formed by the rectangular buildings.</p>
+<p>The entire horizon is represented by a number line with N (1 ≤ N ≤ 40,000) buildings. Building i’s silhouette has a base that spans locations Ai through Bi along the horizon (1 ≤ Ai &lt; Bi ≤ 1,000,000,000) and has height Hi (1 ≤ Hi ≤ 1,000,000,000). Determine the area, in square units, of the aggregate silhouette formed by all N buildings.</p>
+<p>Input<br>Line 1: A single integer: N<br>Lines 2.. N+1: Input line i+1 describes building i with three space-separated integers: Ai, Bi, and Hi<br>Output<br>Line 1: The total area, in square units, of the silhouettes formed by all N buildings<br>Sample Input<br>4<br>2 5 1<br>9 10 4<br>6 8 2<br>4 6 3<br>Sample Output<br>16<br>Hint<br>The first building overlaps with the fourth building for an area of 1 square unit, so the total area is just 3<em>1 + 1</em>4 + 2<em>2 + 2</em>3 - 1 = 16.<br>Source<br>USACO 2007 Open Silver</p>
+<hr>
+<p>矩形切割模板题，代码太容易理解了，就是当前枚举到：前k个矩形划分出来的某一个小块，如果不被后面的矩形切割了，便加入答案，否则继续切割。</p>
+<pre><code><span class="preprocessor">#<span class="keyword">include</span> &lt;stdio.h&gt;  </span>
+<span class="preprocessor">#<span class="keyword">include</span> &lt;string.h&gt;  </span>
+<span class="preprocessor">#<span class="keyword">include</span> &lt;algorithm&gt;  </span>
+
+<span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;  
+
+<span class="preprocessor">#<span class="keyword">define</span> ll long long </span>
+
+<span class="keyword">const</span> <span class="keyword">int</span> N = <span class="number">40010</span>;  
+
+<span class="keyword">struct</span> Build
+{  
+    ll x1,y1;  
+    ll x2,y2;  
+    ll sum;  
+
+    <span class="keyword">bool</span> <span class="keyword">operator</span>&lt;(<span class="keyword">const</span> Build&amp; b2)<span class="keyword">const</span> {
+        <span class="keyword">if</span> (y2 != b2.y2)
+            <span class="keyword">return</span> y2&lt;b2.y2;
+        <span class="keyword">if</span> (x2 != b2.x2)
+            <span class="keyword">return</span> x2&lt;b2.x2;
+        <span class="keyword">return</span> x1&gt;b2.x1;
+    }
+};
+Build building[N];
+
+ll n;  
+
+<span class="function"><span class="keyword">void</span> <span class="title">Cover</span><span class="params">(ll x1,ll y1,ll x2,ll y2,ll k,ll c)</span></span>{  
+    <span class="keyword">while</span>(k&lt;n&amp;&amp;(x1&gt;=building[k].x2||x2&lt;=building[k].x1||y1&gt;=building[k].y2||y2&lt;=building[k].y1)) k++;
+    <span class="keyword">if</span>(k&gt;=n){  
+        building[c].sum+=(x2-x1)*(y2-y1);  
+        <span class="keyword">return</span>;  
+    }  
+    <span class="keyword">if</span>(x1&lt;building[k].x1){  
+        Cover(x1,y1,building[k].x1,y2,k+<span class="number">1</span>,c);  
+        x1=building[k].x1;  
+    }  
+    <span class="keyword">if</span>(x2&gt;building[k].x2){  
+        Cover(building[k].x2,y1,x2,y2,k+<span class="number">1</span>,c);  
+        x2=building[k].x2;  
+    }  
+    <span class="keyword">if</span>(y1&lt;building[k].y1){  
+        Cover(x1,y1,x2,building[k].y1,k+<span class="number">1</span>,c);  
+        y1=building[k].y1;  
+    }  
+    <span class="keyword">if</span>(y2&gt;building[k].y2){  
+        Cover(x1,building[k].y2,x2,y2,k+<span class="number">1</span>,c);  
+        y2=building[k].y2;  
+    }  
+}  
+
+<span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span>{  
+    ll i;  
+    ll a,b,c;  
+    <span class="keyword">while</span>(~<span class="built_in">scanf</span>(<span class="string">"%lld"</span>,&amp;n)){  
+        <span class="keyword">for</span>(i=<span class="number">0</span>;i&lt;n;i++){  
+            <span class="built_in">scanf</span>(<span class="string">"%lld%lld%lld"</span>,&amp;a,&amp;b,&amp;c);  
+            building[i].x1=a;  
+            building[i].y1=<span class="number">0</span>;  
+            building[i].x2=b;  
+            building[i].y2=c;  
+            building[i].sum=<span class="number">0</span>;  
+        }  
+        sort(building,building+n);  
+        <span class="keyword">for</span>(i=n-<span class="number">1</span>;i&gt;=<span class="number">0</span>;i--)  
+            Cover(building[i].x1,building[i].y1,building[i].x2,building[i].y2,i+<span class="number">1</span>,i);  
+        ll ans=<span class="number">0</span>;  
+        <span class="keyword">for</span>(i=<span class="number">0</span>;i&lt;n;i++)  
+            ans+=building[i].sum;  
+        <span class="built_in">printf</span>(<span class="string">"%lld\n"</span>,ans);  
+    }  
+    <span class="keyword">return</span> <span class="number">0</span>;  
+}  
 </code></pre>
         
         
@@ -367,61 +505,6 @@ ll a[N],s[N],t[N];
 <div class="article-categories">
   <span></span>
   <a class="article-category-link" href="/categories/Programming/">Programming</a>
-</div>
-
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2015/03/26/Omnetpp-4-6折腾笔记/" title="Omnetpp-4.6折腾笔记" itemprop="url">Omnetpp-4.6折腾笔记</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="Donald Wu" target="_blank" itemprop="author">Donald Wu</a>
-		
-  <p class="article-time">
-    <time datetime="2015-03-25T16:05:37.000Z" itemprop="datePublished"> 發表於 2015-03-26</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <h1 id="仿真软件Omnet++4-6的安装">仿真软件Omnet++4.6的安装</h1><p>先装tcl/tk，貌似跟图形界面有关。<br>编译omnet++，中途会遇到mpi等问题，但是可以忽略，毕竟是个人电脑。<br>运行不了，两个原因，java的预取bug，通过在ide/omnetpp.ini中加入-XX:-UseLoopPredicate解决。另一个问题，一堆GLib-CRITICAL错误，是GTK 2和GTK 3的兼容问题，export SWT_GTK3=0<br>tcl/tk中途老是链接不上。添加/usr/local/lib/到/etc/ld.so.conf中，/sbin/ldconfig<br>Source Sink范例程序必须在build inet工程之后才能build</p>
-
-        
-        
-        <p class="article-more-link">
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-<div class="article-categories">
-  <span></span>
-  <a class="article-category-link" href="/categories/Networking/">Networking</a>
 </div>
 
 

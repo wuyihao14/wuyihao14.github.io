@@ -81,6 +81,61 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/2015/03/26/Omnetpp-4-6折腾笔记/" title="Omnetpp-4.6折腾笔记" itemprop="url">Omnetpp-4.6折腾笔记</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="Donald Wu" target="_blank" itemprop="author">Donald Wu</a>
+		
+  <p class="article-time">
+    <time datetime="2015-03-25T16:05:37.000Z" itemprop="datePublished"> 發表於 2015-03-26</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <h1 id="仿真软件Omnet++4-6的安装">仿真软件Omnet++4.6的安装</h1><p>先装tcl/tk，貌似跟图形界面有关。<br>编译omnet++，中途会遇到mpi等问题，但是可以忽略，毕竟是个人电脑。<br>运行不了，两个原因，java的预取bug，通过在ide/omnetpp.ini中加入-XX:-UseLoopPredicate解决。另一个问题，一堆GLib-CRITICAL错误，是GTK 2和GTK 3的兼容问题，export SWT_GTK3=0<br>tcl/tk中途老是链接不上。添加/usr/local/lib/到/etc/ld.so.conf中，/sbin/ldconfig<br>Source Sink范例程序必须在build inet工程之后才能build</p>
+
+        
+        
+        <p class="article-more-link">
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Networking/">Networking</a>
+</div>
+
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/2015/03/11/MIC高性能计算编程指南-总结/" title="MIC高性能计算编程指南_总结" itemprop="url">MIC高性能计算编程指南_总结</a>
   </h1>
   <p class="article-author">By
@@ -250,72 +305,6 @@
 <div class="article-categories">
   <span></span>
   <a class="article-category-link" href="/categories/Server/">Server</a>
-</div>
-
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2015/02/20/在Github上建立我的博客-四/" title="在Github上建立我的博客(四)——添加Latex支持" itemprop="url">在Github上建立我的博客(四)——添加Latex支持</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="Donald Wu" target="_blank" itemprop="author">Donald Wu</a>
-		
-  <p class="article-time">
-    <time datetime="2015-02-19T17:25:20.000Z" itemprop="datePublished"> 發表於 2015-02-20</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <p>npm install hexo-math —save<br>hexo math install</p>
-<p>在_config.yml中添加：<br>plugins: </p>
-<ul>
-<li>hexo-math</li>
-</ul>
-<hr>
-<p>遇到了几个需要手工escape的地方：</p>
-<ul>
-<li>两个{不能连写</li>
-<li>_前面要加\</li>
-<li>所有的求和公式求和的部分必须用{}括起来</li>
-</ul>
-
-        
-        
-        <p class="article-more-link">
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-<div class="article-categories">
-  <span></span>
-  <a class="article-category-link" href="/categories/Just4Fun/">Just4Fun</a>
 </div>
 
 
