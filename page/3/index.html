@@ -81,7 +81,7 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/2015/11/02/在Github上建立我的博客-一/" title="在Github上建立我的博客(一)——基本" itemprop="url">在Github上建立我的博客(一)——基本</a>
+      <a href="/2015/11/02/Alictf2015Writeup/" title="Alictf 2015 盗窃Writeup" itemprop="url">Alictf 2015 盗窃Writeup</a>
   </h1>
   <p class="article-author">By
        
@@ -94,15 +94,34 @@
 </header>
     <div class="article-content">
         
-        <p>ssh-keygen -t rsa<br>把id_rsa.pub粘贴到github里去<br>ssh -T git@github.com<br>提示id_rsa的others权限过高，于是改成600</p>
-<hr>
-<p>mkdir blog 建立文件夹<br>cd blog/<br>echo “# wuyihao14.github.io” &gt;&gt; README.md 创建README<br>git init 初始化git<br>git remote add origin git@github.com:wuyihao14/wuyihao14.github.io.git 在github上添加repository，origin是默认的远程版本库名称</p>
-<p>touch a    添加文件<br>git add a 添加到repository中<br>git commit -m “first commit” 提交更改<br>git push -u origin master 推送到github</p>
-<p>hexo init 创建hexo博客<br>npm install 下载modules<br>hexo g  生成静态文件，因为github只支持静态，hexo d部署，只会提交.deploy文件夹，也就是只有静态文件，合并为hexo d -g。hexo s预览</p>
-<hr>
-<p>这些在本博客中都用不上<br>git add  -f 强制添加所有文件<br>git commit -m “Set up Blog”<br>git push -u origin master </p>
-<hr>
-<p>git remote remove origin 有时候会提醒已存在origin<br>error:src refspec master does not match any 这个错误说明提交的空目录<br>[error] Deployer not found: null 因为没有配置deployer<br>修改_config.yml<br>deploy:<br>  type: github<br>  repository: <a href="https://github.com/wuyihao14/wuyihao14.github.io.git" target="_blank" rel="external">https://github.com/wuyihao14/wuyihao14.github.io.git</a><br>  branch: master<br>但是这样之后每次都要求输入密码，有什么办法?</p>
+        <h2 id="0x00_Cake">0x00 Cake</h2><p>异或加密</p>
+<h2 id="0x01_绕过云WAF1">0x01 绕过云WAF1</h2><p>总结别人的思路：</p>
+<h3 id="域名md5解码后是cdn，暗示此题要求找出背后真正的IP。">域名md5解码后是cdn，暗示此题要求找出背后真正的IP。</h3><ol>
+<li>方法一: <a href="http://zone.wooyun.org/content/18058" target="_blank" rel="external">http://zone.wooyun.org/content/18058</a>.<ol>
+<li>上apnic上过滤出全中国的ip段</li>
+<li>使用zmap扫描所有ip的80端口</li>
+<li>使用zmap的example的banner-grab对扫描出来的ip进行banner抓取.由于是要绕过cdn,因此http-req里host应该填对外的这个域名(我不知道改怎么叫它).</li>
+<li>过滤出banner相似的页面,用一定关键字,比如alictf<br>这样大面积撒网找到真正的ip.缺点是太慢,而且apnic上抓的数据要求够新.而且我至今没有得到一个正确的结果。。。</li>
+</ol>
+</li>
+<li>方法二:<ol>
+<li>由于提示说了在.alictf.com的子域名下,所以可以尝试fuzz子域名.</li>
+<li>我找了一个什么基于google的什么鬼字典,3w条记录.fuzz到video.alictf.com.和前一种方法结果差不多.<br>找到之后还可以放进hosts解析.<br>还有一种方法叫全球ping,算是一种暴力方法吧,按照cdn的本质.<br>绕过了WAF之后,可以sqlmap注入,不知道为什么我一直不成功.</li>
+</ol>
+</li>
+</ol>
+<h2 id="0x02_前端初赛题1:_http://drops-wooyun-org/tips/3059">0x02 前端初赛题1: <a href="http://drops.wooyun.org/tips/3059" target="_blank" rel="external">http://drops.wooyun.org/tips/3059</a></h2><p>xss。点号，括号，等于号都被过滤掉，html标签不会被过滤。\<svg\>\</svg\>标签内的内容会被解html编码,于是我们用svg来包装.由于我不明白的原因(也许是仍然会被过滤),还需要再把中间的内容urlencode一次.</p>
+<h2 id="0x03_前端初赛题2:_http://drops-wooyun-org/tips/2924">0x03 前端初赛题2: <a href="http://drops.wooyun.org/tips/2924" target="_blank" rel="external">http://drops.wooyun.org/tips/2924</a></h2><p>要导致url手工解析和库函数解析的结果不同</p>
+<ol>
+<li>思路一：不通过url传参，用html加载flash，用FlashVars传参，我没有尝试过。不能成功。</li>
+<li>思路二：<a href="http://drops.wooyun.org/papers/948。flash会丢弃两个出现在%后面的无效十六进制字符。这样可以导致手工通过找%来parse的方法比正常情况多出几个字符。" target="_blank" rel="external">http://drops.wooyun.org/papers/948。flash会丢弃两个出现在%后面的无效十六进制字符。这样可以导致手工通过找%来parse的方法比正常情况多出几个字符。</a><br>由于swf运行在虚拟机上，异常会显示在console里，我们可以根据这个反馈信息来构造我们的xss，首先闭合掉括号，然后append一个img，然后补上catch，然后注释掉剩余字符。</li>
+</ol>
+<h2 id="0x04_前端初赛题3:">0x04 前端初赛题3:</h2><p>审计js代码。首先很容易实现认证为notexist.example.com，而url为更长的内容。<br>我尝试构造出notexist.example.com，而url为xss，失败了。<br>原来是利用@的功能，@之前用:隔开用户名和密码。会被自动截掉，剩余部分是最终url。<br>同样可以根据console来修改xss。<br>参考别人的writeup分析流程:<br>    将第一个@前面的内容作为基础认证信息，之后的内容作为域名:端口。<br>    但是如果最后一个:之后不是数字，而是@domain.com，浏览器会把这一部分作为域名，之前的部分作为基础认证信息，绕过检查，加载自己域名下的JS。</p>
+<h2 id="0x05_简单业务逻辑:">0x05 简单业务逻辑:</h2><p>注册覆盖Admin，购买的时候抓包，修改数量为负数。</p>
+<h2 id="0x06_谁偷了你的站内短信">0x06 谁偷了你的站内短信</h2><p>这道题相当简单了，格式化字符串漏洞。可惜getFlag函数被我忽略了。<br>格式化字符串有点麻烦的地方是，不能出现0x0，即使是高位为0的整数。<br>不过这道题不用考虑这么多，我的ROP链也不知到哪里不对，不能越过DEP。这道题只需要跳到getflag，甚至不用恢复栈。<br>参考别人的代码时，发现用readUntil比我写的sleep好多了，这样更有可控性。zio也是一个挺好的工具。</p>
+<h2 id="0x07_密码宝宝">0x07 密码宝宝</h2><p>upx -d脱壳后任然不能调试。（有人说在xp下就能调试了。。。什么时候研究一下根据esp手动脱壳。。）。花指令很多，很难静态分析。在GetWindowTextA下断点，然后跟到用户代码。别人好多都是关注堆的变化，最后flag明文写在堆里。这样的话，我确实走了很多弯路，最后是根据逻辑算出来的flag。</p>
+<h2 id="0x08_渗透绕过WAF2">0x08 渗透绕过WAF2</h2><p>提示需要内部访问，于是 fuzz IP：<br>. 192.168.x.x<br>. 10.x.x.x<br>. 172.16.x.x<br>这个叫什么特殊ip，最近课上学了。还没太搞明白。<br>10开头的可以访问，然后注入，不知道为什么一直不能获得information_schema里的信息，然而版本又是&gt;=5.5，不懂了。T_T。。</p>
+<font color="red">好多题比赛结束后就做不了了，有的题很好，可惜了。以后需要多看一下知识库。</font>
 
         
         
@@ -115,7 +134,236 @@
 
 <div class="article-categories">
   <span></span>
-  <a class="article-category-link" href="/categories/Just4Fun/">Just4Fun</a>
+  <a class="article-category-link" href="/categories/CTF/">CTF</a>
+</div>
+
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2015/11/02/AttackTheNEETPrincess/" title="Attack the NEET princess 双连通分量" itemprop="url">Attack the NEET princess 双连通分量</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="Donald Wu" target="_blank" itemprop="author">Donald Wu</a>
+		
+  <p class="article-time">
+    <time datetime="2015-11-02T10:42:59.331Z" itemprop="datePublished"> 發表於 2015-11-02</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>Attack the NEET Princess<br>Time Limit: 9000MS        Memory Limit: 65536KB        64bit IO Format: %lld &amp; %llu<br>Submit</p>
+<p>Status</p>
+<p>Description<br>Houraisan Kaguya (蓬萊山輝夜) is the NEET (not in education, employment or training) princess living in Eientei (永遠亭). She is an unemployed geek, who sits at home and surfs the Internet all day. But today is different, as the Hakurei Shrine Reitaisai Festival (博麗神社例大祭) will be hosted in Hakurei Shrine, Kaguya decides to go to buy some new doujin games.</p>
+<p>Fujiwara no Mokou (藤原妹紅) detests Kaguya, and has been planing to attack her for a long time. But she nerver got the chance before because Kaguya kept staying in Eientei, under the protection of Yagokoro Eirin (八意永琳). Knowing that Kaguya will go outside today, Mokou decides to wait on certain road and attack her once she passes there. Mokou don’t know which path Kaguya will choose, but she thinks that there always exits some roads where she can always meet Kaguya.</p>
+<p>Input<br>There are multiple cases. Each case begins with two integers 2 ≤ n ≤ 10000 — the number of villages and 2 ≤ m ≤ 100000 — the number of roads. Then m lines, each contains two integers a and b (0 ≤ a, b &lt; n), indicating a road connecting village a and village b. Village 0 is Eientei and Village n-1 is Hakurei Shrine. They are always connected by roads. There may be more than one roads between two villages.</p>
+<p>Output<br>Find out the roads where Mokou can always meet Kaguya. For each case, output the number of roads in the first line, then output the numbers of the roads in ascending order in the second line.</p>
+<p>Sample Input<br>3 2<br>0 1<br>1 2</p>
+<p>7 8<br>0 1<br>0 2<br>1 3<br>2 3<br>3 4<br>3 5<br>4 6<br>5 6</p>
+<p>Sample Output<br>2<br>0 1<br>0</p>
+<p>无向图找桥，再筛选一下桥，筛选的时候，注意到新的图变成了一棵树，因此遍历一次树即可，不需要回溯</p>
+<pre><code><span class="preprocessor">#<span class="keyword">include</span>&lt;cstdio&gt;</span>
+<span class="preprocessor">#<span class="keyword">include</span>&lt;algorithm&gt;</span>
+<span class="preprocessor">#<span class="keyword">include</span>&lt;cstring&gt;</span>
+<span class="keyword">using</span> std::sort;
+<span class="keyword">const</span> <span class="keyword">int</span> N=<span class="number">10010</span>;
+<span class="keyword">const</span> <span class="keyword">int</span> M=<span class="number">100010</span>;
+
+<span class="keyword">struct</span> EDGE
+{
+    <span class="keyword">int</span> v,next,i;
+};
+EDGE edge[M*<span class="number">2</span>],edge2[M*<span class="number">2</span>];
+<span class="keyword">bool</span> vis[N];
+
+<span class="keyword">int</span> first[N],low[N],dfn[N],belong[N],degree[N],sta[M],instack[M],first2[N];
+<span class="keyword">int</span> g,cnt,top,scc,g2;
+<span class="function"><span class="keyword">int</span> <span class="title">min</span><span class="params">(<span class="keyword">int</span> a,<span class="keyword">int</span> b)</span>
+</span>{
+    <span class="keyword">return</span> a&lt;b?a:b;
+}
+<span class="function"><span class="keyword">void</span> <span class="title">AddEdge</span><span class="params">(<span class="keyword">int</span> u,<span class="keyword">int</span> v)</span>
+</span>{
+    edge[g].v=v;
+    edge[g].next=first[u];
+    first[u]=g++;
+}
+<span class="function"><span class="keyword">void</span> <span class="title">AddEdge2</span><span class="params">(<span class="keyword">int</span> u,<span class="keyword">int</span> v,<span class="keyword">int</span> i)</span>
+</span>{
+    edge2[g2].v=v;
+    edge2[g2].i=i;
+    edge2[g2].next=first2[u];
+    first2[u]=g2++;
+}
+<span class="function"><span class="keyword">void</span> <span class="title">Tarjan</span><span class="params">(<span class="keyword">int</span> u,<span class="keyword">int</span> fa)</span>
+</span>{
+    <span class="keyword">int</span> i,v;
+    low[u]=dfn[u]=++cnt;
+    sta[++top]=u;
+    instack[u]=<span class="number">1</span>;
+    <span class="keyword">for</span>(i=first[u];i!=-<span class="number">1</span>;i=edge[i].next)
+    {
+        v=edge[i].v;
+        <span class="keyword">if</span>(i==(fa^<span class="number">1</span>))
+            <span class="keyword">continue</span>;
+        <span class="keyword">if</span>(!dfn[v])
+        {
+            Tarjan(v,i);
+            low[u]=min(low[u],low[v]);
+        }
+        <span class="function"><span class="keyword">else</span> <span class="title">if</span><span class="params">(instack[v])</span>
+            low[u]</span>=min(low[u],dfn[v]);
+    }
+    <span class="keyword">if</span>(dfn[u]==low[u])
+    {
+        scc++;
+        <span class="keyword">while</span>(<span class="number">1</span>)
+        {
+            v=sta[top--];
+            instack[v]=<span class="number">0</span>;
+            belong[v]=scc;
+            <span class="keyword">if</span>(v==u)
+                <span class="keyword">break</span>;
+        }
+    }
+}
+
+<span class="keyword">int</span> que[M];
+<span class="keyword">int</span> rear = <span class="number">0</span>;
+<span class="function"><span class="keyword">void</span> <span class="title">output</span><span class="params">(<span class="keyword">int</span> a)</span></span>{
+    que[rear++] = a;
+}
+
+<span class="keyword">int</span> n,m;
+<span class="function"><span class="keyword">bool</span> <span class="title">dfs</span><span class="params">(<span class="keyword">int</span> u,<span class="keyword">int</span> fa)</span></span>{
+    <span class="keyword">int</span> i,v;
+    vis[u] = <span class="keyword">true</span>;
+    <span class="keyword">if</span> (u == belong[n])
+        <span class="keyword">return</span> <span class="keyword">true</span>;
+    <span class="keyword">for</span>(i=first2[u];i!=-<span class="number">1</span>;i=edge2[i].next)
+    {
+        <span class="comment">//printf("%d\n",i);</span>
+        v=edge2[i].v;
+        <span class="keyword">if</span> (vis[v])
+            <span class="keyword">continue</span>;
+        <span class="keyword">if</span>(i==(fa^<span class="number">1</span>))
+            <span class="keyword">continue</span>;
+        <span class="keyword">if</span> (dfs(v,i)){
+            output(edge2[i].i);
+            <span class="keyword">return</span> <span class="keyword">true</span>;
+        }
+    }
+    <span class="keyword">return</span> <span class="keyword">false</span>;
+}
+
+<span class="keyword">int</span> _edge[M][<span class="number">2</span>];
+
+<span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span>
+</span>{
+    <span class="keyword">int</span> u,v,i;
+    <span class="keyword">while</span> (~<span class="built_in">scanf</span>(<span class="string">"%d%d"</span>,&amp;n,&amp;m)){
+        g=cnt=top=scc=<span class="number">0</span>;
+        <span class="built_in">memset</span>(first,-<span class="number">1</span>,<span class="keyword">sizeof</span>(first));
+        <span class="built_in">memset</span>(low,<span class="number">0</span>,<span class="keyword">sizeof</span>(low));
+        <span class="built_in">memset</span>(dfn,<span class="number">0</span>,<span class="keyword">sizeof</span>(dfn));
+        <span class="built_in">memset</span>(instack,<span class="number">0</span>,<span class="keyword">sizeof</span>(instack));
+        <span class="built_in">memset</span>(degree,<span class="number">0</span>,<span class="keyword">sizeof</span>(degree));
+        <span class="keyword">for</span>(i=<span class="number">0</span>;i&lt;m;i++)
+        {
+            <span class="built_in">scanf</span>(<span class="string">"%d%d"</span>,&amp;u,&amp;v);
+            {
+                u ++;
+                v ++;
+                _edge[i][<span class="number">0</span>] = u;
+                _edge[i][<span class="number">1</span>] = v;
+                AddEdge(u,v);
+                AddEdge(v,u);
+            }
+        }
+        <span class="keyword">for</span>(i=<span class="number">1</span>;i&lt;=n;i++)
+            <span class="keyword">if</span>(!dfn[i])
+                Tarjan(i,-<span class="number">1</span>);
+
+        <span class="comment">//printf("DEBUG %d\n",scc);</span>
+        <span class="built_in">memset</span>(first2,-<span class="number">1</span>,<span class="keyword">sizeof</span>(first2));
+        g2 = <span class="number">0</span>;
+        <span class="keyword">for</span> (i=<span class="number">0</span>;i&lt;m;i++){
+            <span class="keyword">int</span> u = belong[_edge[i][<span class="number">0</span>]];
+            <span class="keyword">int</span> v = belong[_edge[i][<span class="number">1</span>]];
+            AddEdge2(u,v,i);
+            AddEdge2(v,u,i);
+        }
+        <span class="built_in">memset</span>(vis,<span class="number">0</span>,<span class="keyword">sizeof</span> vis);
+        rear = <span class="number">0</span>;
+        dfs(belong[<span class="number">1</span>],-<span class="number">1</span>);
+
+        sort(que,que+rear);
+        <span class="built_in">printf</span>(<span class="string">"%d\n"</span>,rear);
+        <span class="comment">//if (rear &gt; 0)</span>
+        {
+            <span class="keyword">for</span> (i=<span class="number">0</span>;i&lt;rear;i++){
+                <span class="built_in">printf</span>(<span class="string">"%d"</span>,que[i]);
+                <span class="keyword">if</span> (i &lt; rear-<span class="number">1</span>)
+                    <span class="built_in">printf</span>(<span class="string">" "</span>);
+            }
+            <span class="built_in">printf</span>(<span class="string">"\n"</span>);
+        }
+    }
+    <span class="comment">/*
+       for(i=1;i&lt;=n;i++)
+       {
+       for(j=first[i];j!=-1;j=edge[j].next)
+       {
+       v=edge[j].v;
+       if(belong[i]!=belong[v])
+       degree[belong[i]]++;
+       }
+       }
+       int sum=0; for(i=1;i&lt;=n;i++)
+       if(degree[i]==1)
+       sum++;
+       int ans=(sum+1)/2;
+       printf("%d\n",ans);
+     */</span>
+    <span class="keyword">return</span> <span class="number">0</span>;
+}
+</code></pre>
+        
+        
+        <p class="article-more-link">
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/ACM/">ACM</a>
 </div>
 
 
@@ -236,7 +484,7 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/2015/11/02/第一次撸站笔记/" title="第一次撸站记录" itemprop="url">第一次撸站记录</a>
+      <a href="/2015/11/02/MayorsPoster_线段树/" title="Mayor&#39;s Poster 线段树" itemprop="url">Mayor&#39;s Poster 线段树</a>
   </h1>
   <p class="article-author">By
        
@@ -249,123 +497,115 @@
 </header>
     <div class="article-content">
         
-        <p>其实不算第一次，上次是imo系统脑残到找回密码时只需前台验证就可以，直接绕过了。</p>
-<p>一直想搞某学校的网站。于是稍微多学了一点东西之后，又来这个网站逛。我想应该首先找留言、登录、上传的地方，上一次在主站登录的地方失利，这一次就找一找别的地方。</p>
-<p>找到一个”教学资源库管理”，不过是另一个地址了，估计是另一个主机吧。进去之后发现很酷炫，有很多不该有的功能（一个教学资源库管理平台为什么要还有山寨vmware workstation呢？）去查了一下，是一个厦门大学的硕士生写的。OrZ。</p>
-<p>弱密码admin,admin，OrZ，我总是不相信会有这些不可思议的傻逼。</p>
-<p>可以上传文件。试了一下，可以上传php文件。含有xss代码的html文件是可以正常访问的，但是没有意义，因为这个数据库是和主站独立的，并且这个网站根本没人用。但是不能正确获取上传上去的php文件的地址（确认是上传成功的，因为能下载下来，只是访问的时候显示404）。于是我去找这个系统的源码，打算审计一下，无奈下载下来的代码和实际的这个很不一样。</p>
-<p>于是另寻他路，这个系统有太多功能了，于是我一个一个地看。。看到有预览功能，还可以自己改代码。。我就添加了一项php，发现它的预览功能其实是用html来包装，所以感觉没什么余地。</p>
-<p>我想是不是.htaccess限制了不能跨域访问php文件（其实是我想多了，高估了这个网管），于是我想是不是要上传一个写了ajax的html上去，那样的话，就有点麻烦了。</p>
-<p>后来得到室友的提醒（其实他也只是说了是不是限制了可以执行的类型，不过不知为何我的脑洞被打开了）。其实只是这台服务器没有装php，运行不了而已，所以显示404，不是限制了。这个系统也是asp的。于是上传了一个asp的web shell上去，能成功打开了。</p>
-<p>nmap扫描了一下，发现3389端口开着。</p>
-<p>kow用菜刀帮我建立了管理员账号，我自己用这个web shell老是不成功，不知道为什么。并且在他的vps上连接上了。貌似一般没有开3389端口时都需要lcx反弹来远控（也就是端口转发。在远端运行一个lcx的监听进程）</p>
-<p>kow告诉我这些webshell都是有后门的，以后只好再另寻他路。</p>
-<p>第一次撸站成功，好有成就感。</p>
-<hr>
-<p>“( ゜- ゜)つロ </p>
-
-        
-        
-        <p class="article-more-link">
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-<div class="article-categories">
-  <span></span>
-  <a class="article-category-link" href="/categories/Security/">Security</a>
-</div>
-
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2015/11/02/Matrix_枚举/" title="Matrix 枚举" itemprop="url">Matrix 枚举</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="Donald Wu" target="_blank" itemprop="author">Donald Wu</a>
-		
-  <p class="article-time">
-    <time datetime="2015-11-02T10:42:59.331Z" itemprop="datePublished"> 發表於 2015-11-02</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <p>Matrix<br>Time Limit: 10000MS        Memory Limit: 131072KB        64bit IO Format: %lld &amp; %llu<br>Submit</p>
+        <p>Mayor’s posters<br>Time Limit: 1000MS        Memory Limit: 65536KB        64bit IO Format: %I64d &amp; %I64u<br>Submit</p>
 <p>Status</p>
-<p>Description<br>A N<em>M coordinate plane ((0, 0)~(n, m)). Initially the value of all N</em>M grids are 0.<br>An operation T(a, b, h, x, y) is defined as follow:</p>
-<ol>
-<li>Select the maximum value in the matrix (x, y) ~ (x+a, y+b), suppose the maximum value is max</li>
-<li>Change all the value in the matrix (x, y) ~ (x+a, y+b) into max+h<br>After C operations, please output the maximum value in the whole N*M coordinate.</li>
-</ol>
-<p>Input<br>The input consists of several cases.<br>For each case, the first line consists of three positive integers N , M and C (N ≤ 1000, M ≤ 1000, C ≤ 1000). In the following C lines, each line consists of 5 non-negative number, ai, bi, hi, xi, yi (0 ≤ hi ≤ 10000, 0 ≤ xi &lt; n, 0 ≤ yi &lt; m).</p>
-<p>Output<br>For each case, output the maximum height.</p>
-<p>Sample Input<br>3 2 2<br>2 1 9 1 1<br>1 1 2 2 1<br>Sample Output<br>11</p>
-<p>二重循环，前i-1个，对第i个造成影响。</p>
-<pre><code>#include &lt;cstdio&gt;
-
-const <span class="keyword">int</span> C = <span class="number">1010</span>;
-
-<span class="keyword">int</span> a[C],b[C],h[C],x[C],y[C];
-
-bool <span class="keyword">cross</span>(<span class="keyword">int</span> i,<span class="keyword">int</span> j){
-    <span class="keyword">int</span> l1 = x[i];
-    <span class="keyword">int</span> l2 = x[j];
-    <span class="keyword">int</span> r1 = x[i]+a[i]-<span class="number">1</span>;
-    <span class="keyword">int</span> r2 = x[j]+a[j]-<span class="number">1</span>;
-    <span class="keyword">int</span> t1 = y[i];
-    <span class="keyword">int</span> t2 = y[j];
-    <span class="keyword">int</span> b1 = y[i]+b[i]-<span class="number">1</span>;
-    <span class="keyword">int</span> b2 = y[j]+b[j]-<span class="number">1</span>;
-    <span class="keyword">return</span> r1&gt;=l2 &amp;&amp; r2&gt;=l1 &amp;&amp; b1&gt;=t2 &amp;&amp; b2&gt;=t1;
+<p>Description<br>The citizens of Bytetown, AB, could not stand that the candidates in the mayoral election campaign have been placing their electoral posters at all places at their whim. The city council has finally decided to build an electoral wall for placing the posters and introduce the following rules:<br>Every candidate can place exactly one poster on the wall.<br>All posters are of the same height equal to the height of the wall; the width of a poster can be any integer number of bytes (byte is the unit of length in Bytetown).<br>The wall is divided into segments and the width of each segment is one byte.<br>Each poster must completely cover a contiguous number of wall segments.</p>
+<p>They have built a wall 10000000 bytes long (such that there is enough place for all candidates). When the electoral campaign was restarted, the candidates were placing their posters on the wall and their posters differed widely in width. Moreover, the candidates started placing their posters on wall segments already occupied by other posters. Everyone in Bytetown was curious whose posters will be visible (entirely or in part) on the last day before elections.<br>Your task is to find the number of visible posters when all the posters are placed given the information about posters’ size, their place and order of placement on the electoral wall.<br>Input<br>The first line of input contains a number c giving the number of cases that follow. The first line of data for a single case contains number 1 &lt;= n &lt;= 10000. The subsequent n lines describe the posters in the order in which they were placed. The i-th line among the n lines contains two integer numbers l i and ri which are the number of the wall segment occupied by the left end and the right end of the i-th poster, respectively. We know that for each 1 &lt;= i &lt;= n, 1 &lt;= l i &lt;= ri &lt;= 10000000. After the i-th poster is placed, it entirely covers all wall segments numbered l i, l i+1 ,… , ri.<br>Output<br>For each input data set print the number of visible posters after all the posters are placed. </p>
+<p>The picture below illustrates the case of the sample input. </p>
+<p>Sample Input<br>1<br>5<br>1 4<br>2 6<br>8 10<br>3 4<br>7 10<br>Sample Output<br>4<br>Source<br>Alberta Collegiate Programming Contest 2003.10.18</p>
+<hr>
+<p>线段树模板题<br>由于1 &lt;= l i &lt;= ri &lt;= 10000000条件的存在，导致建立线段树很困难。<br>然而1 &lt;= n &lt;= 10000，并且意识到两点之间的距离是无用的数据，因此进行离散化。<br>unique和sort是离散化的好帮手。</p>
+<pre><code><span class="flow">if</span> (<span class="built_in">tree</span>[i] != -<span class="number">1</span>){
+    <span class="built_in">tree</span>[i&lt;&lt;<span class="number">1</span>] = <span class="built_in">tree</span>[(i&lt;&lt;<span class="number">1</span>)+<span class="number">1</span>] = <span class="built_in">tree</span>[i];
 }
+</code></pre><p>线段树的lazy处理，一定不要忘了配对的向上传递和向下传递。<br>这样避免了父亲存储了儿子的数据，却把儿子的信息丢掉了的情况（即因为两个儿子数据的不一致而置位-1）</p>
+<pre><code><span class="preprocessor">#<span class="keyword">include</span> &lt;cstdio&gt;</span>
+<span class="preprocessor">#<span class="keyword">include</span> &lt;cstring&gt;</span>
+<span class="preprocessor">#<span class="keyword">include</span> &lt;algorithm&gt;</span>
+<span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;
 
-<span class="keyword">int</span> main(){
-    <span class="keyword">int</span> n,m,c;
-    <span class="keyword">while</span> (~scanf(<span class="string">"%d%d%d"</span>,&amp;n,&amp;m,&amp;c)){
-        <span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;c;i++){
-            scanf(<span class="string">"%d%d%d%d%d"</span>,a+i,b+i,h+i,x+i,y+i);
-            <span class="keyword">int</span> <span class="keyword">max</span> = h[i];
-            <span class="keyword">for</span> (<span class="keyword">int</span> j=<span class="number">0</span>;j&lt;i;j++){
-                <span class="keyword">if</span> (<span class="keyword">cross</span>(i,j) &amp;&amp; h[j]+h[i] &gt; <span class="keyword">max</span>){
-                    <span class="keyword">max</span> = h[j] + h[i];
-                }
-            }
-            h[i] = <span class="keyword">max</span>;
-        }
-        <span class="keyword">int</span> <span class="keyword">max</span> = <span class="number">0</span>;
-        <span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;c;i++){
-            <span class="keyword">max</span> = <span class="keyword">max</span>&lt;h[i]?h[i]:<span class="keyword">max</span>;
-        }
-        printf(<span class="string">"%d\n"</span>,<span class="keyword">max</span>);
+<span class="keyword">const</span> <span class="keyword">int</span> N = <span class="number">10300</span>;
+
+<span class="keyword">bool</span> mark[N];
+<span class="keyword">int</span> hash[<span class="number">10000010</span>];
+<span class="keyword">int</span> tree[N&lt;&lt;<span class="number">4</span>];
+
+<span class="keyword">struct</span> Edge{
+    <span class="keyword">int</span> l,r;
+}edge[N];
+
+<span class="keyword">int</span> point[N&lt;&lt;<span class="number">2</span>];
+<span class="keyword">int</span> psum;
+
+<span class="function"><span class="keyword">void</span> <span class="title">change</span><span class="params">(<span class="keyword">int</span> i,<span class="keyword">int</span> l,<span class="keyword">int</span> r,<span class="keyword">int</span> ll,<span class="keyword">int</span> rr,<span class="keyword">int</span> c)</span></span>{
+    <span class="keyword">int</span> mid = ((l+r)&gt;&gt;<span class="number">1</span>);
+
+    <span class="keyword">if</span> (l&gt;=ll &amp;&amp; r&lt;=rr){
+        tree[i] = c;
+        <span class="keyword">return</span>;
+    }
+    <span class="keyword">if</span> (tree[i] != -<span class="number">1</span>){
+        tree[i&lt;&lt;<span class="number">1</span>] = tree[(i&lt;&lt;<span class="number">1</span>)+<span class="number">1</span>] = tree[i];
     }
 
+    <span class="keyword">if</span> (rr &lt;= mid){
+        change(i&lt;&lt;<span class="number">1</span>, l,mid, ll,rr,c);
+    } <span class="function"><span class="keyword">else</span> <span class="title">if</span> <span class="params">(ll &gt; mid)</span> </span>{
+        change((i&lt;&lt;<span class="number">1</span>)+<span class="number">1</span>, mid+<span class="number">1</span>,r, ll,rr,c);
+    } <span class="keyword">else</span> {
+        change(i&lt;&lt;<span class="number">1</span>, l,mid, ll,mid,c);
+        change((i&lt;&lt;<span class="number">1</span>)+<span class="number">1</span>,mid+<span class="number">1</span>,r,mid+<span class="number">1</span>,rr,c);
+    }
+    <span class="keyword">if</span> (tree[i&lt;&lt;<span class="number">1</span>] == tree[(i&lt;&lt;<span class="number">1</span>)+<span class="number">1</span>] &amp;&amp; tree[i&lt;&lt;<span class="number">1</span>]!=-<span class="number">1</span>){
+        tree[i] = tree[i&lt;&lt;<span class="number">1</span>];
+    }<span class="keyword">else</span>{
+        tree[i] = -<span class="number">1</span>;
+    }
+}
+
+<span class="function"><span class="keyword">void</span> <span class="title">find</span><span class="params">(<span class="keyword">int</span> i,<span class="keyword">int</span> l,<span class="keyword">int</span> r)</span></span>{
+    <span class="keyword">int</span> mid = ((l+r)&gt;&gt;<span class="number">1</span>);
+
+    <span class="keyword">if</span> (tree[i] != -<span class="number">1</span>){
+        mark[tree[i]] = <span class="keyword">true</span>;
+        <span class="keyword">return</span>;
+    }
+    find(i&lt;&lt;<span class="number">1</span>,l,mid);
+    find((i&lt;&lt;<span class="number">1</span>)+<span class="number">1</span>,mid+<span class="number">1</span>,r);
+}
+
+<span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span>{
+    <span class="keyword">int</span> c;
+    <span class="built_in">scanf</span>(<span class="string">"%d"</span>,&amp;c);
+    <span class="keyword">while</span> (c--){
+        <span class="built_in">memset</span>(mark,<span class="number">0</span>,<span class="keyword">sizeof</span> mark);
+        <span class="built_in">memset</span>(tree,<span class="number">0</span>,<span class="keyword">sizeof</span> tree);
+        <span class="built_in">memset</span>(hash,<span class="number">0</span>,<span class="keyword">sizeof</span> hash);
+        psum = <span class="number">0</span>;
+        <span class="keyword">int</span> n;
+
+        <span class="built_in">scanf</span>(<span class="string">"%d"</span>,&amp;n);
+        <span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;n;i++){
+            <span class="keyword">int</span> l,r;
+            <span class="built_in">scanf</span>(<span class="string">"%d%d"</span>,&amp;l,&amp;r);
+            point[psum++] = l;
+            point[psum++] = r;
+            edge[i].l = l;
+            edge[i].r = r;
+        }
+
+        sort(point,point+psum);
+        <span class="keyword">int</span> npsum = unique(point,point+psum)-point;
+
+        <span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;npsum;i++){
+            hash[point[i]] = i+<span class="number">1</span>;
+        }
+
+        <span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;n;i++){
+            edge[i].l = hash[edge[i].l];
+            edge[i].r = hash[edge[i].r];
+
+            change(<span class="number">1</span>,<span class="number">1</span>,npsum,edge[i].l,edge[i].r,i+<span class="number">1</span>);
+        }
+
+        find(<span class="number">1</span>,<span class="number">1</span>,npsum);
+
+        <span class="keyword">int</span> ans = <span class="number">0</span>;
+        <span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">1</span>;i&lt;n+<span class="number">1</span>;i++)
+            <span class="keyword">if</span> (mark[i])
+                ans ++;
+        <span class="built_in">printf</span>(<span class="string">"%d\n"</span>,ans);
+    }
     <span class="keyword">return</span> <span class="number">0</span>;
 }
 </code></pre>
@@ -405,7 +645,7 @@ bool <span class="keyword">cross</span>(<span class="keyword">int</span> i,<span
 
 
   <nav id="page-nav" class="clearfix">
-    <a class="extend prev" rel="prev" href="/page/2/"><span></span>Prev</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/page/4/">4</a><a class="page-number" href="/page/5/">5</a><span class="space">&hellip;</span><a class="page-number" href="/page/7/">7</a><a class="extend next" rel="next" href="/page/4/">Next<span></span></a>
+    <a class="extend prev" rel="prev" href="/page/2/"><span></span>Prev</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/page/4/">4</a><a class="page-number" href="/page/5/">5</a><span class="space">&hellip;</span><a class="page-number" href="/page/8/">8</a><a class="extend next" rel="next" href="/page/4/">Next<span></span></a>
   </nav>
 
 </div>
@@ -466,6 +706,10 @@ bool <span class="keyword">cross</span>(<span class="keyword">int</span> i,<span
 		
 		  
 			<li><a href="/categories/programming/" title="programming">programming<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/pwn/" title="pwn">pwn<sup>1</sup></a></li>
 		  
 		
 		</ul>
