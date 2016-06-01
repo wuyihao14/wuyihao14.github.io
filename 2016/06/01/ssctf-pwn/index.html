@@ -4,22 +4,44 @@
 <head>
   <meta charset="UTF-8">
   
-    <title>Shelter</title>
+    <title>ssctf_pwn | Shelter</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
     
     <meta name="author" content="Donald Wu">
     
 
     
-    <meta name="description">
-<meta property="og:type" content="website">
-<meta property="og:title" content="Shelter">
-<meta property="og:url" content="http://wuyihao14.github.io/index.html">
+    <meta name="description" content="几个月前的比赛题学习晨升牛的题解。
+自己实现的堆管理器的漏洞。这种题目出现的频率比较高。对于我还是算难度比较大的一种。
+分析
+一个很大的堆，可以在其上生成长度最大为32的DWORD数组。
+数组可以溢出一个DWORD，可以读/写。
+该堆没有自动合并碎片的功能，每次分割之后的块大小就固定了。
+有一个排序功能，该排序功能也从堆上分配空间来存储排序结果
+排序结果会被记录，并被链入链表（结构为struct">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ssctf_pwn">
+<meta property="og:url" content="http://wuyihao14.github.io/2016/06/01/ssctf-pwn/index.html">
 <meta property="og:site_name" content="Shelter">
-<meta property="og:description">
+<meta property="og:description" content="几个月前的比赛题学习晨升牛的题解。
+自己实现的堆管理器的漏洞。这种题目出现的频率比较高。对于我还是算难度比较大的一种。
+分析
+一个很大的堆，可以在其上生成长度最大为32的DWORD数组。
+数组可以溢出一个DWORD，可以读/写。
+该堆没有自动合并碎片的功能，每次分割之后的块大小就固定了。
+有一个排序功能，该排序功能也从堆上分配空间来存储排序结果
+排序结果会被记录，并被链入链表（结构为struct">
+<meta property="og:updated_time" content="2016-06-01T13:35:08.859Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Shelter">
-<meta name="twitter:description">
+<meta name="twitter:title" content="ssctf_pwn">
+<meta name="twitter:description" content="几个月前的比赛题学习晨升牛的题解。
+自己实现的堆管理器的漏洞。这种题目出现的频率比较高。对于我还是算难度比较大的一种。
+分析
+一个很大的堆，可以在其上生成长度最大为32的DWORD数组。
+数组可以溢出一个DWORD，可以读/写。
+该堆没有自动合并碎片的功能，每次分割之后的块大小就固定了。
+有一个排序功能，该排序功能也从堆上分配空间来存储排序结果
+排序结果会被记录，并被链入链表（结构为struct">
 
     
     <link rel="alternative" href="/atom.xml" title="Shelter" type="application/atom+xml">
@@ -73,12 +95,10 @@
 </div>
     </header>
     <div id="container">
-      <div id="main">
-
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
   <h1 itemprop="name">
     
       <a href="/2016/06/01/ssctf-pwn/" title="ssctf_pwn" itemprop="url">ssctf_pwn</a>
@@ -92,9 +112,16 @@
     
   </p>
 </header>
-    <div class="article-content">
-        
-        <p>几个月前的比赛题<br>学习晨升牛的题解。</p>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目錄</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#分析"><span class="toc-number">1.</span> <span class="toc-text">分析</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#方法"><span class="toc-number">2.</span> <span class="toc-text">方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#心得"><span class="toc-number">3.</span> <span class="toc-text">心得</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#代码"><span class="toc-number">4.</span> <span class="toc-text">代码</span></a></li></ol>
+		
+		</div>
+		
+		<p>几个月前的比赛题<br>学习晨升牛的题解。</p>
 <p>自己实现的堆管理器的漏洞。<br>这种题目出现的频率比较高。对于我还是算难度比较大的一种。</p>
 <h3 id="分析">分析</h3><ol>
 <li>一个很大的堆，可以在其上生成长度最大为32的DWORD数组。</li>
@@ -216,14 +243,9 @@ def main():
     <span class="keyword">return</span> <span class="number">0</span>
 <span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:
     main()
-</code></pre>
-        
-        
-        <p class="article-more-link">
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
+</code></pre>  
+	</div>
+		<footer class="article-footer clearfix">
 <div class="article-catetags">
 
 <div class="article-categories">
@@ -236,215 +258,43 @@ def main():
 
 
 
-
-<div class="comments-count">
+	<div class="article-share" id="share">
 	
-</div>
+	  <div data-url="http://wuyihao14.github.io/2016/06/01/ssctf-pwn/" data-title="ssctf_pwn | Shelter" data-tsina="null" class="share clearfix">
+	  </div>
+	
+	</div>
+
 
 </footer>
 
-
-    </article>
-
-
-
-
-
-
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2016/05/17/anyun-pwn/" title="anyun_pwn" itemprop="url">anyun_pwn</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="Donald Wu" target="_blank" itemprop="author">Donald Wu</a>
-		
-  <p class="article-time">
-    <time datetime="2016-05-17T08:06:49.000Z" itemprop="datePublished"> 發表於 2016-05-17</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <h2 id="安云的pwn题">安云的pwn题</h2><h3 id="思路">思路</h3><ol>
-<li>运行shellcode</li>
-<li>打开了NX咋办。有mprotect</li>
-<li>把shellcode放到bss</li>
-<li>怎么放？gets</li>
-</ol>
-<h3 id="ELF心得">ELF心得</h3><ol>
-<li>ELF加载的过程中有linker view和loader view，linker view处理segments，而loader view处理sections。</li>
-<li>ELF文件的有的segments会被加载到内存里，并页对齐，因此可利用的bss大小不止40字节，因为页大小大于段大小</li>
-<li>sections可以出现在多个segement里（换句话说，一个section可能在link阶段有多种需求）</li>
-</ol>
-<h3 id="溢出心得">溢出心得</h3><ol>
-<li>fgets/gets函数，如果需要写入\x00还算好解决，可以分多次写入；但是\x0a不好解决，在遇到\x0a之后，会停止读入，并在\x0a后加上\x00。因此dump libc的时候，找到base很容易（因为4K对齐），但是找system和/bin/sh就挺困难了)，这个问题要学习一下别人是怎么解决的</li>
-<li>字符串格式化写（输入函数scanf,gets等，输出函数printf等都用了，因为写进服务器内存既可以用scanf系，也可以用printf的%n）：<br> a. 写到任意地址，需要先写入一个地址作为指针，然后利用%n（或%hn，%hhn还可以只写一个字节），对\x0a和\x00比较友好，单个字节写入解决了这个问题<br> b. 写到任意地址，通过普通栈溢出方法（%$n修改返回地址），修改ret为gets等，对\x0a和\x00不太友好，但是可以批量，这道题就用了gets写shellcode<br> c. 作为stdin，写到栈上（不利用字符串格式化）（可以给a作铺垫），对\x0a和\x00不太友好<br> d. 改got表，比较传统了</li>
-<li>字符串格式化读（输入函数scanf,gets等，输出函数printf等都用了，因为要把我们的格式化字符串s上传上去，然后才被printf打印）：<br> a. 读栈的高地址的内容，比较容易，因为没有\x00和\x0a的烦恼<br> b. 读栈上高地址处的指针指向的内容%$s，不如a容易，（一种不太好思路是用字符串格式化写，写进一个地址，但是不好实现），writeup放弃了打印出libc或system，而只找了相对容易找的bss，绕过这个问题。<br> c. ?</li>
-</ol>
-<h3 id="失败尝试">失败尝试</h3><ol>
-<li>尝试使用libcdb。libcdb已经很久不更新了，所以然并卵</li>
-<li>尝试dump处libc失败了，</li>
-</ol>
-<h3 id="问题">问题</h3><ol>
-<li>不明白为什么pwntools的DynELF总是会读到section的外边，然后失败。</li>
-</ol>
-
-        
-        
-        <p class="article-more-link">
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-<div class="article-categories">
-  <span></span>
-  <a class="article-category-link" href="/categories/pwn/">pwn</a>
-</div>
-
-
-</div>
-
-
-
-
-<div class="comments-count">
+   	       
+	</article>
 	
+<nav class="article-nav clearfix">
+ 
+
+<div class="next">
+<a href="/2016/05/17/anyun-pwn/"  title="anyun_pwn">
+ <strong>下一篇：</strong><br/> 
+ <span>anyun_pwn
+</span>
+</a>
 </div>
 
-</footer>
+</nav>
 
-
-    </article>
-
-
-
-
-
-
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2016/03/02/Daily/" title="Daily" itemprop="url">Daily</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="Donald Wu" target="_blank" itemprop="author">Donald Wu</a>
-		
-  <p class="article-time">
-    <time datetime="2016-03-01T16:14:07.000Z" itemprop="datePublished"> 發表於 2016-03-02</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <p>1 Mar. Review CVE-2014-2851 on [<a href="https://cyseclabs.com/page?n=02012016" target="_blank" rel="external">https://cyseclabs.com/page?n=02012016</a>] :p<br>8 Mar. Reviewing CVE-2016-0799(DRWON) on [<a href="https://drownattack.com/drown-attack-paper.pdf" target="_blank" rel="external">https://drownattack.com/drown-attack-paper.pdf</a>] ;-&gt;</p>
-
-        
-        
-        <p class="article-more-link">
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-
-</div>
-
-
-
-
-<div class="comments-count">
 	
-</div>
 
-</footer>
-
-
-    </article>
-
-
-
-
-
-
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2016/02/12/Sharif其它无聊的题解/" title="Sharif其它无聊的题解" itemprop="url">Sharif其它无聊的题解</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="Donald Wu" target="_blank" itemprop="author">Donald Wu</a>
-		
-  <p class="article-time">
-    <time datetime="2016-02-12T05:44:15.000Z" itemprop="datePublished"> 發表於 2016-02-12</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <h2 id="Login_to_System">Login to System</h2><p>栈溢出，标志位覆盖</p>
-<h2 id="Kick_Tort_Teen">Kick Tort Teen</h2><p>VBA宏，写了一个ELF文件</p>
-<h2 id="uagent">uagent</h2><p>流量分析，useragent里的base64。用dshell或dpkt来分析。</p>
-<h2 id="DUMPED">DUMPED</h2><p>dump文件，不需要用windbg来找，内存在dump文件里是原始字节，直接grep Sharif即可</p>
-<h2 id="WE_LOST_THE_FASHION_FLAG">WE LOST THE FASHION FLAG</h2><p>解压缩</p>
-<h2 id="Android_App">Android App</h2><p>把.so里的那串hash输进去就可以了，脑残没有反应过来。</p>
-<h2 id="Asian_Cheetah">Asian Cheetah</h2><p>LSB</p>
-<h2 id="dMd">dMd</h2><p>按字节比较</p>
-<h2 id="SRM">SRM</h2><p>按字节比较</p>
-<h2 id="Serial">Serial</h2><p>已经忘了。。</p>
-<h2 id="SecCoding">SecCoding</h2><p>换成string</p>
-
-        
-        
-        <p class="article-more-link">
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
-
-  <nav id="page-nav" class="clearfix">
-    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/8/">8</a><a class="extend next" rel="next" href="/page/2/">Next<span></span></a>
-  </nav>
-
-</div>
+</div>  
       <div class="openaside"><a class="navbutton" href="#" title="顯示側邊欄"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目錄</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#分析"><span class="toc-number">1.</span> <span class="toc-text">分析</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#方法"><span class="toc-number">2.</span> <span class="toc-text">方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#心得"><span class="toc-number">3.</span> <span class="toc-text">心得</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#代码"><span class="toc-number">4.</span> <span class="toc-text">代码</span></a></li></ol>
+ 
+  </div>
 
 <div id="asidepart">
 <div class="closeaside"><a class="closebutton" href="#" title="隱藏側邊欄"></a></div>
@@ -622,12 +472,69 @@ $(document).ready(function(){
       m.removeClass('moveMain');
       a.css('display', 'block').removeClass('fadeOut');
       o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
         
     }
   });
 });
 </script>
 
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#nothing"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});     
+</script>
 
 
 
@@ -687,5 +594,35 @@ $(document).ready(function(){
 
 <!-- Tiny_search End -->
 
-  </body>
- </html>
+  <!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+</body>
+</html>

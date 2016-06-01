@@ -81,6 +81,139 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/2015/06/29/Aria2源代码笔记——2/" title="Aria2源代码笔记——2.md" itemprop="url">Aria2源代码笔记——2.md</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="Donald Wu" target="_blank" itemprop="author">Donald Wu</a>
+		
+  <p class="article-time">
+    <time datetime="2015-06-29T09:14:02.000Z" itemprop="datePublished"> 發表於 2015-06-29</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>从0.2.0看到了0.2.1的所有commits，到后面就比较略了，因为框架形成后，无聊的细节就开始变得很多。学习了程序开发的迭代过程，之后就每次看一个release吧，这样也可以避免陷入无聊的细节中，节约时间。</p>
+<h1 id="commit_1">commit 1</h1><ol>
+<li>独立出Socket的实现模块SocketCore</li>
+<li>将原来的实现封装进getSockfd()，establishConnection()，setNonBlockingMode()，closeConnection()，isWritable()，isReadable()，writeData()，readData()，peekData()。</li>
+<li>取消了dup的使用，变成了内部的计数器，因为不需要两个不同的fd，不需要别名，使用计数器更快。</li>
+</ol>
+<h1 id="commit_2">commit 2</h1><ol>
+<li>添加SSL的支持。（需要过两天单独学习SSL的架构？？？)<ol>
+<li>configure文件系列</li>
+<li>HttpConnection.cc里getHost()支持443端口了。</li>
+<li>HttpRequestCommand.cc里executeInternal()，在建立httpConnection之前，判断如果req的协议是https（首先要系统支持，根据预定义宏判断），则initiateSecureConnection()        <strong>Http又忘了，需要复习一下书？？？</strong>    HttpInitiateConnectionCommand.cc里createInitiateConnectionCommand()；Request.cc里Request()。类似。</li>
+<li>Socket.cc，SocketCore.cc提供支持。SocketCore.cc</li>
+<li><strong>SocketCore.cc这是重点</strong>，writeData()和readData()单纯地把添加了SSL_write和SSL_read和SSL_peek，和send和recv和peek并排。<strong>closeConnection()的顺序是SSL_shutdown，然后是socket的close，然后是SSL_free，然后是SSL_CTX_free。当然这都是建立在SocketCore中secure开关打开的情况下</strong>。    initiateSecureConnection是新的函数，secure开关表示是否已经配置好ssl，一堆OpenSSL的api和定义的异常。需要学习？？？</li>
+<li>main.cc中也有OpenSSL的初始化的api。SSL_load_error_strings();和SSL_library_init();</li>
+</ol>
+</li>
+<li>common.h里是一些常用头文件</li>
+<li>ChunkedEncoding的缓冲区变大。减少了addBuffer里冗余的strlen函数。</li>
+<li>HttpResponseCommand里createHttpResponseCommand()，把transferEncoding写入了引擎的map映射表里（之前真的是没有用呢）</li>
+<li>修正有/无ChunkEncoding时，真实下载的字节数不同bug。</li>
+</ol>
+<h1 id="commit_3">commit 3</h1><ol>
+<li>检测ssl宏的使用逻辑错误。即使不支持ssl也要检测https，也该预留接口。<strong>只有在真正调用了api的时候，才是判断是否支持ssl的正确场合</strong></li>
+</ol>
+<h1 id="commit_4">commit 4</h1><ol>
+<li>支持Referer。首先添加currentUrl和previousUrl，两者在resetUrl和redirectUrl时更新，第一次的referer由req自己指定。以后都是previousUrl，因为url会在Request之间通过Referer传递。main函数里，addCommand增加referer参数，和识别referer选项。</li>
+</ol>
+<h1 id="commit_5">commit 5</h1><p>略</p>
+<ol>
+<li>AbstractCommand的execute()的错误输出加上cuid，方便调试。</li>
+<li>AbstractCommand的execute()收到重试异常时，不resetUrl，这样可以保留Referer。并且不立马向工厂请求createInitiateConnectionCommand。而是先加入SleepCommand，延迟后再去请求。睡眠的时间从引擎的option里查（如果是0就不加入SleepCommand了）。这个做法之前已在DownloadCommand中有，现将它上升到AbstractCommand，DownloadCommand只调用基类方法。</li>
+<li>可变参数直接列表直接写va_list，不用…的记法，更方便，不需要在函数体内，再写va_list，va_start，va_end。</li>
+<li>把SleepCommand的wait变成成员变量。并且加入程序选项。</li>
+<li>main里proxy_port之前没有转成数字</li>
+</ol>
+<h1 id="commit_6">commit 6</h1><ol>
+<li>有的服务器不支持相对路径，所以在HttpConnection在createRequest时，用parse了url得出来的结果来生成绝对路径。？？？</li>
+</ol>
+<h1 id="commit_7">commit 7</h1><ol>
+<li>只有previousUrl不为空时才加入Referer</li>
+</ol>
+<h1 id="commit_8">commit 8</h1><ol>
+<li>又是一堆看不懂的configure。还要学习make和configure？？？</li>
+</ol>
+<h1 id="commit_9">commit 9</h1><ol>
+<li>string的字符的位置p规范成string::size_type，而不是unsigned int。因为会有和string::npos的比较。</li>
+</ol>
+<h1 id="commit_10">commit 10</h1><ol>
+<li>AbstractCommand太短的TIMEOUT_SEC</li>
+<li>把AbstractCommand的addSocketForXXXCheck和deletSocketForXXXCheck，统一用setXXXdCheckSocket封装。并且把管理sockets的任务从DownloadEngine下放到AbstractCommand，原因我还没想明白？？？。而且之前其实是半双工的，Write之前要删掉Read的socket。</li>
+<li>DownloadComman的onAbort中(本commit中从onError改成onAbort)，从段管理器中卸载该段Id。</li>
+<li>DownloadEngine.cc的更改？？？</li>
+<li>HttpConnection.cc中createRequest，如果协议是ftp，则GET的url直接使用相对路径？？？</li>
+<li>HttpConnection.cc的receiveResponse中header的实现改成string，没有必要使用自己定义的缓冲区扩充方案。</li>
+<li>把可以改成const函数的改成const函数</li>
+<li>httpConnection的req是固定的，因此在构造函数初始化，并且写成const</li>
+<li>不再使用map作为headers，独立成HttpHeader类。</li>
+<li>预留ftp接口</li>
+<li>用const_iterator替代iterator</li>
+<li>在Socket中封装beginListen，getAddrInfo，acceptConnection，establishConnection</li>
+<li>一些ssl的bug修正</li>
+</ol>
+<h1 id="commit_11">commit 11</h1><ol>
+<li>实现ftp。有了前面Http的经验，能看出作者开发ftp的时候顺利得多。FtpInitiateConnectionCommand发现里面还是http。不太懂，去学习一下ftp协议？？？</li>
+</ol>
+<h1 id="commit_12">commit 12</h1><ol>
+<li>把常数都变成option</li>
+</ol>
+<h1 id="commit_13">commit 13</h1><ol>
+<li>Ftp实现的一些非法情况的检查？？？</li>
+</ol>
+<h1 id="commit_14">commit 14</h1><ol>
+<li>计算速度</li>
+<li>预留SegmentSplitter新类</li>
+</ol>
+<h1 id="commit_15">commit 15</h1><ol>
+<li>把原先的实现移动到SegmentSplitter新类中</li>
+</ol>
+<h1 id="记">记</h1><p>用git来研究一个项目成长过程太爽了！<br>作者在调试的时候用的cppunit，看起来很厉害的样子！可以学一下单元测试？？？<br>养成写// TODO的习惯</p>
+
+        
+        
+        <p class="article-more-link">
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/programming/">programming</a>
+</div>
+
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/2015/06/23/Aria2源代码笔记——1/" title="Aria2源代码笔记——1" itemprop="url">Aria2源代码笔记——1</a>
   </h1>
   <p class="article-author">By
@@ -293,65 +426,6 @@
 
 
 
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2015/03/07/MPI实验记录/" title="MPI实验记录" itemprop="url">MPI实验记录</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="Donald Wu" target="_blank" itemprop="author">Donald Wu</a>
-		
-  <p class="article-time">
-    <time datetime="2015-03-07T05:48:28.000Z" itemprop="datePublished"> 發表於 2015-03-07</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <h1 id="Trouble_Shooting">Trouble Shooting</h1><p>[wuyihao@ascdut MPItest]$ mpicc ./test1.cpp -o test<br>/tmp/ccC7wVkw.o:(.eh_frame+0x12): undefined reference to `__gxx_personality_v0’</p>
-<p>[wuyihao@ascdut MPItest]$ mpicc -lstdc++ ./test1.cpp -o test</p>
-<hr>
-<p>[root@ascdut MPItest]# mpicc ./test2.cpp -o test<br>./test2.cpp:9: internal compiler error: in ix86_valid_target_attribute_inner_p, at config/i386/i386.c:4121<br>Please submit a full bug report,<br>       with preprocessed source if appropriate.<br>       See <a href="http://bugzilla.redhat.com/bugzilla" target="_blank" rel="external">http://bugzilla.redhat.com/bugzilla</a> for instructions.<br>       Preprocessed source stored into /tmp/ccEgkJYF.out file, please attach this to your bugreport.</p>
-<p>使用mpiicc而不是mipcc</p>
-
-        
-        
-        <p class="article-more-link">
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-<div class="article-categories">
-  <span></span>
-  <a class="article-category-link" href="/categories/HPC/">HPC</a>
-</div>
-
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
 
   <nav id="page-nav" class="clearfix">
     <a class="extend prev" rel="prev" href="/page/5/"><span></span>Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/4/">4</a><a class="page-number" href="/page/5/">5</a><span class="page-number current">6</span><a class="page-number" href="/page/7/">7</a><a class="page-number" href="/page/8/">8</a><a class="extend next" rel="next" href="/page/7/">Next<span></span></a>
@@ -418,7 +492,7 @@
 		  
 		
 		  
-			<li><a href="/categories/pwn/" title="pwn">pwn<sup>1</sup></a></li>
+			<li><a href="/categories/pwn/" title="pwn">pwn<sup>2</sup></a></li>
 		  
 		
 		</ul>

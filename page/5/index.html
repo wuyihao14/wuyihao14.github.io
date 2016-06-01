@@ -185,6 +185,557 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/2015/11/02/Intel-Xeon-Phi协处理器高性能编程指南-总结/" title="Intel Xeon Phi协处理器高性能编程指南" itemprop="url">Intel Xeon Phi协处理器高性能编程指南</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="Donald Wu" target="_blank" itemprop="author">Donald Wu</a>
+		
+  <p class="article-time">
+    <time datetime="2015-11-02T10:42:59.327Z" itemprop="datePublished"> 發表於 2015-11-02</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>对读过的章节稍微做一下总结</p>
+<h2 id="第二章">第二章</h2><p>线程和亲缘性：线程并不是越多越好，但至少要保证每核2个线程，因为根据现在xeon phi的设计，一个周期两条指令，预取的时候，不能用当前线程来预取。性能会减半。<br>亲缘性最好是scatter，负载均衡。</p>
+<font size="1px" color="grey">这两者都既可以在程序中设置，也可以在环境变量中设置</font>
+
+<p>内存带宽：增加核的使用，以增加内存缓冲区，但是核上线程增加可能是会牺牲内存带宽的，可以增加内存页大小</p>
+<h2 id="第三章">第三章</h2><h3 id="向量化">向量化</h3><p>向量化是MIC优化的主题。</p>
+<p>-O2 -O3 中实现了自动向量化<br>而ivdep补充说明了哪些块可以向量化</p>
+<p>要用OpenMP扩展到多核也必须满足可向量化才行</p>
+<h3 id="对齐">对齐</h3><p>前端对齐:_mm_malloc和_mm_free。（如数组首地址）<br>补白：（如二维数组行首）（注意一级cache大小)</p>
+<h3 id="流存储">流存储</h3><p>写入前不读取#pragma vector nontemporal</p>
+<h3 id="2MB大内存页">2MB大内存页</h3><p>mmap()</p>
+<h2 id="第四章">第四章</h2><h3 id="代码扩展">代码扩展</h3><p>#pragma omp for collapse(2) 循环合并</p>
+<h3 id="向量化-1">向量化</h3><p>#pragma simd 比 #pragma ivdep更强制</p>
+<h3 id="剥离">剥离</h3><p>一个循环拆分成两个，以消除分支判断</p>
+<h3 id="切片">切片</h3><p>多重循环的时候，不宜某一维度过长。如3维，y过长，则不能利用数据局部性，因为处理完一个x-y平面之后，才会z++，进入到下一个x-y平面，此时最前面的数据可能已经不在L2Cache中了。优化的方法是切片，并且把个切片y轴上的长度设为参数，调优。</p>
+<h2 id="第五章">第五章</h2><h3 id="向量化的五种方法">向量化的五种方法</h3><ul>
+<li>Cilk Plus</li>
+<li>Array Notations</li>
+<li>Auto-vectorization</li>
+<li>SIMD Directives</li>
+<li>MKL</li>
+</ul>
+<h3 id="六步方法论">六步方法论</h3><ul>
+<li>测试基准版性能</li>
+<li>用Intel Vtune Amplifier XE确定热点</li>
+<li>使用英特尔编译器vec-report确定可向量化循环</li>
+<li>使用英特尔编译器GAP报告和工具资源获得建议<font color="red">这是什么？还没用过</font></li>
+<li>GAP实线意见及其他建议（如使用基本函数和/或数组符号）</li>
+<li>重复</li>
+</ul>
+<h3 id="Cache流标题和下面的内容的关系是什么？">Cache流<font color="red">标题和下面的内容的关系是什么？</font></h3><ul>
+<li>数据布局</li>
+<li>数据对齐</li>
+<li>预取 <font color="red">还不太熟悉</font><ul>
+<li>硬件到L2缓存的自动预取（见第八章）</li>
+<li>编译器到L1缓存的自动软件预取指令</li>
+<li>编译器生成的预取（可从程序员提供的信息中获取帮助）</li>
+<li>程序员通过L2和L1的预取能力进行的手动预取</li>
+</ul>
+</li>
+<li>流存储 <ul>
+<li>条件。可向量化，非时间局部性。<font color="red">还不太理解，书的翻译也不好</font></li>
+<li>编译器生成clevicts。它告知硬件不预取将被彻底删除的数据，判断发生在编译时。分别讨论了处理器和协处理器上。</li>
+</ul>
+</li>
+</ul>
+<h3 id="编译器技巧一些杂技巧">编译器技巧<font color="red">一些杂技巧</font></h3><ul>
+<li>避免手动展开。使用#pragma unroll。以直接了当的方式书写</li>
+<li>编译器向量化的要求。几点容易理解的，和一些特殊情况。<ul>
+<li>更杂的建议。可作为优化后复审的参考，这是一个总结，前面都提到过</li>
+</ul>
+</li>
+<li>内联<br>  最内层的循环函数被自动内联很重要，用-opt-report-phase-ipo_inl观察是否内联，因为有的行为会关闭自动内联（如-pg 的性能分析功能）</li>
+</ul>
+<h3 id="编译器选项（同样是一些技巧）没看太懂，书写得有点混乱">编译器选项（同样是一些技巧）<font color="red">没看太懂，书写得有点混乱</font></h3><font color="red">这有一段不知所云，而且此处还没有涉及到预取</font><br>- 解决不明确，可能存在的隐含的混叠<font color="red">实际上这也是数据相关性的一种表现</font><br>    - 用restricted关键字说明指针具有独立性（即不混叠）<br>    - #pragma ivdep，允许编译器消除一些假定的相关性（而SIMD是强制性的）<br>    - 换用数组表示法或元素函数<br><br><br>###编译器指导指令，这部分内容很多<br>- SIMD<br>    - 使用的要求（底线，比ivdep的要求低），有一点比较奇怪但是也容易理解，就是循环体不能过大。另外一个奇怪的地方是，不要和快速浮点模式一起用<br><br><br><br>无主题（通用）<br>—-<br>source inte/composer**/bin/comiplervars.sh ia32/intel64 自动建立环境<br>#pragma omp master常用在输出调试信息上，只使用一个节点输出<br>private(xxx) 表示mic里和host上是独立的，不共享<br>各种优化后都要尝试不同线程数<br>在修改的时候要注意可扩展性和移植性<br><br><font color="red">明天继续补充</font>
+
+        
+        
+        <p class="article-more-link">
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/HPC/">HPC</a>
+</div>
+
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2015/11/02/底层并行实验记录/" title="底层并行实验" itemprop="url">底层并行实验</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="Donald Wu" target="_blank" itemprop="author">Donald Wu</a>
+		
+  <p class="article-time">
+    <time datetime="2015-11-02T10:42:59.327Z" itemprop="datePublished"> 發表於 2015-11-02</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <h2 id="多进程实验">多进程实验</h2><pre><code><span class="comment">#include &lt;unistd.h&gt; //fork&amp;wait&amp;getpid..</span>
+<span class="comment">#include &lt;stdlib.h&gt;</span>
+<span class="comment">#include &lt;signal.h&gt; //kill</span>
+<span class="comment">#include &lt;sys/types.h&gt;</span>
+<span class="comment">#include &lt;stdio.h&gt;</span>
+
+<span class="comment">#define NUM_THREADS 3</span>
+
+void tryfork(){
+    <span class="keyword">int</span> i;
+    pid_t <span class="sub"><span class="keyword">sub</span>[NUM_THREADS];</span>
+    <span class="keyword">for</span> (i=<span class="number">0</span>;i&lt;NUM_THREADS;i++){
+        <span class="sub"><span class="keyword">sub</span>[i] = fork();</span>
+        //<span class="keyword">printf</span>(<span class="string">"DEBUG <span class="variable">%d</span> , <span class="variable">%d</span>\n"</span>,i,<span class="sub"><span class="keyword">sub</span>[i]);</span>
+        <span class="keyword">if</span> (<span class="sub"><span class="keyword">sub</span>[i] == -1){</span>
+            fprintf(stderr, <span class="string">"ERROR while fork"</span>);
+        }<span class="keyword">else</span> <span class="keyword">if</span> (<span class="sub"><span class="keyword">sub</span>[i] == 0){</span> //子进程
+            <span class="keyword">sleep</span>(<span class="number">2</span>); <span class="regexp">//</span>测试<span class="keyword">wait</span>
+            <span class="keyword">printf</span>(<span class="string">"I am the child #<span class="variable">%d</span> pid=<span class="variable">%d</span>\n"</span>, i, getpid()); <span class="regexp">//fork</span>是多进程
+        }<span class="keyword">else</span>{
+            <span class="keyword">waitpid</span>(<span class="sub"><span class="keyword">sub</span>[i],NULL,0);</span> //只能是等待子进程，第三个参数很重要，回去再研究
+            <span class="keyword">printf</span>(<span class="string">"I am the father #<span class="variable">%d</span> pid=<span class="variable">%d</span> my son is <span class="variable">%d</span>\n"</span>,i, getpid(),<span class="sub"><span class="keyword">sub</span>[i]);</span>
+            <span class="keyword">return</span>; <span class="regexp">//</span>避免二叉树
+        }
+    }
+}
+
+void tryexec(){
+    execve(<span class="string">"./tryexec"</span>,NULL,NULL);
+}
+void trykill(){
+    <span class="keyword">int</span> pid = <span class="keyword">fork</span>();
+    <span class="keyword">if</span> (pid == -<span class="number">1</span>){
+        fprintf(stderr, <span class="string">"ERROR while fork"</span>);
+    }<span class="keyword">else</span> <span class="keyword">if</span> (pid == <span class="number">0</span>){
+        <span class="keyword">sleep</span>(<span class="number">1</span>);
+        <span class="keyword">printf</span>(<span class="string">"I am the child\n"</span>);
+    }<span class="keyword">else</span>{
+        <span class="keyword">kill</span>(pid,<span class="number">9</span>);<span class="regexp">//</span>回去再研究各种信号
+    }
+}
+
+void sigcat(){
+    <span class="keyword">printf</span>(<span class="string">"SIGNAL Triggered\n"</span>);
+}
+
+typedef void (*sighandler_t)(<span class="keyword">int</span>);
+
+void trypause(){
+    signal(SIGINT,(sighandler_t)sigcat);<span class="regexp">//</span>注册信号！！
+    <span class="keyword">int</span> pid = <span class="keyword">fork</span>();
+    <span class="keyword">if</span> (pid == -<span class="number">1</span>){
+        fprintf(stderr, <span class="string">"ERROR while fork"</span>);
+        <span class="keyword">exit</span>(EXIT_FAILURE);
+    }<span class="keyword">else</span> <span class="keyword">if</span> (pid == <span class="number">0</span>){
+        pause();
+        <span class="keyword">printf</span>(<span class="string">"I am the child\n"</span>);
+        <span class="keyword">exit</span>(EXIT_FAILURE);
+    }<span class="keyword">else</span>{
+        <span class="keyword">waitpid</span>(pid,NULL,<span class="number">0</span>);
+        <span class="keyword">if</span> (<span class="keyword">kill</span>(pid,SIGINT) &gt;= <span class="number">0</span>){
+            <span class="keyword">printf</span>(<span class="string">"Child woke up\n"</span>);
+    }
+}
+
+<span class="keyword">int</span> main(){
+    <span class="regexp">//tryfork</span>();
+    <span class="regexp">//tryexec</span>();
+    <span class="regexp">//trykill</span>();
+    trypause();
+    <span class="keyword">return</span> <span class="number">0</span>;
+}
+</code></pre><h3 id="1-_fork实验：">1. fork实验：</h3><p>一个父进程fork，只能编程两个进程，若要实现一个进程派生出多个进程，仅仅循环fork，或者连续fork，这样会变成一棵二叉树。可以用return的方法，主进程执行完自己的任务后，不再fork。<br>fork是多进程，而不是多线程，父进程可以维护子进程的pid，多进程可以用父子关系，也可以表示成兄弟关系，看具体实现方式。<br>wait和waitpid，要注意options选项，WNOHANG指定wait no hang，不阻塞，而子进程的状态存在第二个参数status中，可以由父进程轮训，小心这是默认选项，因此如果不处理，则会“看起来”不像wait。</p>
+<h3 id="2-_exec实验：">2. exec实验：</h3><p>exec家族一共有六个函数，分别是：<br>(1)int execl(const char <em>path, const char </em>arg, ……);<br>(2)int execle(const char <em>path, const char </em>arg, …… , char <em> const envp[]);<br>(3)int execv(const char </em>path, char <em>const argv[]);<br>(4)int execve(const char </em>filename, char <em>const argv[], char </em>const envp[]);<br>(5)int execvp(const char <em>file, char </em> const argv[]);<br>(6)int execlp(const char <em>file, const char </em>arg, ……);<br>其中只有execve是真正意义上的系统调用，其它都是在此基础上经过包装的库函数。<br>exec函数族的作用是根据指定的文件名找到可执行文件，并用它来取代调用进程的内容，换句话说，就是在调用进程内部执行一个可执行文件。这里的可执行文件既可以是二进制文件，也可以是任何Linux下可执行的脚本文件。若失败则返回-1，并继续执行原程序。<br>第一个区别是：<br>前四个取路径名做为参数，后两个取文件名做为参数，如果文件名中不包含 “/” 则从PATH环境变量中搜寻可执行文件， 如果找到了一个可执行文件，但是该文件不是连接编辑程序产生的可执行代码文件，则当做shell脚本处理。<br>第二个区别：<br>前两个和最后一个函数中都包括“ l ”这个字母 ，而另三个都包括“ v ”， “ l “代表 list即表 ，而” v “代表 vector即矢量，也是是前三个函数的参数都是以list的形式给出的，但最后要加一个空指针，如果用常数0来表示空指针，则必须将它强行转换成字符指针，否则有可能出错。，而后三个都是以矢量的形式给出，即数组。<br>最后一个区别：<br>与向新程序传递环境变量有关，如第二个和第四个以e结尾的函数，可以向函数传递一个指向环境字符串指针数组的指针。即自个定义各个环境变量，而其它四个则使用进程中的环境变量。</p>
+<h3 id="3-_kill实验">3. kill实验</h3><p>kill -l 列出信号<br>1) SIGHUP<br>本信号在用户终端连接(正常或非正常)结束时发出, 通常是在终端的控制进程结束时, 通知同一session内的各个作业, 这时它们与控制终端不再关联。</p>
+<p>登录Linux时，系统会分配给登录用户一个终端(Session)。在这个终端运行的所有程序，包括前台进程组和后台进程组，一般都属于这个 Session。当用户退出Linux登录时，前台进程组和后台有对终端输出的进程将会收到SIGHUP信号。这个信号的默认操作为终止进程，因此前台进 程组和后台有终端输出的进程就会中止。不过可以捕获这个信号，比如wget能捕获SIGHUP信号，并忽略它，这样就算退出了Linux登录，wget也 能继续下载。</p>
+<p>此外，对于与终端脱离关系的守护进程，这个信号用于通知它重新读取配置文件。<br>2) SIGINT<br>程序终止(interrupt)信号, 在用户键入INTR字符(通常是Ctrl-C)时发出，用于通知前台进程组终止进程。<br>3) SIGQUIT<br>和SIGINT类似, 但由QUIT字符(通常是Ctrl-)来控制. 进程在因收到SIGQUIT退出时会产生core文件, 在这个意义上类似于一个程序错误信号。<br>4) SIGILL<br>执行了非法指令. 通常是因为可执行文件本身出现错误, 或者试图执行数据段. 堆栈溢出时也有可能产生这个信号。<br>5) SIGTRAP<br>由断点指令或其它trap指令产生. 由debugger使用。<br>6) SIGABRT<br>调用abort函数生成的信号。<br>7) SIGBUS<br>非法地址, 包括内存地址对齐(alignment)出错。比如访问一个四个字长的整数, 但其地址不是4的倍数。它与SIGSEGV的区别在于后者是由于对合法存储地址的非法访问触发的(如访问不属于自己存储空间或只读存储空间)。<br>8) SIGFPE<br>在发生致命的算术运算错误时发出. 不仅包括浮点运算错误, 还包括溢出及除数为0等其它所有的算术的错误。<br>9) SIGKILL<br>用来立即结束程序的运行. 本信号不能被阻塞、处理和忽略。如果管理员发现某个进程终止不了，可尝试发送这个信号。<br>10) SIGUSR1<br>留给用户使用<br>11) SIGSEGV<br>试图访问未分配给自己的内存, 或试图往没有写权限的内存地址写数据.<br>12) SIGUSR2<br>留给用户使用<br>13) SIGPIPE<br>管道破裂。这个信号通常在进程间通信产生，比如采用FIFO(管道)通信的两个进程，读管道没打开或者意外终止就往管道写，写进程会收到SIGPIPE信号。此外用Socket通信的两个进程，写进程在写Socket的时候，读进程已经终止。<br>14) SIGALRM<br>时钟定时信号, 计算的是实际的时间或时钟时间. alarm函数使用该信号.<br>15) SIGTERM<br>程序结束(terminate)信号, 与SIGKILL不同的是该信号可以被阻塞和处理。通常用来要求程序自己正常退出，shell命令kill缺省产生这个信号。如果进程终止不了，我们才会尝试SIGKILL。<br>17) SIGCHLD<br>子进程结束时, 父进程会收到这个信号。</p>
+<p>如果父进程没有处理这个信号，也没有等待(wait)子进程，子进程虽然终止，但是还会在内核进程表中占有表项，这时的子进程称为僵尸进程。这种情 况我们应该避免(父进程或者忽略SIGCHILD信号，或者捕捉它，或者wait它派生的子进程，或者父进程先终止，这时子进程的终止自动由init进程来接管)。<br>18) SIGCONT<br>让一个停止(stopped)的进程继续执行. 本信号不能被阻塞. 可以用一个handler来让程序在由stopped状态变为继续执行时完成特定的工作. 例如, 重新显示提示符…<br>19) SIGSTOP<br>停止(stopped)进程的执行. 注意它和terminate以及interrupt的区别:该进程还未结束, 只是暂停执行. 本信号不能被阻塞, 处理或忽略.<br>20) SIGTSTP<br>停止进程的运行, 但该信号可以被处理和忽略. 用户键入SUSP字符时(通常是Ctrl-Z)发出这个信号<br>21) SIGTTIN<br>当后台作业要从用户终端读数据时, 该作业中的所有进程会收到SIGTTIN信号. 缺省时这些进程会停止执行.<br>22) SIGTTOU<br>类似于SIGTTIN, 但在写终端(或修改终端模式)时收到.<br>23) SIGURG<br>有”紧急”数据或out-of-band数据到达socket时产生.<br>24) SIGXCPU<br>超过CPU时间资源限制. 这个限制可以由getrlimit/setrlimit来读取/改变。<br>25) SIGXFSZ<br>当进程企图扩大文件以至于超过文件大小资源限制。<br>26) SIGVTALRM<br>虚拟时钟信号. 类似于SIGALRM, 但是计算的是该进程占用的CPU时间.<br>27) SIGPROF<br>类似于SIGALRM/SIGVTALRM, 但包括该进程用的CPU时间以及系统调用的时间.<br>28) SIGWINCH<br>窗口大小改变时发出.<br>29) SIGIO<br>文件描述符准备就绪, 可以开始进行输入/输出操作.<br>30) SIGPWR<br>Power failure<br>31) SIGSYS<br>非法的系统调用。</p>
+<p>并不知道大部分signal有什么用</p>
+<h3 id="4-_pause实验">4. pause实验</h3><p>pause()将程序挂起，直到有系统signal将其唤醒<br>typedef void (*sighandler_t)(int);类型的函数指针<br>signal(xxx,(sighandler_t)sigcat);注册信号<br>kill失败返回-1，成功返回0</p>
+<hr>
+<p>练习程序，实现主进程派生出两个进程，分别exec两个程序，其中ps优先执行（将它作为ls进程的父进程）</p>
+<pre><code><span class="preprocessor">#<span class="keyword">include</span> &lt;stdio.h&gt;</span>
+<span class="preprocessor">#<span class="keyword">include</span> &lt;signal.h&gt;</span>
+<span class="preprocessor">#<span class="keyword">include</span> &lt;sys/types.h&gt;</span>
+<span class="preprocessor">#<span class="keyword">include</span> &lt;unistd.h&gt;</span>
+<span class="preprocessor">#<span class="keyword">include</span> &lt;stdlib.h&gt;</span>
+
+<span class="preprocessor">#<span class="keyword">define</span> NUM_THREADS 2</span>
+
+pid_t pid[NUM_THREADS];
+<span class="keyword">char</span> * argv1[] = {<span class="string">"/bin/ls"</span>,<span class="string">"-a"</span>,NULL};
+<span class="keyword">char</span> * argv2[] = {<span class="string">"/bin/ps"</span>,<span class="string">"aux"</span>,NULL};
+
+<span class="function"><span class="keyword">void</span> <span class="title">work</span><span class="params">()</span></span>{
+    <span class="keyword">int</span> i;
+    <span class="keyword">for</span> (i=<span class="number">0</span>;i&lt;NUM_THREADS;i++){
+        pid[i] = fork();
+        <span class="keyword">if</span> (pid[i] == -<span class="number">1</span>){
+            <span class="built_in">fprintf</span>(stderr,<span class="string">"ERROR while fork\n"</span>);
+        }<span class="function"><span class="keyword">else</span> <span class="title">if</span> <span class="params">(pid[i] == 0)</span></span>{
+            <span class="keyword">if</span> (i == <span class="number">1</span>)
+                execve(argv2[<span class="number">0</span>],&amp;argv2,NULL);
+        }<span class="keyword">else</span>{
+            <span class="keyword">if</span> (i==<span class="number">1</span>){
+                waitpid(pid[<span class="number">1</span>],NULL,<span class="number">0</span>);
+                execve(argv1[<span class="number">0</span>],&amp;argv1,NULL);
+            }
+        }
+    }
+}
+
+<span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span>{
+    work();
+    <span class="keyword">return</span> <span class="number">0</span>;
+}
+</code></pre><hr>
+<h2 id="进程同步实验">进程同步实验</h2><p>linux中IPC的三个对象：共享内存、信号量数组、消息队列，来解决协作并发进程间的同步和互斥问题。</p>
+<p>共享内存：ipcs -m查看。<br>信号量数组：ipcs -s查看。<br>消息队列：ipcs -q 查看。</p>
+<p>同上，删除用ipcrm</p>
+<p>三个虚拟文件/proc/sysvipc/shm sem msg</p>
+<p>头文件：sys/types.h、sys/ipc.h</p>
+<p>主要函数：shmget shmat shmdt（不一定要显式调用，进程结束后会自动计数器减一） semget semop（PV操作） semctl msgget msgsnd msgrcv msgctl</p>
+<p>本次实验利用共享内存和信号量两者实现了生产者消费者问题。</p>
+<p>下面是ipc的封装程序，基于三个系统文件，完成了创建、赋初值、判重、PV操作等功能。</p>
+<pre><code>#include <span class="string">"ipc.h"</span>
+
+<span class="built_in">int</span> get_ipc_id(<span class="built_in">char</span>* proc_file,key_t <span class="variable">key</span>){
+    FILE * pf;
+    <span class="built_in">int</span> i,j;
+    <span class="built_in">char</span> <span class="built_in">line</span>[BUFSZ],colum[BUFSZ];
+
+    <span class="keyword">if</span> ((pf=fopen(proc_file,<span class="string">"r"</span>))==NULL){
+        perror(<span class="string">"Proc file not open"</span>);
+        <span class="built_in">exit</span>(EXIT_FAILURE);
+    }
+    fgets(<span class="built_in">line</span>,BUFSZ,pf);
+    <span class="keyword">while</span> (!feof(pf)){
+        i = j = <span class="number">0</span>;
+        fgets(<span class="built_in">line</span> ,BUFSZ, pf);
+        <span class="keyword">while</span> (<span class="built_in">line</span>[i]==<span class="string">' '</span>)i++;
+        <span class="keyword">while</span> (<span class="built_in">line</span>[i]!=<span class="string">' '</span>)colum[j++]=<span class="built_in">line</span>[i++];
+        colum[j] = <span class="string">'\0'</span>;
+        <span class="keyword">if</span> (atoi(colum)!=<span class="variable">key</span>) <span class="keyword">continue</span>;
+        j = <span class="number">0</span>;
+        <span class="keyword">while</span> (<span class="built_in">line</span>[i]==<span class="string">' '</span>)i++;
+        <span class="keyword">while</span> (<span class="built_in">line</span>[i]!=<span class="string">' '</span>)colum[j++]=<span class="built_in">line</span>[i++];
+        colum[j] = <span class="string">'\0'</span>;
+        i = atoi(colum);
+        fclose(pf);
+        <span class="keyword">return</span> i;
+    }
+    fclose(pf);
+    <span class="keyword">return</span> -<span class="number">1</span>;
+}
+
+<span class="built_in">int</span> down(<span class="built_in">int</span> sem_id){
+    struct sembuf buf;
+    buf.sem_op = -<span class="number">1</span>;
+    buf.sem_num = <span class="number">0</span>;
+    buf.sem_flg = SEM_UNDO;
+    <span class="keyword">if</span> ((semop(sem_id,&amp;buf,<span class="number">1</span>))&lt;<span class="number">0</span>){
+        perror(<span class="string">"down error"</span>);
+        <span class="built_in">exit</span>(EXIT_FAILURE);
+    }
+    <span class="keyword">return</span> EXIT_SUCCESS;
+}
+
+<span class="built_in">int</span> up(<span class="built_in">int</span> sem_id){
+    struct sembuf buf;
+    buf.sem_op = <span class="number">1</span>;
+    buf.sem_num = <span class="number">0</span>;
+    buf.sem_flg = SEM_UNDO;
+    <span class="keyword">if</span> ((semop(sem_id,&amp;buf,<span class="number">1</span>))&lt;<span class="number">0</span>){
+        perror(<span class="string">"up error"</span>);
+        <span class="built_in">exit</span>(EXIT_FAILURE);
+    }
+    <span class="keyword">return</span> EXIT_SUCCESS;
+}
+
+<span class="built_in">int</span> set_sem(key_t sem_key,<span class="built_in">int</span> sem_val,<span class="built_in">int</span> sem_flg){
+    <span class="built_in">int</span> sem_id;
+    Sem_uns sem_arg;
+
+    <span class="keyword">if</span> ((sem_id = get_ipc_id(<span class="string">"/proc/sysvipc/sem"</span>,sem_key))&lt;<span class="number">0</span>){
+        <span class="keyword">if</span> ((sem_id = semget(sem_key,<span class="number">1</span>,sem_flg))&lt;<span class="number">0</span>){
+            perror(<span class="string">"semaphore create error"</span>);
+            <span class="built_in">exit</span>(EXIT_FAILURE);
+        }
+        sem_arg.val = sem_val;
+        <span class="keyword">if</span> (semctl(sem_id,<span class="number">0</span>,SETVAL,sem_arg)&lt;<span class="number">0</span>){
+            perror(<span class="string">"semaphore set error"</span>);
+            <span class="built_in">exit</span>(EXIT_FAILURE);
+        }
+    }
+    <span class="keyword">return</span> sem_id;
+}
+
+<span class="built_in">char</span> * set_shm(key_t shm_key,<span class="built_in">int</span> shm_num,<span class="built_in">int</span> shm_flg){
+    <span class="built_in">int</span> i,shm_id;
+    <span class="built_in">char</span> * shm_buf;
+
+    <span class="keyword">if</span> ((shm_id = get_ipc_id(<span class="string">"/proc/sysvipc/shm"</span>,shm_key))&lt;<span class="number">0</span>){
+        <span class="keyword">if</span> ((shm_id = shmget(shm_key,shm_num,shm_flg))&lt;<span class="number">0</span>){
+            perror(<span class="string">"shareMemory set error"</span>);
+            <span class="built_in">exit</span>(EXIT_FAILURE);
+        }
+        <span class="keyword">if</span> ((shm_buf=(<span class="built_in">char</span>*)shmat(shm_id,<span class="number">0</span>,<span class="number">0</span>)) &lt; (<span class="built_in">char</span>*)<span class="number">0</span>){
+            perror(<span class="string">"get shareMemory error"</span>);
+            <span class="built_in">exit</span>(EXIT_FAILURE);
+        }
+        <span class="keyword">for</span> (i=<span class="number">0</span>;i&lt;shm_num;i++) shm_buf[i] = <span class="number">0</span>;
+    }
+    <span class="comment">//</span>
+    <span class="keyword">if</span> ((shm_buf = (<span class="built_in">char</span>*)shmat(shm_id,<span class="number">0</span>,<span class="number">0</span>))&lt;(<span class="built_in">char</span>*)<span class="number">0</span>){
+        perror(<span class="string">"get shareMemory error"</span>);
+        <span class="built_in">exit</span>(EXIT_FAILURE);
+    }
+    <span class="keyword">return</span> shm_buf;
+}
+
+<span class="built_in">int</span> set_msq(key_t msq_key,<span class="built_in">int</span> msq_flg){
+    <span class="built_in">int</span> msq_id;
+
+    <span class="keyword">if</span> ((msq_id = get_ipc_id(<span class="string">"/proc/sysvipc/msg"</span>,msq_key))&lt;<span class="number">0</span>){
+        <span class="keyword">if</span> ((msq_id==msgget(msq_key,msq_flg))&lt;<span class="number">0</span>){
+            perror(<span class="string">"messageQueue set error"</span>);
+            <span class="built_in">exit</span>(EXIT_FAILURE);
+        }
+    }
+    <span class="keyword">return</span> msq_id;
+}
+</code></pre><p>头文件：</p>
+<pre><code><span class="preprocessor">#<span class="keyword">include</span> &lt;stdio.h&gt;</span>
+<span class="preprocessor">#<span class="keyword">include</span> &lt;stdlib.h&gt;</span>
+<span class="preprocessor">#<span class="keyword">include</span> &lt;sys/types.h&gt;</span>
+<span class="preprocessor">#<span class="keyword">include</span> &lt;sys/ipc.h&gt;</span>
+<span class="preprocessor">#<span class="keyword">include</span> &lt;sys/shm.h&gt;</span>
+<span class="preprocessor">#<span class="keyword">include</span> &lt;sys/sem.h&gt;</span>
+<span class="preprocessor">#<span class="keyword">include</span> &lt;sys/msg.h&gt;</span>
+<span class="preprocessor">#<span class="keyword">define</span> BUFSZ 256</span>
+
+<span class="function"><span class="keyword">int</span> <span class="title">get_ipc_id</span><span class="params">(<span class="keyword">char</span> *proc_file,key_t key)</span></span>;
+
+<span class="keyword">char</span> *set_shm(key_t shm_key,<span class="keyword">int</span> shm_num,<span class="keyword">int</span> shm_flag);
+
+<span class="function"><span class="keyword">int</span> <span class="title">set_msg</span><span class="params">(key_t msq_key,<span class="keyword">int</span> msq_flag)</span></span>;
+
+<span class="function"><span class="keyword">int</span> <span class="title">set_sem</span><span class="params">(key_t sem_key,<span class="keyword">int</span> sem_val,<span class="keyword">int</span> sem_flag)</span></span>;
+
+<span class="function"><span class="keyword">int</span> <span class="title">down</span><span class="params">(<span class="keyword">int</span> sem_id)</span></span>;
+
+<span class="function"><span class="keyword">int</span> <span class="title">up</span><span class="params">(<span class="keyword">int</span> sem_id)</span></span>;
+
+<span class="keyword">typedef</span> <span class="keyword">union</span> semuns{
+    <span class="keyword">int</span> val;
+}Sem_uns;
+
+<span class="keyword">typedef</span> <span class="keyword">struct</span> msgbuf{
+    <span class="keyword">long</span> mtype;
+    <span class="keyword">char</span> mtext[<span class="number">1</span>];
+}Msg_buf;
+
+key_t buff_key;
+
+<span class="keyword">int</span> buff_num;
+<span class="keyword">char</span> * buff_ptr;
+
+key_t pput_key;
+<span class="keyword">int</span> pput_num;
+<span class="keyword">int</span> * pput_ptr;
+
+key_t cget_key;
+<span class="keyword">int</span> cget_num;
+<span class="keyword">int</span> *cget_ptr;
+
+key_t prod_key;
+key_t pmtx_key;
+<span class="keyword">int</span> prod_sem;
+
+key_t cons_key;
+key_t cmtx_key;
+<span class="keyword">int</span> cons_sem;
+<span class="keyword">int</span> cmtx_sem;
+
+key_t prod_key;
+key_t pmtx_key;
+<span class="keyword">int</span> prod_sem;
+<span class="keyword">int</span> pmtx_sem;
+
+<span class="keyword">int</span> sem_val;
+<span class="keyword">int</span> sem_flg;
+<span class="keyword">int</span> shm_flg;
+</code></pre><p>生产者：</p>
+<pre><code><span class="comment">#include "ipc.h"</span>
+
+int main(int argc,char * argv[]){
+    int rate;
+    <span class="keyword">if</span> (argv[<span class="number">1</span>] != NULL) <span class="variable">rate =</span> atoi(argv[<span class="number">1</span>]);
+    <span class="keyword">else</span> <span class="variable">rate =</span> <span class="number">3</span>;
+
+    <span class="variable">buff_key =</span> <span class="number">101</span>;
+    <span class="variable">buff_num =</span> <span class="number">8</span>;
+    <span class="variable">pput_key =</span> <span class="number">102</span>;
+    <span class="variable">pput_num =</span> <span class="number">1</span>;
+    <span class="variable">shm_flg =</span> IPC_CREAT|<span class="number">0644</span>;
+
+    <span class="variable">buff_ptr =</span> (char*)set_shm(buff_key,buff_num,shm_flg);
+    <span class="variable">pput_ptr =</span> (int*)set_shm(pput_key,pput_num,shm_flg);
+
+    <span class="variable">prod_key =</span> <span class="number">201</span>;
+    <span class="variable">pmtx_key =</span> <span class="number">202</span>;
+    <span class="variable">cons_key =</span> <span class="number">301</span>;
+    <span class="variable">cmtx_key =</span> <span class="number">302</span>;
+    <span class="variable">sem_flg =</span> IPC_CREAT | <span class="number">0644</span>;
+
+    <span class="variable">sem_val =</span> buff_num;
+    <span class="variable">prod_sem =</span> set_sem(prod_key,sem_val,sem_flg);
+
+    <span class="variable">sem_val =</span> <span class="number">0</span>;
+    <span class="variable">cons_sem =</span> set_sem(cons_key,sem_val,sem_flg);
+
+    <span class="variable">sem_val =</span> <span class="number">1</span>;
+    <span class="variable">pmtx_sem =</span> set_sem(pmtx_key,sem_val,sem_flg);
+
+    while (<span class="number">1</span>){
+        down(prod_sem);
+        down(pmtx_sem);
+
+        buff_ptr[*pput_ptr] = 'A' + *pput_ptr;
+        sleep(rate);
+        printf(<span class="string">"%d producer put: %c to Buffer[%d]\n"</span>,getpid(),buff_ptr[*pput_ptr],*pput_ptr);
+        *<span class="variable">pput_ptr =</span> (*pput_ptr+<span class="number">1</span>) % buff_num;
+
+        up(pmtx_sem);
+        up(cons_sem);
+    }
+
+    return EXIT_SUCCESS;
+}
+</code></pre><p>消费者：</p>
+<pre><code><span class="comment">#include "ipc.h"</span>
+
+int main(int argc,char * argv[]){
+    int rate;
+    <span class="keyword">if</span> (argv[<span class="number">1</span>] != NULL) <span class="variable">rate =</span> atoi(argv[<span class="number">1</span>]);
+    <span class="keyword">else</span> <span class="variable">rate =</span> <span class="number">3</span>;
+
+    <span class="variable">buff_key =</span> <span class="number">101</span>;
+    <span class="variable">buff_num =</span> <span class="number">8</span>;
+    <span class="variable">cget_key =</span> <span class="number">103</span>;
+    <span class="variable">cget_num =</span> <span class="number">1</span>;
+    <span class="variable">shm_flg =</span> IPC_CREAT|<span class="number">0644</span>;
+
+    <span class="variable">buff_ptr =</span> (char*)set_shm(buff_key,buff_num,shm_flg);
+    <span class="variable">cget_ptr =</span> (int*)set_shm(cget_key,cget_num,shm_flg);
+
+    <span class="variable">prod_key =</span> <span class="number">201</span>;
+    <span class="variable">pmtx_key =</span> <span class="number">202</span>;
+    <span class="variable">cons_key =</span> <span class="number">301</span>;
+    <span class="variable">cmtx_key =</span> <span class="number">302</span>;
+    <span class="variable">sem_flg =</span> IPC_CREAT|<span class="number">0644</span>;
+
+    <span class="variable">sem_val =</span> buff_num;
+    <span class="variable">prod_sem =</span> set_sem(prod_key,sem_val,sem_flg);
+
+    <span class="variable">sem_val =</span> <span class="number">0</span>;
+    <span class="variable">cons_sem =</span> set_sem(cons_key,sem_val,sem_flg);
+
+    <span class="variable">sem_val =</span> <span class="number">1</span>;
+    <span class="variable">cmtx_sem =</span> set_sem(cmtx_key,sem_val,sem_flg);
+
+    while (<span class="number">1</span>){
+        down(cons_sem);
+        down(cmtx_sem);
+        sleep(rate);
+        printf(<span class="string">"%d consumer get: %c from Buffer[%d]\n"</span>,getpid(),buff_ptr[*cget_ptr],*cget_ptr);
+        *<span class="variable">cget_ptr =</span> (*cget_ptr+<span class="number">1</span>) % buff_num;
+
+        up(cmtx_sem);
+        up(prod_sem);
+    }
+    return EXIT_SUCCESS;
+}
+</code></pre><p>可以发现，他们（所有的消费者加上所有生产者）共享一个环形缓冲区buff，但是所有生产者共享一个指针pput_ptr，所有消费者共享一个指针cget_ptr。维护两个信号量，cons_sem和prod_sem，它们俩的和维持为窗口大小(8)，也即环形缓冲区的大小。在所有消费者之间交换一把锁cmtx_sem，所有生产者之间同样。</p>
+<p>每个信号量都只初始化一次，因为在ipc.c里sem_get的时候，会判断指定的key的信号量是否已存在。</p>
+<p>另一个有意思的地方是权限sem_flg，IRC_CREATE是不存在则创建，644权限限制了别的进程不能修改或删除该锁。</p>
+<p>另一个实验是抽咽者问题，这个问题，如果把三种材料独立成三个缓冲区，则会出现哲学家问题里的那种死锁现象，而三种材料共享一个缓冲区，每次生产者都同时生产两种东西，则不会出现这个问题。意识到这一点之后，实现就变得简单了，略过。</p>
+
+        
+        
+        <p class="article-more-link">
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/HPC/">HPC</a>
+</div>
+
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/2015/11/02/CityHorizon_矩形切割/" title="City Horizon" itemprop="url">City Horizon</a>
   </h1>
   <p class="article-author">By
@@ -312,248 +863,6 @@ ll n;
 
 
 
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2015/11/02/Intel-Xeon-Phi协处理器高性能编程指南-总结/" title="Intel Xeon Phi协处理器高性能编程指南" itemprop="url">Intel Xeon Phi协处理器高性能编程指南</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="Donald Wu" target="_blank" itemprop="author">Donald Wu</a>
-		
-  <p class="article-time">
-    <time datetime="2015-11-02T10:42:59.327Z" itemprop="datePublished"> 發表於 2015-11-02</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <p>对读过的章节稍微做一下总结</p>
-<h2 id="第二章">第二章</h2><p>线程和亲缘性：线程并不是越多越好，但至少要保证每核2个线程，因为根据现在xeon phi的设计，一个周期两条指令，预取的时候，不能用当前线程来预取。性能会减半。<br>亲缘性最好是scatter，负载均衡。</p>
-<font size="1px" color="grey">这两者都既可以在程序中设置，也可以在环境变量中设置</font>
-
-<p>内存带宽：增加核的使用，以增加内存缓冲区，但是核上线程增加可能是会牺牲内存带宽的，可以增加内存页大小</p>
-<h2 id="第三章">第三章</h2><h3 id="向量化">向量化</h3><p>向量化是MIC优化的主题。</p>
-<p>-O2 -O3 中实现了自动向量化<br>而ivdep补充说明了哪些块可以向量化</p>
-<p>要用OpenMP扩展到多核也必须满足可向量化才行</p>
-<h3 id="对齐">对齐</h3><p>前端对齐:_mm_malloc和_mm_free。（如数组首地址）<br>补白：（如二维数组行首）（注意一级cache大小)</p>
-<h3 id="流存储">流存储</h3><p>写入前不读取#pragma vector nontemporal</p>
-<h3 id="2MB大内存页">2MB大内存页</h3><p>mmap()</p>
-<h2 id="第四章">第四章</h2><h3 id="代码扩展">代码扩展</h3><p>#pragma omp for collapse(2) 循环合并</p>
-<h3 id="向量化-1">向量化</h3><p>#pragma simd 比 #pragma ivdep更强制</p>
-<h3 id="剥离">剥离</h3><p>一个循环拆分成两个，以消除分支判断</p>
-<h3 id="切片">切片</h3><p>多重循环的时候，不宜某一维度过长。如3维，y过长，则不能利用数据局部性，因为处理完一个x-y平面之后，才会z++，进入到下一个x-y平面，此时最前面的数据可能已经不在L2Cache中了。优化的方法是切片，并且把个切片y轴上的长度设为参数，调优。</p>
-<h2 id="第五章">第五章</h2><h3 id="向量化的五种方法">向量化的五种方法</h3><ul>
-<li>Cilk Plus</li>
-<li>Array Notations</li>
-<li>Auto-vectorization</li>
-<li>SIMD Directives</li>
-<li>MKL</li>
-</ul>
-<h3 id="六步方法论">六步方法论</h3><ul>
-<li>测试基准版性能</li>
-<li>用Intel Vtune Amplifier XE确定热点</li>
-<li>使用英特尔编译器vec-report确定可向量化循环</li>
-<li>使用英特尔编译器GAP报告和工具资源获得建议<font color="red">这是什么？还没用过</font></li>
-<li>GAP实线意见及其他建议（如使用基本函数和/或数组符号）</li>
-<li>重复</li>
-</ul>
-<h3 id="Cache流标题和下面的内容的关系是什么？">Cache流<font color="red">标题和下面的内容的关系是什么？</font></h3><ul>
-<li>数据布局</li>
-<li>数据对齐</li>
-<li>预取 <font color="red">还不太熟悉</font><ul>
-<li>硬件到L2缓存的自动预取（见第八章）</li>
-<li>编译器到L1缓存的自动软件预取指令</li>
-<li>编译器生成的预取（可从程序员提供的信息中获取帮助）</li>
-<li>程序员通过L2和L1的预取能力进行的手动预取</li>
-</ul>
-</li>
-<li>流存储 <ul>
-<li>条件。可向量化，非时间局部性。<font color="red">还不太理解，书的翻译也不好</font></li>
-<li>编译器生成clevicts。它告知硬件不预取将被彻底删除的数据，判断发生在编译时。分别讨论了处理器和协处理器上。</li>
-</ul>
-</li>
-</ul>
-<h3 id="编译器技巧一些杂技巧">编译器技巧<font color="red">一些杂技巧</font></h3><ul>
-<li>避免手动展开。使用#pragma unroll。以直接了当的方式书写</li>
-<li>编译器向量化的要求。几点容易理解的，和一些特殊情况。<ul>
-<li>更杂的建议。可作为优化后复审的参考，这是一个总结，前面都提到过</li>
-</ul>
-</li>
-<li>内联<br>  最内层的循环函数被自动内联很重要，用-opt-report-phase-ipo_inl观察是否内联，因为有的行为会关闭自动内联（如-pg 的性能分析功能）</li>
-</ul>
-<h3 id="编译器选项（同样是一些技巧）没看太懂，书写得有点混乱">编译器选项（同样是一些技巧）<font color="red">没看太懂，书写得有点混乱</font></h3><font color="red">这有一段不知所云，而且此处还没有涉及到预取</font><br>- 解决不明确，可能存在的隐含的混叠<font color="red">实际上这也是数据相关性的一种表现</font><br>    - 用restricted关键字说明指针具有独立性（即不混叠）<br>    - #pragma ivdep，允许编译器消除一些假定的相关性（而SIMD是强制性的）<br>    - 换用数组表示法或元素函数<br><br><br>###编译器指导指令，这部分内容很多<br>- SIMD<br>    - 使用的要求（底线，比ivdep的要求低），有一点比较奇怪但是也容易理解，就是循环体不能过大。另外一个奇怪的地方是，不要和快速浮点模式一起用<br><br><br><br>无主题（通用）<br>—-<br>source inte/composer**/bin/comiplervars.sh ia32/intel64 自动建立环境<br>#pragma omp master常用在输出调试信息上，只使用一个节点输出<br>private(xxx) 表示mic里和host上是独立的，不共享<br>各种优化后都要尝试不同线程数<br>在修改的时候要注意可扩展性和移植性<br><br><font color="red">明天继续补充</font>
-
-        
-        
-        <p class="article-more-link">
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-<div class="article-categories">
-  <span></span>
-  <a class="article-category-link" href="/categories/HPC/">HPC</a>
-</div>
-
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2015/06/29/Aria2源代码笔记——2/" title="Aria2源代码笔记——2.md" itemprop="url">Aria2源代码笔记——2.md</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="Donald Wu" target="_blank" itemprop="author">Donald Wu</a>
-		
-  <p class="article-time">
-    <time datetime="2015-06-29T09:14:02.000Z" itemprop="datePublished"> 發表於 2015-06-29</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <p>从0.2.0看到了0.2.1的所有commits，到后面就比较略了，因为框架形成后，无聊的细节就开始变得很多。学习了程序开发的迭代过程，之后就每次看一个release吧，这样也可以避免陷入无聊的细节中，节约时间。</p>
-<h1 id="commit_1">commit 1</h1><ol>
-<li>独立出Socket的实现模块SocketCore</li>
-<li>将原来的实现封装进getSockfd()，establishConnection()，setNonBlockingMode()，closeConnection()，isWritable()，isReadable()，writeData()，readData()，peekData()。</li>
-<li>取消了dup的使用，变成了内部的计数器，因为不需要两个不同的fd，不需要别名，使用计数器更快。</li>
-</ol>
-<h1 id="commit_2">commit 2</h1><ol>
-<li>添加SSL的支持。（需要过两天单独学习SSL的架构？？？)<ol>
-<li>configure文件系列</li>
-<li>HttpConnection.cc里getHost()支持443端口了。</li>
-<li>HttpRequestCommand.cc里executeInternal()，在建立httpConnection之前，判断如果req的协议是https（首先要系统支持，根据预定义宏判断），则initiateSecureConnection()        <strong>Http又忘了，需要复习一下书？？？</strong>    HttpInitiateConnectionCommand.cc里createInitiateConnectionCommand()；Request.cc里Request()。类似。</li>
-<li>Socket.cc，SocketCore.cc提供支持。SocketCore.cc</li>
-<li><strong>SocketCore.cc这是重点</strong>，writeData()和readData()单纯地把添加了SSL_write和SSL_read和SSL_peek，和send和recv和peek并排。<strong>closeConnection()的顺序是SSL_shutdown，然后是socket的close，然后是SSL_free，然后是SSL_CTX_free。当然这都是建立在SocketCore中secure开关打开的情况下</strong>。    initiateSecureConnection是新的函数，secure开关表示是否已经配置好ssl，一堆OpenSSL的api和定义的异常。需要学习？？？</li>
-<li>main.cc中也有OpenSSL的初始化的api。SSL_load_error_strings();和SSL_library_init();</li>
-</ol>
-</li>
-<li>common.h里是一些常用头文件</li>
-<li>ChunkedEncoding的缓冲区变大。减少了addBuffer里冗余的strlen函数。</li>
-<li>HttpResponseCommand里createHttpResponseCommand()，把transferEncoding写入了引擎的map映射表里（之前真的是没有用呢）</li>
-<li>修正有/无ChunkEncoding时，真实下载的字节数不同bug。</li>
-</ol>
-<h1 id="commit_3">commit 3</h1><ol>
-<li>检测ssl宏的使用逻辑错误。即使不支持ssl也要检测https，也该预留接口。<strong>只有在真正调用了api的时候，才是判断是否支持ssl的正确场合</strong></li>
-</ol>
-<h1 id="commit_4">commit 4</h1><ol>
-<li>支持Referer。首先添加currentUrl和previousUrl，两者在resetUrl和redirectUrl时更新，第一次的referer由req自己指定。以后都是previousUrl，因为url会在Request之间通过Referer传递。main函数里，addCommand增加referer参数，和识别referer选项。</li>
-</ol>
-<h1 id="commit_5">commit 5</h1><p>略</p>
-<ol>
-<li>AbstractCommand的execute()的错误输出加上cuid，方便调试。</li>
-<li>AbstractCommand的execute()收到重试异常时，不resetUrl，这样可以保留Referer。并且不立马向工厂请求createInitiateConnectionCommand。而是先加入SleepCommand，延迟后再去请求。睡眠的时间从引擎的option里查（如果是0就不加入SleepCommand了）。这个做法之前已在DownloadCommand中有，现将它上升到AbstractCommand，DownloadCommand只调用基类方法。</li>
-<li>可变参数直接列表直接写va_list，不用…的记法，更方便，不需要在函数体内，再写va_list，va_start，va_end。</li>
-<li>把SleepCommand的wait变成成员变量。并且加入程序选项。</li>
-<li>main里proxy_port之前没有转成数字</li>
-</ol>
-<h1 id="commit_6">commit 6</h1><ol>
-<li>有的服务器不支持相对路径，所以在HttpConnection在createRequest时，用parse了url得出来的结果来生成绝对路径。？？？</li>
-</ol>
-<h1 id="commit_7">commit 7</h1><ol>
-<li>只有previousUrl不为空时才加入Referer</li>
-</ol>
-<h1 id="commit_8">commit 8</h1><ol>
-<li>又是一堆看不懂的configure。还要学习make和configure？？？</li>
-</ol>
-<h1 id="commit_9">commit 9</h1><ol>
-<li>string的字符的位置p规范成string::size_type，而不是unsigned int。因为会有和string::npos的比较。</li>
-</ol>
-<h1 id="commit_10">commit 10</h1><ol>
-<li>AbstractCommand太短的TIMEOUT_SEC</li>
-<li>把AbstractCommand的addSocketForXXXCheck和deletSocketForXXXCheck，统一用setXXXdCheckSocket封装。并且把管理sockets的任务从DownloadEngine下放到AbstractCommand，原因我还没想明白？？？。而且之前其实是半双工的，Write之前要删掉Read的socket。</li>
-<li>DownloadComman的onAbort中(本commit中从onError改成onAbort)，从段管理器中卸载该段Id。</li>
-<li>DownloadEngine.cc的更改？？？</li>
-<li>HttpConnection.cc中createRequest，如果协议是ftp，则GET的url直接使用相对路径？？？</li>
-<li>HttpConnection.cc的receiveResponse中header的实现改成string，没有必要使用自己定义的缓冲区扩充方案。</li>
-<li>把可以改成const函数的改成const函数</li>
-<li>httpConnection的req是固定的，因此在构造函数初始化，并且写成const</li>
-<li>不再使用map作为headers，独立成HttpHeader类。</li>
-<li>预留ftp接口</li>
-<li>用const_iterator替代iterator</li>
-<li>在Socket中封装beginListen，getAddrInfo，acceptConnection，establishConnection</li>
-<li>一些ssl的bug修正</li>
-</ol>
-<h1 id="commit_11">commit 11</h1><ol>
-<li>实现ftp。有了前面Http的经验，能看出作者开发ftp的时候顺利得多。FtpInitiateConnectionCommand发现里面还是http。不太懂，去学习一下ftp协议？？？</li>
-</ol>
-<h1 id="commit_12">commit 12</h1><ol>
-<li>把常数都变成option</li>
-</ol>
-<h1 id="commit_13">commit 13</h1><ol>
-<li>Ftp实现的一些非法情况的检查？？？</li>
-</ol>
-<h1 id="commit_14">commit 14</h1><ol>
-<li>计算速度</li>
-<li>预留SegmentSplitter新类</li>
-</ol>
-<h1 id="commit_15">commit 15</h1><ol>
-<li>把原先的实现移动到SegmentSplitter新类中</li>
-</ol>
-<h1 id="记">记</h1><p>用git来研究一个项目成长过程太爽了！<br>作者在调试的时候用的cppunit，看起来很厉害的样子！可以学一下单元测试？？？<br>养成写// TODO的习惯</p>
-
-        
-        
-        <p class="article-more-link">
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-<div class="article-categories">
-  <span></span>
-  <a class="article-category-link" href="/categories/programming/">programming</a>
-</div>
-
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
 
   <nav id="page-nav" class="clearfix">
     <a class="extend prev" rel="prev" href="/page/4/"><span></span>Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><span class="page-number current">5</span><a class="page-number" href="/page/6/">6</a><a class="page-number" href="/page/7/">7</a><a class="page-number" href="/page/8/">8</a><a class="extend next" rel="next" href="/page/6/">Next<span></span></a>
@@ -620,7 +929,7 @@ ll n;
 		  
 		
 		  
-			<li><a href="/categories/pwn/" title="pwn">pwn<sup>1</sup></a></li>
+			<li><a href="/categories/pwn/" title="pwn">pwn<sup>2</sup></a></li>
 		  
 		
 		</ul>
