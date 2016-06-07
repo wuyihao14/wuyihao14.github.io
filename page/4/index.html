@@ -81,151 +81,6 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/2015/11/02/Alictf2015Writeup/" title="Alictf 2015 盗窃Writeup" itemprop="url">Alictf 2015 盗窃Writeup</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="Donald Wu" target="_blank" itemprop="author">Donald Wu</a>
-		
-  <p class="article-time">
-    <time datetime="2015-11-02T10:42:59.331Z" itemprop="datePublished"> 發表於 2015-11-02</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <h2 id="0x00_Cake">0x00 Cake</h2><p>异或加密</p>
-<h2 id="0x01_绕过云WAF1">0x01 绕过云WAF1</h2><p>总结别人的思路：</p>
-<h3 id="域名md5解码后是cdn，暗示此题要求找出背后真正的IP。">域名md5解码后是cdn，暗示此题要求找出背后真正的IP。</h3><ol>
-<li>方法一: <a href="http://zone.wooyun.org/content/18058" target="_blank" rel="external">http://zone.wooyun.org/content/18058</a>.<ol>
-<li>上apnic上过滤出全中国的ip段</li>
-<li>使用zmap扫描所有ip的80端口</li>
-<li>使用zmap的example的banner-grab对扫描出来的ip进行banner抓取.由于是要绕过cdn,因此http-req里host应该填对外的这个域名(我不知道改怎么叫它).</li>
-<li>过滤出banner相似的页面,用一定关键字,比如alictf<br>这样大面积撒网找到真正的ip.缺点是太慢,而且apnic上抓的数据要求够新.而且我至今没有得到一个正确的结果。。。</li>
-</ol>
-</li>
-<li>方法二:<ol>
-<li>由于提示说了在.alictf.com的子域名下,所以可以尝试fuzz子域名.</li>
-<li>我找了一个什么基于google的什么鬼字典,3w条记录.fuzz到video.alictf.com.和前一种方法结果差不多.<br>找到之后还可以放进hosts解析.<br>还有一种方法叫全球ping,算是一种暴力方法吧,按照cdn的本质.<br>绕过了WAF之后,可以sqlmap注入,不知道为什么我一直不成功.</li>
-</ol>
-</li>
-</ol>
-<h2 id="0x02_前端初赛题1:_http://drops-wooyun-org/tips/3059">0x02 前端初赛题1: <a href="http://drops.wooyun.org/tips/3059" target="_blank" rel="external">http://drops.wooyun.org/tips/3059</a></h2><p>xss。点号，括号，等于号都被过滤掉，html标签不会被过滤。\<svg\>\</svg\>标签内的内容会被解html编码,于是我们用svg来包装.由于我不明白的原因(也许是仍然会被过滤),还需要再把中间的内容urlencode一次.</p>
-<h2 id="0x03_前端初赛题2:_http://drops-wooyun-org/tips/2924">0x03 前端初赛题2: <a href="http://drops.wooyun.org/tips/2924" target="_blank" rel="external">http://drops.wooyun.org/tips/2924</a></h2><p>要导致url手工解析和库函数解析的结果不同</p>
-<ol>
-<li>思路一：不通过url传参，用html加载flash，用FlashVars传参，我没有尝试过。不能成功。</li>
-<li>思路二：<a href="http://drops.wooyun.org/papers/948。flash会丢弃两个出现在%后面的无效十六进制字符。这样可以导致手工通过找%来parse的方法比正常情况多出几个字符。" target="_blank" rel="external">http://drops.wooyun.org/papers/948。flash会丢弃两个出现在%后面的无效十六进制字符。这样可以导致手工通过找%来parse的方法比正常情况多出几个字符。</a><br>由于swf运行在虚拟机上，异常会显示在console里，我们可以根据这个反馈信息来构造我们的xss，首先闭合掉括号，然后append一个img，然后补上catch，然后注释掉剩余字符。</li>
-</ol>
-<h2 id="0x04_前端初赛题3:">0x04 前端初赛题3:</h2><p>审计js代码。首先很容易实现认证为notexist.example.com，而url为更长的内容。<br>我尝试构造出notexist.example.com，而url为xss，失败了。<br>原来是利用@的功能，@之前用:隔开用户名和密码。会被自动截掉，剩余部分是最终url。<br>同样可以根据console来修改xss。<br>参考别人的writeup分析流程:<br>    将第一个@前面的内容作为基础认证信息，之后的内容作为域名:端口。<br>    但是如果最后一个:之后不是数字，而是@domain.com，浏览器会把这一部分作为域名，之前的部分作为基础认证信息，绕过检查，加载自己域名下的JS。</p>
-<h2 id="0x05_简单业务逻辑:">0x05 简单业务逻辑:</h2><p>注册覆盖Admin，购买的时候抓包，修改数量为负数。</p>
-<h2 id="0x06_谁偷了你的站内短信">0x06 谁偷了你的站内短信</h2><p>这道题相当简单了，格式化字符串漏洞。可惜getFlag函数被我忽略了。<br>格式化字符串有点麻烦的地方是，不能出现0x0，即使是高位为0的整数。<br>不过这道题不用考虑这么多，我的ROP链也不知到哪里不对，不能越过DEP。这道题只需要跳到getflag，甚至不用恢复栈。<br>参考别人的代码时，发现用readUntil比我写的sleep好多了，这样更有可控性。zio也是一个挺好的工具。</p>
-<h2 id="0x07_密码宝宝">0x07 密码宝宝</h2><p>upx -d脱壳后任然不能调试。（有人说在xp下就能调试了。。。什么时候研究一下根据esp手动脱壳。。）。花指令很多，很难静态分析。在GetWindowTextA下断点，然后跟到用户代码。别人好多都是关注堆的变化，最后flag明文写在堆里。这样的话，我确实走了很多弯路，最后是根据逻辑算出来的flag。</p>
-<h2 id="0x08_渗透绕过WAF2">0x08 渗透绕过WAF2</h2><p>提示需要内部访问，于是 fuzz IP：<br>. 192.168.x.x<br>. 10.x.x.x<br>. 172.16.x.x<br>这个叫什么特殊ip，最近课上学了。还没太搞明白。<br>10开头的可以访问，然后注入，不知道为什么一直不能获得information_schema里的信息，然而版本又是&gt;=5.5，不懂了。T_T。。</p>
-<font color="red">好多题比赛结束后就做不了了，有的题很好，可惜了。以后需要多看一下知识库。</font>
-
-        
-        
-        <p class="article-more-link">
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-<div class="article-categories">
-  <span></span>
-  <a class="article-category-link" href="/categories/CTF/">CTF</a>
-</div>
-
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2015/11/02/在Github上建立我的博客-一/" title="在Github上建立我的博客(一)——基本" itemprop="url">在Github上建立我的博客(一)——基本</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="Donald Wu" target="_blank" itemprop="author">Donald Wu</a>
-		
-  <p class="article-time">
-    <time datetime="2015-11-02T10:42:59.331Z" itemprop="datePublished"> 發表於 2015-11-02</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <p>ssh-keygen -t rsa<br>把id_rsa.pub粘贴到github里去<br>ssh -T git@github.com<br>提示id_rsa的others权限过高，于是改成600</p>
-<hr>
-<p>mkdir blog 建立文件夹<br>cd blog/<br>echo “# wuyihao14.github.io” &gt;&gt; README.md 创建README<br>git init 初始化git<br>git remote add origin git@github.com:wuyihao14/wuyihao14.github.io.git 在github上添加repository，origin是默认的远程版本库名称</p>
-<p>touch a    添加文件<br>git add a 添加到repository中<br>git commit -m “first commit” 提交更改<br>git push -u origin master 推送到github</p>
-<p>hexo init 创建hexo博客<br>npm install 下载modules<br>hexo g  生成静态文件，因为github只支持静态，hexo d部署，只会提交.deploy文件夹，也就是只有静态文件，合并为hexo d -g。hexo s预览</p>
-<hr>
-<p>这些在本博客中都用不上<br>git add  -f 强制添加所有文件<br>git commit -m “Set up Blog”<br>git push -u origin master </p>
-<hr>
-<p>git remote remove origin 有时候会提醒已存在origin<br>error:src refspec master does not match any 这个错误说明提交的空目录<br>[error] Deployer not found: null 因为没有配置deployer<br>修改_config.yml<br>deploy:<br>  type: github<br>  repository: <a href="https://github.com/wuyihao14/wuyihao14.github.io.git" target="_blank" rel="external">https://github.com/wuyihao14/wuyihao14.github.io.git</a><br>  branch: master<br>但是这样之后每次都要求输入密码，有什么办法?</p>
-
-        
-        
-        <p class="article-more-link">
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-<div class="article-categories">
-  <span></span>
-  <a class="article-category-link" href="/categories/Just4Fun/">Just4Fun</a>
-</div>
-
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
       <a href="/2015/11/02/Matrix_枚举/" title="Matrix 枚举" itemprop="url">Matrix 枚举</a>
   </h1>
   <p class="article-author">By
@@ -331,7 +186,7 @@ bool <span class="keyword">cross</span>(<span class="keyword">int</span> i,<span
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/2015/11/02/在Github上建立我的博客-二/" title="在Github上建立我的博客(二)——主题" itemprop="url">在Github上建立我的博客(二)——主题</a>
+      <a href="/2015/11/02/MayorsPoster_线段树/" title="Mayor&#39;s Poster 线段树" itemprop="url">Mayor&#39;s Poster 线段树</a>
   </h1>
   <p class="article-author">By
        
@@ -344,14 +199,180 @@ bool <span class="keyword">cross</span>(<span class="keyword">int</span> i,<span
 </header>
     <div class="article-content">
         
-        <h1 id="换一个theme">换一个theme</h1><p>获取jacman，pacman主题的一个分支<br>git clone <a href="https://github.com/wuchong/jacman.git" target="_blank" rel="external">https://github.com/wuchong/jacman.git</a> themes/jacman</p>
-<p>配置_config.yml<br>theme: jackman 一定要有空格</p>
-<p># Stylus<br>stylus:<br>  compress: true</p>
+        <p>Mayor’s posters<br>Time Limit: 1000MS        Memory Limit: 65536KB        64bit IO Format: %I64d &amp; %I64u<br>Submit</p>
+<p>Status</p>
+<p>Description<br>The citizens of Bytetown, AB, could not stand that the candidates in the mayoral election campaign have been placing their electoral posters at all places at their whim. The city council has finally decided to build an electoral wall for placing the posters and introduce the following rules:<br>Every candidate can place exactly one poster on the wall.<br>All posters are of the same height equal to the height of the wall; the width of a poster can be any integer number of bytes (byte is the unit of length in Bytetown).<br>The wall is divided into segments and the width of each segment is one byte.<br>Each poster must completely cover a contiguous number of wall segments.</p>
+<p>They have built a wall 10000000 bytes long (such that there is enough place for all candidates). When the electoral campaign was restarted, the candidates were placing their posters on the wall and their posters differed widely in width. Moreover, the candidates started placing their posters on wall segments already occupied by other posters. Everyone in Bytetown was curious whose posters will be visible (entirely or in part) on the last day before elections.<br>Your task is to find the number of visible posters when all the posters are placed given the information about posters’ size, their place and order of placement on the electoral wall.<br>Input<br>The first line of input contains a number c giving the number of cases that follow. The first line of data for a single case contains number 1 &lt;= n &lt;= 10000. The subsequent n lines describe the posters in the order in which they were placed. The i-th line among the n lines contains two integer numbers l i and ri which are the number of the wall segment occupied by the left end and the right end of the i-th poster, respectively. We know that for each 1 &lt;= i &lt;= n, 1 &lt;= l i &lt;= ri &lt;= 10000000. After the i-th poster is placed, it entirely covers all wall segments numbered l i, l i+1 ,… , ri.<br>Output<br>For each input data set print the number of visible posters after all the posters are placed. </p>
+<p>The picture below illustrates the case of the sample input. </p>
+<p>Sample Input<br>1<br>5<br>1 4<br>2 6<br>8 10<br>3 4<br>7 10<br>Sample Output<br>4<br>Source<br>Alberta Collegiate Programming Contest 2003.10.18</p>
 <hr>
-<p>使用jacman或pacman主题，建议按此标准语法写：</p>
-<p>title: postName #文章页面上的显示名称，可以任意修改，不会出现在URL中<br>date: 2013-12-02 15:30:16 #文章生成时间，一般不改，当然也可以任意修改<br>categories: example #分类<br>tags: [tag1,tag2,tag3] #文章标签，可空，多标签请用格式，注意:后面有个空格<br>description: 附加一段文章摘要，字数最好在140字以内。</p>
+<p>线段树模板题<br>由于1 &lt;= l i &lt;= ri &lt;= 10000000条件的存在，导致建立线段树很困难。<br>然而1 &lt;= n &lt;= 10000，并且意识到两点之间的距离是无用的数据，因此进行离散化。<br>unique和sort是离散化的好帮手。</p>
+<pre><code><span class="flow">if</span> (<span class="built_in">tree</span>[i] != -<span class="number">1</span>){
+    <span class="built_in">tree</span>[i&lt;&lt;<span class="number">1</span>] = <span class="built_in">tree</span>[(i&lt;&lt;<span class="number">1</span>)+<span class="number">1</span>] = <span class="built_in">tree</span>[i];
+}
+</code></pre><p>线段树的lazy处理，一定不要忘了配对的向上传递和向下传递。<br>这样避免了父亲存储了儿子的数据，却把儿子的信息丢掉了的情况（即因为两个儿子数据的不一致而置位-1）</p>
+<pre><code><span class="preprocessor">#<span class="keyword">include</span> &lt;cstdio&gt;</span>
+<span class="preprocessor">#<span class="keyword">include</span> &lt;cstring&gt;</span>
+<span class="preprocessor">#<span class="keyword">include</span> &lt;algorithm&gt;</span>
+<span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;
+
+<span class="keyword">const</span> <span class="keyword">int</span> N = <span class="number">10300</span>;
+
+<span class="keyword">bool</span> mark[N];
+<span class="keyword">int</span> hash[<span class="number">10000010</span>];
+<span class="keyword">int</span> tree[N&lt;&lt;<span class="number">4</span>];
+
+<span class="keyword">struct</span> Edge{
+    <span class="keyword">int</span> l,r;
+}edge[N];
+
+<span class="keyword">int</span> point[N&lt;&lt;<span class="number">2</span>];
+<span class="keyword">int</span> psum;
+
+<span class="function"><span class="keyword">void</span> <span class="title">change</span><span class="params">(<span class="keyword">int</span> i,<span class="keyword">int</span> l,<span class="keyword">int</span> r,<span class="keyword">int</span> ll,<span class="keyword">int</span> rr,<span class="keyword">int</span> c)</span></span>{
+    <span class="keyword">int</span> mid = ((l+r)&gt;&gt;<span class="number">1</span>);
+
+    <span class="keyword">if</span> (l&gt;=ll &amp;&amp; r&lt;=rr){
+        tree[i] = c;
+        <span class="keyword">return</span>;
+    }
+    <span class="keyword">if</span> (tree[i] != -<span class="number">1</span>){
+        tree[i&lt;&lt;<span class="number">1</span>] = tree[(i&lt;&lt;<span class="number">1</span>)+<span class="number">1</span>] = tree[i];
+    }
+
+    <span class="keyword">if</span> (rr &lt;= mid){
+        change(i&lt;&lt;<span class="number">1</span>, l,mid, ll,rr,c);
+    } <span class="function"><span class="keyword">else</span> <span class="title">if</span> <span class="params">(ll &gt; mid)</span> </span>{
+        change((i&lt;&lt;<span class="number">1</span>)+<span class="number">1</span>, mid+<span class="number">1</span>,r, ll,rr,c);
+    } <span class="keyword">else</span> {
+        change(i&lt;&lt;<span class="number">1</span>, l,mid, ll,mid,c);
+        change((i&lt;&lt;<span class="number">1</span>)+<span class="number">1</span>,mid+<span class="number">1</span>,r,mid+<span class="number">1</span>,rr,c);
+    }
+    <span class="keyword">if</span> (tree[i&lt;&lt;<span class="number">1</span>] == tree[(i&lt;&lt;<span class="number">1</span>)+<span class="number">1</span>] &amp;&amp; tree[i&lt;&lt;<span class="number">1</span>]!=-<span class="number">1</span>){
+        tree[i] = tree[i&lt;&lt;<span class="number">1</span>];
+    }<span class="keyword">else</span>{
+        tree[i] = -<span class="number">1</span>;
+    }
+}
+
+<span class="function"><span class="keyword">void</span> <span class="title">find</span><span class="params">(<span class="keyword">int</span> i,<span class="keyword">int</span> l,<span class="keyword">int</span> r)</span></span>{
+    <span class="keyword">int</span> mid = ((l+r)&gt;&gt;<span class="number">1</span>);
+
+    <span class="keyword">if</span> (tree[i] != -<span class="number">1</span>){
+        mark[tree[i]] = <span class="keyword">true</span>;
+        <span class="keyword">return</span>;
+    }
+    find(i&lt;&lt;<span class="number">1</span>,l,mid);
+    find((i&lt;&lt;<span class="number">1</span>)+<span class="number">1</span>,mid+<span class="number">1</span>,r);
+}
+
+<span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span>{
+    <span class="keyword">int</span> c;
+    <span class="built_in">scanf</span>(<span class="string">"%d"</span>,&amp;c);
+    <span class="keyword">while</span> (c--){
+        <span class="built_in">memset</span>(mark,<span class="number">0</span>,<span class="keyword">sizeof</span> mark);
+        <span class="built_in">memset</span>(tree,<span class="number">0</span>,<span class="keyword">sizeof</span> tree);
+        <span class="built_in">memset</span>(hash,<span class="number">0</span>,<span class="keyword">sizeof</span> hash);
+        psum = <span class="number">0</span>;
+        <span class="keyword">int</span> n;
+
+        <span class="built_in">scanf</span>(<span class="string">"%d"</span>,&amp;n);
+        <span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;n;i++){
+            <span class="keyword">int</span> l,r;
+            <span class="built_in">scanf</span>(<span class="string">"%d%d"</span>,&amp;l,&amp;r);
+            point[psum++] = l;
+            point[psum++] = r;
+            edge[i].l = l;
+            edge[i].r = r;
+        }
+
+        sort(point,point+psum);
+        <span class="keyword">int</span> npsum = unique(point,point+psum)-point;
+
+        <span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;npsum;i++){
+            hash[point[i]] = i+<span class="number">1</span>;
+        }
+
+        <span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;n;i++){
+            edge[i].l = hash[edge[i].l];
+            edge[i].r = hash[edge[i].r];
+
+            change(<span class="number">1</span>,<span class="number">1</span>,npsum,edge[i].l,edge[i].r,i+<span class="number">1</span>);
+        }
+
+        find(<span class="number">1</span>,<span class="number">1</span>,npsum);
+
+        <span class="keyword">int</span> ans = <span class="number">0</span>;
+        <span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">1</span>;i&lt;n+<span class="number">1</span>;i++)
+            <span class="keyword">if</span> (mark[i])
+                ans ++;
+        <span class="built_in">printf</span>(<span class="string">"%d\n"</span>,ans);
+    }
+    <span class="keyword">return</span> <span class="number">0</span>;
+}
+</code></pre>
+        
+        
+        <p class="article-more-link">
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/ACM/">ACM</a>
+</div>
+
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2015/11/02/在Github上建立我的博客-一/" title="在Github上建立我的博客(一)——基本" itemprop="url">在Github上建立我的博客(一)——基本</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="Donald Wu" target="_blank" itemprop="author">Donald Wu</a>
+		
+  <p class="article-time">
+    <time datetime="2015-11-02T10:42:59.331Z" itemprop="datePublished"> 發表於 2015-11-02</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>ssh-keygen -t rsa<br>把id_rsa.pub粘贴到github里去<br>ssh -T git@github.com<br>提示id_rsa的others权限过高，于是改成600</p>
 <hr>
-<h1 id="修改theme">修改theme</h1><p>hexo s启动服务器，然后即可变修改边预览，不需要hexo g</p>
+<p>mkdir blog 建立文件夹<br>cd blog/<br>echo “# wuyihao14.github.io” &gt;&gt; README.md 创建README<br>git init 初始化git<br>git remote add origin git@github.com:wuyihao14/wuyihao14.github.io.git 在github上添加repository，origin是默认的远程版本库名称</p>
+<p>touch a    添加文件<br>git add a 添加到repository中<br>git commit -m “first commit” 提交更改<br>git push -u origin master 推送到github</p>
+<p>hexo init 创建hexo博客<br>npm install 下载modules<br>hexo g  生成静态文件，因为github只支持静态，hexo d部署，只会提交.deploy文件夹，也就是只有静态文件，合并为hexo d -g。hexo s预览</p>
+<hr>
+<p>这些在本博客中都用不上<br>git add  -f 强制添加所有文件<br>git commit -m “Set up Blog”<br>git push -u origin master </p>
+<hr>
+<p>git remote remove origin 有时候会提醒已存在origin<br>error:src refspec master does not match any 这个错误说明提交的空目录<br>[error] Deployer not found: null 因为没有配置deployer<br>修改_config.yml<br>deploy:<br>  type: github<br>  repository: <a href="https://github.com/wuyihao14/wuyihao14.github.io.git" target="_blank" rel="external">https://github.com/wuyihao14/wuyihao14.github.io.git</a><br>  branch: master<br>但是这样之后每次都要求输入密码，有什么办法?</p>
 
         
         
@@ -365,6 +386,98 @@ bool <span class="keyword">cross</span>(<span class="keyword">int</span> i,<span
 <div class="article-categories">
   <span></span>
   <a class="article-category-link" href="/categories/Just4Fun/">Just4Fun</a>
+</div>
+
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2015/11/02/CountTheLength/" title="Count the Length 数学" itemprop="url">Count the Length 数学</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="Donald Wu" target="_blank" itemprop="author">Donald Wu</a>
+		
+  <p class="article-time">
+    <time datetime="2015-11-02T10:42:59.331Z" itemprop="datePublished"> 發表於 2015-11-02</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>Count the Length<br>Time Limit: 2000MS        Memory Limit: 65536KB        64bit IO Format: %lld &amp; %llu<br>Submit</p>
+<p>Status</p>
+<p>Description<br>You are given a board of m<em>n, so there are m</em>n unit squares(1*1) in the board. Suppose all unit squares are colored red or blue, and no adjacent(have common edge) unit squares share the same color. Consider the diagonal D of the board from left bottom to right top, D is a segment with color too, a point in D is red(or blue) if it falls in a red(or blue) unit square. Assume the left bottom square’s color is red, then what is the total length of red part of the diagonal D?</p>
+<p>the sample of 2 * 4 board</p>
+<p>the total length of red part of the diagonal is 2.236068<br>Input<br>There are multiple test cases(less than 10000). Each case is a line containing two integers m,n(1 ≤ m,n ≤ 2^31-1).</p>
+<p>Output<br>For each case, output a single line containing the right answer(rounded up to 3 digits after the decimal point).</p>
+<p>Sample Input<br>2 4<br>1 3<br>Sample Output<br>2.236<br>2.108</p>
+<p>最大公约数</p>
+<pre><code><span class="preprocessor">#<span class="keyword">include</span> &lt;cstdio&gt;</span>
+<span class="preprocessor">#<span class="keyword">include</span> &lt;cmath&gt;</span>
+
+<span class="function"><span class="keyword">int</span> <span class="title">GCD</span><span class="params">(<span class="keyword">int</span> a, <span class="keyword">int</span> b)</span>
+</span>{
+    <span class="keyword">while</span>(b != <span class="number">0</span>)
+    {
+        <span class="keyword">int</span> r = b;
+        b = a % b;
+        a = r;
+    }
+    <span class="keyword">return</span> a;
+}
+
+
+<span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span>{
+    <span class="keyword">int</span> m,n;
+    <span class="keyword">while</span> (~<span class="built_in">scanf</span>(<span class="string">"%d%d"</span>,&amp;m,&amp;n)){
+        <span class="keyword">int</span> gcd = GCD(m,n);
+        m /= gcd;
+        n /= gcd;
+        <span class="keyword">double</span> mm = m;
+        <span class="keyword">double</span> nn = n;
+        <span class="keyword">double</span> sum = mm*nn;
+        <span class="keyword">double</span> ans = <span class="built_in">sqrt</span>(mm*mm + nn*nn) * (<span class="keyword">double</span>)gcd;
+        ans = ans*<span class="built_in">ceil</span>(sum/<span class="number">2.0</span>)/sum;
+        <span class="built_in">printf</span>(<span class="string">"%.3lf\n"</span>,ans);
+    }
+    <span class="keyword">return</span> <span class="number">0</span>;
+}
+</code></pre>
+        
+        
+        <p class="article-more-link">
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/ACM/">ACM</a>
 </div>
 
 
@@ -453,7 +566,7 @@ bool <span class="keyword">cross</span>(<span class="keyword">int</span> i,<span
 		  
 		
 		  
-			<li><a href="/categories/pwn/" title="pwn">pwn<sup>3</sup></a></li>
+			<li><a href="/categories/pwn/" title="pwn">pwn<sup>2</sup></a></li>
 		  
 		
 		</ul>
