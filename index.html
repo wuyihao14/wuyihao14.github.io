@@ -94,7 +94,7 @@
 </header>
     <div class="article-content">
         
-        <p>队友做的，自己比赛时没做出来<br>自己忽略了一个问题，就是sub_4011B1的栈里保存了完整的（小于1024byte）的输入，而sub_40108E是存在漏洞的，但是只能刚好覆盖ret地址，因此要利用sub_4011B1的栈。</p>
+        <h1 id="VSS">VSS</h1><p>队友做的，自己比赛时没做出来<br>自己忽略了一个问题，就是sub_4011B1的栈里保存了完整的（小于1024byte）的输入，而sub_40108E是存在漏洞的，但是只能刚好覆盖ret地址，因此要利用sub_4011B1的栈。</p>
 <table>
 <thead>
 <tr>
@@ -116,6 +116,32 @@
 </table>
 <p>抬高rsp之后，再ret就能直接ret到我们的ropchain<br>布置栈’A’*72 + (add rsp 0x58; ret;) + ‘A’*8 + ropchain</p>
 <p>用ROPGadget这个软件可以自动生成ropchain。真是牛逼。。<br>分析这次它生成的ropchain，把.data段地址放入rsi，/bin/sh放入rax，把/bin/sh写入.data前8个字节；同理把0x0000000000000000写入.data+8；然后把三个参数rdi,rsi,rdx分别设为data,data+8,data+8（即参数filename,{NULL},{NULL}）,rax设为59(即execve的syscall号)，然后调用syscall</p>
+<h1 id="FB">FB</h1><p>这是一个Off-By-One的堆溢出<br>    signed <strong>int64 </strong>fastcall sub_40085D(char *str, unsigned int len)<br>    {<br>      char buf; // [sp+17h] [bp-9h]@2<br>      unsigned int i; // [sp+18h] [bp-8h]@1<br>      int v5; // [sp+1Ch] [bp-4h]@1</p>
+<pre><code>  v5 = <span class="number">0</span>;
+  <span class="keyword">for</span> ( i = <span class="number">0</span>; i &lt;= len; ++i )
+  {
+    <span class="keyword">if</span> ( read(<span class="number">0</span>, &amp;buf, <span class="number">1</span>uLL) &lt; <span class="number">0</span> )
+      <span class="keyword">return</span> <span class="number">0xFFFFFFFF</span>LL;
+    <span class="keyword">if</span> ( buf == <span class="number">10</span> )
+    {
+      <span class="keyword">str</span>[i] = <span class="number">0</span>;
+      <span class="keyword">return</span> i;
+    }
+    <span class="keyword">str</span>[i] = buf;
+  }
+  <span class="keyword">str</span>[i - <span class="number">1</span>] = <span class="number">0</span>;
+  <span class="keyword">return</span> i - <span class="number">1</span>;
+}
+</code></pre><p>其中&lt;=len是一个offbyone漏洞。<br>将下一个chunk的prev_inuse标志位覆盖为0，让下一个chunk认为它之前的这个chunk已经被释放，当它被释放的时候，就会向前合并(backward coalesce)（有人翻译成向后）<br>合并，则会引发前一个chunk的unlink。</p>
+<p>我们无法修改其chunk head，要怎么利用其unlink？用到了linux内存管理的另一个性质，即在free chunk的末尾有chunk size副本，用于便于合并。<br>修改此size副本变小一点，就可以欺骗next chunk，让我们可以在原来的user data域伪造chunk head。此处我们将size减小为0xf0，减小了8字节，正好跳过了原先chunk里不可控的8字节。</p>
+<p>unlink容易出现不可访问地址的问题，直接利用unlink修改GOT表不容易成功，于是迂回利用别的修改内存的函数。unlink负责让list[0]-&gt;addr指向&amp;list[0]-18，接下来我们便可以利用内存修改的函数直接修改&amp;list[0]-18起的一大段内存了</p>
+<p>这样写的话，保证了只会修改*ptr，并把*ptr改成ptr-0x18<br>  payload += p64(ptr-0x18) + p64(ptr-0x10)<br>于是我们的list[0].addr便指向了&amp;list[0]-0x18的位置，</p>
+<p>接下来我们便可以自由地将list[0].addr写成got表，然后修改got表了。</p>
+<p>将free_got改为printf，第七个块内容改成%17$p，然后free第七个块，free已经变成printf，则会把%17$p字符串当做格式化字符串<br>%17$p，rdi为格式化字符串，再去掉rsi,rax,rbx,r8,r9五个寄存器，那么输出的是从%rsp算起的第12个QWORD，即[rsp + 11]，偏移了88个字节，当前函数rsp减少了0x10，去掉栈帧、ret地址，main函数rsp减少了0x30，去掉栈帧，加起来刚好88字节。因此%17$p刚好能输出返回到__libc_start_main的地址</p>
+<p>这样我们能计算出__libc_start_main和system的地址。</p>
+<p>([:-1]是因为该函数会自动补一个\x00)</p>
+<p>接下来我们可以再将free_got重新改成system，随便一块（比如第6块）改成/bin/sh;，free第6块，便会执行system(“/bin/sh;”)</p>
+<p>关于malloc的大小，涉及到unlink大小，第一块选择使用248byte，因为刚好使用了256byte的chunk，8byte的head，这样刚好能覆盖到下一chunk，如果是248byte的话就覆盖不到了。<br>第二块选择使用240byte，大一点也可以。但如果232byte的话，则会选择更小的chunk了。而且小于0x100字节，由于我们覆盖的LSB，如果size大于0x100字节（比如0x101字节），覆盖掉标志位之后刚好为0x100，但如果小于0x100了，覆盖LSB之后size就变成了0，所以这里不能比240更小了。</p>
 
         
         
@@ -702,5 +728,35 @@ $(document).ready(function(){
 
 <!-- Tiny_search End -->
 
-  </body>
+  <!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+</body>
  </html>
