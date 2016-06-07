@@ -31,7 +31,7 @@
 该堆没有自动合并碎片的功能，每次分割之后的块大小就固定了。
 有一个排序功能，该排序功能也从堆上分配空间来存储排序结果
 排序结果会被记录，并被链入链表（结构为struct">
-<meta property="og:updated_time" content="2016-06-01T13:35:08.859Z">
+<meta property="og:updated_time" content="2016-06-01T18:16:37.636Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="ssctf_pwn">
 <meta name="twitter:description" content="几个月前的比赛题学习晨升牛的题解。
@@ -137,7 +137,7 @@
 <li>atoi_got -&gt; 根据堆的起始地址和atoi_got的VA来算</li>
 <li>堆的起始地址 -&gt; 第一次sort，会在堆中生成一个struct Link作为表头，其第一个DWORD便是第一个数组，也就是堆的起始地址。我们对第一次生成的数组排序，然后溢出query，便能查到。</li>
 <li>system的地址 -&gt; 根据atoi_plt算出libc，再算出system。</li>
-<li>atoi_plt -&gt; 同2的方法，在该size值很大的块下，我们能进行很大范围的索引</li>
+<li>atoi_plt -&gt; 同2的方法，在该size值很大的块下，我们能进行很大范围的索引。size为0x40000000时,size*4大于了unsigned的最大范围，因此使用0x40000000能够达到32位进程空间任意读写。</li>
 </ol>
 <h3 id="心得">心得</h3><ol>
 <li>才学会使用IDA的structure功能，汗颜。分析数据结构比较复杂的程序，现在应该专注于数据结构的分析才能比较快。</li>
@@ -273,6 +273,14 @@ def main():
 	
 <nav class="article-nav clearfix">
  
+ <div class="prev" >
+ <a href="/2016/06/02/ssctf-pwn2/" title="ssctf-pwn2">
+  <strong>上一篇：</strong><br/>
+  <span>
+  ssctf-pwn2</span>
+</a>
+</div>
+
 
 <div class="next">
 <a href="/2016/05/17/anyun-pwn/"  title="anyun_pwn">
@@ -354,7 +362,7 @@ def main():
 		  
 		
 		  
-			<li><a href="/categories/pwn/" title="pwn">pwn<sup>2</sup></a></li>
+			<li><a href="/categories/pwn/" title="pwn">pwn<sup>3</sup></a></li>
 		  
 		
 		</ul>

@@ -81,6 +81,139 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/2015/02/20/在Github上建立我的博客-四/" title="在Github上建立我的博客(四)——添加Latex支持" itemprop="url">在Github上建立我的博客(四)——添加Latex支持</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="Donald Wu" target="_blank" itemprop="author">Donald Wu</a>
+		
+  <p class="article-time">
+    <time datetime="2015-02-19T17:25:20.000Z" itemprop="datePublished"> 發表於 2015-02-20</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>npm install hexo-math —save<br>hexo math install</p>
+<p>在_config.yml中添加：<br>plugins: </p>
+<ul>
+<li>hexo-math</li>
+</ul>
+<hr>
+<p>遇到了几个需要手工escape的地方：</p>
+<ul>
+<li>两个{不能连写</li>
+<li>_前面要加\</li>
+<li>所有的求和公式求和的部分必须用{}括起来</li>
+</ul>
+
+        
+        
+        <p class="article-more-link">
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Just4Fun/">Just4Fun</a>
+</div>
+
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2015/02/19/神经网络复习/" title="神经网络复习" itemprop="url">神经网络复习</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="Donald Wu" target="_blank" itemprop="author">Donald Wu</a>
+		
+  <p class="article-time">
+    <time datetime="2015-02-19T10:27:24.000Z" itemprop="datePublished"> 發表於 2015-02-19</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>复习了一下PNN，仍旧是只涉猎了一点浅显的内容，不过还是有新的收获。</p>
+<p>概率神经网络围绕的中心是<strong>贝叶斯决策理论（使错误率最小）</strong>。它是前向传播算法，没有<strong>反馈</strong>。</p>
+<p>它分为四层。<strong>输入层</strong>、<strong>模式层</strong>、<strong>求和层</strong>、<strong>输出（竞争）层</strong>。其中模式层，激活函数是<strong>非线性</strong>，且神经元多于种类数的是为了把输入<strong>映射到高维空间</strong>（类似于径向基神经网络），以解决<strong>线性不可分</strong>的问题，和提高精度。求和层的神经元数等于类别数，激活函数是线性的。</p>
+<p>分类器理论，基于贝叶斯决策。即$P(w_i|\vec{x})&gt;P(w_j|\vec{x}) \forall j\neq i \Rightarrow vec{x} \in w_i$，$P(w_i|\vec{x})$是<strong>后验概率</strong>，即在x向量属于wi类的可能性，把x归为可能性最大的一类。</p>
+<p>又$P(w_i|x)=\frac{P(x|w_i)P(w_i)}{\sum_{j=1}^{c}{P(x|w_j)P(w_j)}}$。也可以写成$P(w_i|x)=\frac{P(x|w_i)P(w_i)}{P(x)}$。即<strong>后验概率=似然*先验/证据因子</strong></p>
+<font color="grey" size="1px">最好所有的_前面都价一个\，有时候会出错。sum的内容也要跟一个{}</font>
+
+<p>计算$P(x|w_i)$。概率密度是难以得到其准确函数的，但是我们可以用估计方法来获得其近似函数。分为<strong>参数法</strong>和<strong>非参数法</strong>。参数法是预测一个确定的函数形式（如多项式函数），然后通过算法来确定其参数，这种方法实际应用中效果不如非参数法好。在PNN中，应用的即是非参数法中的<strong>核方法</strong>中的Parzen窗法，另外还有直方图法。选取的核为<strong>高斯核</strong>（其符合正态分布)。要求是概率密度函数积分为1，积分就不做了，不会。得到$P(\vec{x}|w_i)=\frac{1}{N_i} \sum_{k=1}^{N_i}{\frac{1}{(2 \pi)^{\frac{l}{2} } \sigma^l}e^{-\frac{ {\left|\vec{x}-\vec{x_{ik} }\right|}^2}{2 \sigma^2} } }$。这种方法是基于训练样本的。</p>
+<font color="grey" size="1px">LATEX不要把两个{连着了,编译不过，中间插个空格</font>
+
+<p>P(x)和P(w_i)在样本足够大，随机的情况下，是可以得到的。然后就可以计算出后验概率。</p>
+<p>求决策函数，因为决策函数只用来比较，不需要知道确切的值，因此可以省略掉后验概率密度函数中的共有项。进而对样本进行归一话后，可以对函数进一步化简。$g_i(\vec{x})=\frac{p(w_i)}{N_i}\sum_{k=1}^{N_i}{e^{-\frac{ {\left|\vec{x}-\vec{x_{ik} }\right|}^2}{2 \sigma^2} }=\frac{p(w_i)}{N_i}\sum_{k=1}^{N_i}e^{\frac{\vec{x}^T\vec{x_{ik} }-1}{\sigma^2} }}$</p>
+<p>我仍然不理解的是，PNN比RBF和BP优的原因，不能理解是矩阵运算的低效，不过由于矩阵运算的高度并行化，如果实现算法并行化，肯定能体现出其优势。效率上没有具体数字的呈现，不太能够承认。然而实验能力的不足，没法自己验证。等待以后再来理解吧.</p>
+
+        
+        
+        <p class="article-more-link">
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/AI/">AI</a>
+</div>
+
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/2015/02/19/在Github上建立我的博客-三/" title="在Github上建立我的博客(三)——图床" itemprop="url">在Github上建立我的博客(三)——图床</a>
   </h1>
   <p class="article-author">By
@@ -270,7 +403,7 @@
 		  
 		
 		  
-			<li><a href="/categories/pwn/" title="pwn">pwn<sup>2</sup></a></li>
+			<li><a href="/categories/pwn/" title="pwn">pwn<sup>3</sup></a></li>
 		  
 		
 		</ul>
@@ -453,5 +586,35 @@ $(document).ready(function(){
 
 <!-- Tiny_search End -->
 
-  </body>
+  <!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+</body>
  </html>

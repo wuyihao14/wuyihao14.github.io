@@ -81,6 +81,142 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/2015/03/26/Omnetpp-4-6折腾笔记/" title="Omnetpp-4.6折腾笔记" itemprop="url">Omnetpp-4.6折腾笔记</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="Donald Wu" target="_blank" itemprop="author">Donald Wu</a>
+		
+  <p class="article-time">
+    <time datetime="2015-03-25T16:05:37.000Z" itemprop="datePublished"> 發表於 2015-03-26</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <h1 id="仿真软件Omnet++4-6的安装">仿真软件Omnet++4.6的安装</h1><p>先装tcl/tk，貌似跟图形界面有关。<br>编译omnet++，中途会遇到mpi等问题，但是可以忽略，毕竟是个人电脑。<br>运行不了，两个原因，java的预取bug，通过在ide/omnetpp.ini中加入-XX:-UseLoopPredicate解决。另一个问题，一堆GLib-CRITICAL错误，是GTK 2和GTK 3的兼容问题，export SWT_GTK3=0<br>tcl/tk中途老是链接不上。添加/usr/local/lib/到/etc/ld.so.conf中，/sbin/ldconfig<br>Source Sink范例程序必须在build inet工程之后才能build</p>
+
+        
+        
+        <p class="article-more-link">
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Networking/">Networking</a>
+</div>
+
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2015/03/11/MIC高性能计算编程指南-总结/" title="MIC高性能计算编程指南_总结" itemprop="url">MIC高性能计算编程指南_总结</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="Donald Wu" target="_blank" itemprop="author">Donald Wu</a>
+		
+  <p class="article-time">
+    <time datetime="2015-03-11T05:12:06.000Z" itemprop="datePublished"> 發表於 2015-03-11</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>总结了一下，貌似关于MIC本身：</p>
+<ol>
+<li>异步通信</li>
+<li>通信传输</li>
+<li>线程数</li>
+<li>SCIF</li>
+</ol>
+<h1 id="第五章">第五章</h1><h3 id="OpenMP">OpenMP</h3><p>OpenMP是一种语言扩展，代替程序员线程创建、同步、负载均衡、销毁等<br>OpenMP只负责并行，不管数据依赖<br>#pragma omp parallel for private/firstprivate/lastprivate/num_threads/schedule(flag)/reduction<br>OpenMP基于fork/join模型<br>可以分写成</p>
+<pre><code><span class="preprocessor">#<span class="keyword">pragma</span> omp parallel</span>
+{
+    <span class="preprocessor">#<span class="keyword">pragma</span> omp for/do</span>
+    {
+
+    }
+}
+</code></pre><p>库函数<br>环境变量<br>亲缘性</p>
+<h3 id="MPI">MPI</h3><p>MPI的包含四个函数的最小集<br>MPI数据类型、tag、comm、dest等（MPI_send和MPI_recv的参数），MPI_recv获得status<br>MPI_Get_Count</p>
+<h1 id="第六章">第六章</h1><h3 id="CPU和协处理器的比重决定的六种应用模式">CPU和协处理器的比重决定的六种应用模式</h3><p>CPU原生:-no-offload<br>分载模式：讨论了从串行变成并行，并移植到mic的常用模式；offload只能用于单节点的局限和用MPI等方法解决。<br>对等模式、MIC原生模式：两者类似，只是前者包括cpu，后者不包括。MIC原生能够节约传输时间。<br>CPU为辅，MIC为主</p>
+<h3 id="MIC的语法_这是重点">MIC的语法 <font color="red">这是重点</font></h3><p><strong>offload</strong><br><strong>__MIC__宏</strong><br><strong>数据传输</strong> if|mandatory(后者表示只能运行在mic上，否则报错。不能与if同时用) in out nocopy length alloc_if free_if align alloc into（前五个是在括号外，其余的是在冒号后）。传输关键字的语法和技巧。特例，传输数组的一部分。<br><strong>target</strong> 指定第几张mic卡，不指定时将轮流使用。讨论了轮流使用mic卡时易犯的三种主观错误。</p>
+<h3 id="多块mic协同工作">多块mic协同工作</h3><p>pThread为每个线程指定MIC卡<br>增加一层OpenMP循环（真的是手动加一层循环），如下。<font color="red">里面有两个技巧很实用</font><br>    omp_set_nested(1);                        //允许嵌套OpenMP</p>
+<pre><code><span class="comment">#pragma parallel for num_threads(3)    //假设有两张MIC卡，加上CPU，让它们都有一个线程</span>
+<span class="keyword">for</span> (i=<span class="number">0</span>;i&lt;<span class="number">3</span>;++i)
+{
+    <span class="comment">#pragma offload target(mic:i) if (i&gt;1) in(...) out(...) //给CPU留了一个线程</span>
+    <span class="keyword">...</span>
+}
+</code></pre><p>VC上的__declspec与gcc的__attribute__对应</p>
+
+        
+        
+        <p class="article-more-link">
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/HPC/">HPC</a>
+</div>
+
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/2015/03/07/MPI实验记录/" title="MPI实验记录" itemprop="url">MPI实验记录</a>
   </h1>
   <p class="article-author">By
@@ -191,139 +327,6 @@
 
 
 
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2015/02/20/在Github上建立我的博客-四/" title="在Github上建立我的博客(四)——添加Latex支持" itemprop="url">在Github上建立我的博客(四)——添加Latex支持</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="Donald Wu" target="_blank" itemprop="author">Donald Wu</a>
-		
-  <p class="article-time">
-    <time datetime="2015-02-19T17:25:20.000Z" itemprop="datePublished"> 發表於 2015-02-20</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <p>npm install hexo-math —save<br>hexo math install</p>
-<p>在_config.yml中添加：<br>plugins: </p>
-<ul>
-<li>hexo-math</li>
-</ul>
-<hr>
-<p>遇到了几个需要手工escape的地方：</p>
-<ul>
-<li>两个{不能连写</li>
-<li>_前面要加\</li>
-<li>所有的求和公式求和的部分必须用{}括起来</li>
-</ul>
-
-        
-        
-        <p class="article-more-link">
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-<div class="article-categories">
-  <span></span>
-  <a class="article-category-link" href="/categories/Just4Fun/">Just4Fun</a>
-</div>
-
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2015/02/19/神经网络复习/" title="神经网络复习" itemprop="url">神经网络复习</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="Donald Wu" target="_blank" itemprop="author">Donald Wu</a>
-		
-  <p class="article-time">
-    <time datetime="2015-02-19T10:27:24.000Z" itemprop="datePublished"> 發表於 2015-02-19</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <p>复习了一下PNN，仍旧是只涉猎了一点浅显的内容，不过还是有新的收获。</p>
-<p>概率神经网络围绕的中心是<strong>贝叶斯决策理论（使错误率最小）</strong>。它是前向传播算法，没有<strong>反馈</strong>。</p>
-<p>它分为四层。<strong>输入层</strong>、<strong>模式层</strong>、<strong>求和层</strong>、<strong>输出（竞争）层</strong>。其中模式层，激活函数是<strong>非线性</strong>，且神经元多于种类数的是为了把输入<strong>映射到高维空间</strong>（类似于径向基神经网络），以解决<strong>线性不可分</strong>的问题，和提高精度。求和层的神经元数等于类别数，激活函数是线性的。</p>
-<p>分类器理论，基于贝叶斯决策。即$P(w_i|\vec{x})&gt;P(w_j|\vec{x}) \forall j\neq i \Rightarrow vec{x} \in w_i$，$P(w_i|\vec{x})$是<strong>后验概率</strong>，即在x向量属于wi类的可能性，把x归为可能性最大的一类。</p>
-<p>又$P(w_i|x)=\frac{P(x|w_i)P(w_i)}{\sum_{j=1}^{c}{P(x|w_j)P(w_j)}}$。也可以写成$P(w_i|x)=\frac{P(x|w_i)P(w_i)}{P(x)}$。即<strong>后验概率=似然*先验/证据因子</strong></p>
-<font color="grey" size="1px">最好所有的_前面都价一个\，有时候会出错。sum的内容也要跟一个{}</font>
-
-<p>计算$P(x|w_i)$。概率密度是难以得到其准确函数的，但是我们可以用估计方法来获得其近似函数。分为<strong>参数法</strong>和<strong>非参数法</strong>。参数法是预测一个确定的函数形式（如多项式函数），然后通过算法来确定其参数，这种方法实际应用中效果不如非参数法好。在PNN中，应用的即是非参数法中的<strong>核方法</strong>中的Parzen窗法，另外还有直方图法。选取的核为<strong>高斯核</strong>（其符合正态分布)。要求是概率密度函数积分为1，积分就不做了，不会。得到$P(\vec{x}|w_i)=\frac{1}{N_i} \sum_{k=1}^{N_i}{\frac{1}{(2 \pi)^{\frac{l}{2} } \sigma^l}e^{-\frac{ {\left|\vec{x}-\vec{x_{ik} }\right|}^2}{2 \sigma^2} } }$。这种方法是基于训练样本的。</p>
-<font color="grey" size="1px">LATEX不要把两个{连着了,编译不过，中间插个空格</font>
-
-<p>P(x)和P(w_i)在样本足够大，随机的情况下，是可以得到的。然后就可以计算出后验概率。</p>
-<p>求决策函数，因为决策函数只用来比较，不需要知道确切的值，因此可以省略掉后验概率密度函数中的共有项。进而对样本进行归一话后，可以对函数进一步化简。$g_i(\vec{x})=\frac{p(w_i)}{N_i}\sum_{k=1}^{N_i}{e^{-\frac{ {\left|\vec{x}-\vec{x_{ik} }\right|}^2}{2 \sigma^2} }=\frac{p(w_i)}{N_i}\sum_{k=1}^{N_i}e^{\frac{\vec{x}^T\vec{x_{ik} }-1}{\sigma^2} }}$</p>
-<p>我仍然不理解的是，PNN比RBF和BP优的原因，不能理解是矩阵运算的低效，不过由于矩阵运算的高度并行化，如果实现算法并行化，肯定能体现出其优势。效率上没有具体数字的呈现，不太能够承认。然而实验能力的不足，没法自己验证。等待以后再来理解吧.</p>
-
-        
-        
-        <p class="article-more-link">
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-<div class="article-categories">
-  <span></span>
-  <a class="article-category-link" href="/categories/AI/">AI</a>
-</div>
-
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
 
   <nav id="page-nav" class="clearfix">
     <a class="extend prev" rel="prev" href="/page/6/"><span></span>Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/5/">5</a><a class="page-number" href="/page/6/">6</a><span class="page-number current">7</span><a class="page-number" href="/page/8/">8</a><a class="extend next" rel="next" href="/page/8/">Next<span></span></a>
@@ -390,7 +393,7 @@
 		  
 		
 		  
-			<li><a href="/categories/pwn/" title="pwn">pwn<sup>2</sup></a></li>
+			<li><a href="/categories/pwn/" title="pwn">pwn<sup>3</sup></a></li>
 		  
 		
 		</ul>
@@ -573,35 +576,5 @@ $(document).ready(function(){
 
 <!-- Tiny_search End -->
 
-  <!-- mathjax config similar to math.stackexchange -->
-
-<script type="text/x-mathjax-config">
-  MathJax.Hub.Config({
-    tex2jax: {
-      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
-      processEscapes: true
-    }
-  });
-</script>
-
-<script type="text/x-mathjax-config">
-    MathJax.Hub.Config({
-      tex2jax: {
-        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
-      }
-    });
-</script>
-
-<script type="text/x-mathjax-config">
-    MathJax.Hub.Queue(function() {
-        var all = MathJax.Hub.getAllJax(), i;
-        for(i=0; i < all.length; i += 1) {
-            all[i].SourceElement().parentNode.className += ' has-jax';
-        }
-    });
-</script>
-
-<script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
-</script>
-</body>
+  </body>
  </html>

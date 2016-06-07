@@ -4,29 +4,83 @@
 <head>
   <meta charset="UTF-8">
   
-    <title>Count the Length 数学 | Shelter</title>
+    <title>alictf-pwn-vss | Shelter</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
     
     <meta name="author" content="Donald Wu">
     
 
     
-    <meta name="description" content="Count the LengthTime Limit: 2000MS        Memory Limit: 65536KB        64bit IO Format: %lld &amp;amp; %lluSubmit
-Status
-DescriptionYou are given a board of mn, so there are mn unit squares(1*1) in the bo">
+    <meta name="description" content="队友做的，自己比赛时没做出来自己忽略了一个问题，就是sub_4011B1的栈里保存了完整的（小于1024byte）的输入，而sub_40108E是存在漏洞的，但是只能刚好覆盖ret地址，因此要利用sub_4011B1的栈。
+
+
+
+sub_4011B1
+.
+8B
+Trash*72B
+Trash2*8B
+RopChain*944B
+
+
+
+
+sub_40108E
+Trash*72B
+ret
+
+
+
+抬高r">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Count the Length 数学">
-<meta property="og:url" content="http://wuyihao14.github.io/2015/11/02/CountTheLength/index.html">
+<meta property="og:title" content="alictf-pwn-vss">
+<meta property="og:url" content="http://wuyihao14.github.io/2016/06/07/alictf-pwn-vss/index.html">
 <meta property="og:site_name" content="Shelter">
-<meta property="og:description" content="Count the LengthTime Limit: 2000MS        Memory Limit: 65536KB        64bit IO Format: %lld &amp;amp; %lluSubmit
-Status
-DescriptionYou are given a board of mn, so there are mn unit squares(1*1) in the bo">
-<meta property="og:updated_time" content="2015-07-18T07:15:27.767Z">
+<meta property="og:description" content="队友做的，自己比赛时没做出来自己忽略了一个问题，就是sub_4011B1的栈里保存了完整的（小于1024byte）的输入，而sub_40108E是存在漏洞的，但是只能刚好覆盖ret地址，因此要利用sub_4011B1的栈。
+
+
+
+sub_4011B1
+.
+8B
+Trash*72B
+Trash2*8B
+RopChain*944B
+
+
+
+
+sub_40108E
+Trash*72B
+ret
+
+
+
+抬高r">
+<meta property="og:updated_time" content="2016-06-07T03:48:52.417Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Count the Length 数学">
-<meta name="twitter:description" content="Count the LengthTime Limit: 2000MS        Memory Limit: 65536KB        64bit IO Format: %lld &amp;amp; %lluSubmit
-Status
-DescriptionYou are given a board of mn, so there are mn unit squares(1*1) in the bo">
+<meta name="twitter:title" content="alictf-pwn-vss">
+<meta name="twitter:description" content="队友做的，自己比赛时没做出来自己忽略了一个问题，就是sub_4011B1的栈里保存了完整的（小于1024byte）的输入，而sub_40108E是存在漏洞的，但是只能刚好覆盖ret地址，因此要利用sub_4011B1的栈。
+
+
+
+sub_4011B1
+.
+8B
+Trash*72B
+Trash2*8B
+RopChain*944B
+
+
+
+
+sub_40108E
+Trash*72B
+ret
+
+
+
+抬高r">
 
     
     <link rel="alternative" href="/atom.xml" title="Shelter" type="application/atom+xml">
@@ -86,14 +140,14 @@ DescriptionYou are given a board of mn, so there are mn unit squares(1*1) in the
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/2015/11/02/CountTheLength/" title="Count the Length 数学" itemprop="url">Count the Length 数学</a>
+      <a href="/2016/06/07/alictf-pwn-vss/" title="alictf-pwn-vss" itemprop="url">alictf-pwn-vss</a>
   </h1>
   <p class="article-author">By
        
 		<a href="/about" title="Donald Wu" target="_blank" itemprop="author">Donald Wu</a>
 		
   <p class="article-time">
-    <time datetime="2015-11-02T10:42:59.331Z" itemprop="datePublished"> 發表於 2015-11-02</time>
+    <time datetime="2016-06-07T03:14:23.000Z" itemprop="datePublished"> 發表於 2016-06-07</time>
     
   </p>
 </header>
@@ -106,52 +160,36 @@ DescriptionYou are given a board of mn, so there are mn unit squares(1*1) in the
 		
 		</div>
 		
-		<p>Count the Length<br>Time Limit: 2000MS        Memory Limit: 65536KB        64bit IO Format: %lld &amp; %llu<br>Submit</p>
-<p>Status</p>
-<p>Description<br>You are given a board of m<em>n, so there are m</em>n unit squares(1*1) in the board. Suppose all unit squares are colored red or blue, and no adjacent(have common edge) unit squares share the same color. Consider the diagonal D of the board from left bottom to right top, D is a segment with color too, a point in D is red(or blue) if it falls in a red(or blue) unit square. Assume the left bottom square’s color is red, then what is the total length of red part of the diagonal D?</p>
-<p>the sample of 2 * 4 board</p>
-<p>the total length of red part of the diagonal is 2.236068<br>Input<br>There are multiple test cases(less than 10000). Each case is a line containing two integers m,n(1 ≤ m,n ≤ 2^31-1).</p>
-<p>Output<br>For each case, output a single line containing the right answer(rounded up to 3 digits after the decimal point).</p>
-<p>Sample Input<br>2 4<br>1 3<br>Sample Output<br>2.236<br>2.108</p>
-<p>最大公约数</p>
-<pre><code><span class="preprocessor">#<span class="keyword">include</span> &lt;cstdio&gt;</span>
-<span class="preprocessor">#<span class="keyword">include</span> &lt;cmath&gt;</span>
-
-<span class="function"><span class="keyword">int</span> <span class="title">GCD</span><span class="params">(<span class="keyword">int</span> a, <span class="keyword">int</span> b)</span>
-</span>{
-    <span class="keyword">while</span>(b != <span class="number">0</span>)
-    {
-        <span class="keyword">int</span> r = b;
-        b = a % b;
-        a = r;
-    }
-    <span class="keyword">return</span> a;
-}
-
-
-<span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span>{
-    <span class="keyword">int</span> m,n;
-    <span class="keyword">while</span> (~<span class="built_in">scanf</span>(<span class="string">"%d%d"</span>,&amp;m,&amp;n)){
-        <span class="keyword">int</span> gcd = GCD(m,n);
-        m /= gcd;
-        n /= gcd;
-        <span class="keyword">double</span> mm = m;
-        <span class="keyword">double</span> nn = n;
-        <span class="keyword">double</span> sum = mm*nn;
-        <span class="keyword">double</span> ans = <span class="built_in">sqrt</span>(mm*mm + nn*nn) * (<span class="keyword">double</span>)gcd;
-        ans = ans*<span class="built_in">ceil</span>(sum/<span class="number">2.0</span>)/sum;
-        <span class="built_in">printf</span>(<span class="string">"%.3lf\n"</span>,ans);
-    }
-    <span class="keyword">return</span> <span class="number">0</span>;
-}
-</code></pre>  
+		<p>队友做的，自己比赛时没做出来<br>自己忽略了一个问题，就是sub_4011B1的栈里保存了完整的（小于1024byte）的输入，而sub_40108E是存在漏洞的，但是只能刚好覆盖ret地址，因此要利用sub_4011B1的栈。</p>
+<table>
+<thead>
+<tr>
+<th>sub_4011B1</th>
+<th>.</th>
+<th>8B</th>
+<th>Trash*72B</th>
+<th>Trash2*8B</th>
+<th>RopChain*944B</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>sub_40108E</td>
+<td>Trash*72B</td>
+<td>ret</td>
+</tr>
+</tbody>
+</table>
+<p>抬高rsp之后，再ret就能直接ret到我们的ropchain<br>布置栈’A’*72 + (add rsp 0x58; ret;) + ‘A’*8 + ropchain</p>
+<p>用ROPGadget这个软件可以自动生成ropchain。真是牛逼。。<br>分析这次它生成的ropchain，把.data段地址放入rsi，/bin/sh放入rax，把/bin/sh写入.data前8个字节；同理把0x0000000000000000写入.data+8；然后把三个参数rdi,rsi,rdx分别设为data,data+8,data+8（即参数filename,{NULL},{NULL}）,rax设为59(即execve的syscall号)，然后调用syscall</p>
+  
 	</div>
 		<footer class="article-footer clearfix">
 <div class="article-catetags">
 
 <div class="article-categories">
   <span></span>
-  <a class="article-category-link" href="/categories/ACM/">ACM</a>
+  <a class="article-category-link" href="/categories/pwn/">pwn</a>
 </div>
 
 
@@ -161,7 +199,7 @@ DescriptionYou are given a board of mn, so there are mn unit squares(1*1) in the
 
 	<div class="article-share" id="share">
 	
-	  <div data-url="http://wuyihao14.github.io/2015/11/02/CountTheLength/" data-title="Count the Length 数学 | Shelter" data-tsina="null" class="share clearfix">
+	  <div data-url="http://wuyihao14.github.io/2016/06/07/alictf-pwn-vss/" data-title="alictf-pwn-vss | Shelter" data-tsina="null" class="share clearfix">
 	  </div>
 	
 	</div>
@@ -174,19 +212,11 @@ DescriptionYou are given a board of mn, so there are mn unit squares(1*1) in the
 	
 <nav class="article-nav clearfix">
  
- <div class="prev" >
- <a href="/2015/11/02/AttackTheNEETPrincess/" title="Attack the NEET princess 双连通分量">
-  <strong>上一篇：</strong><br/>
-  <span>
-  Attack the NEET princess 双连通分量</span>
-</a>
-</div>
-
 
 <div class="next">
-<a href="/2015/11/02/第一次撸站笔记/"  title="第一次撸站记录">
+<a href="/2016/06/02/ssctf-pwn2/"  title="ssctf-pwn2">
  <strong>下一篇：</strong><br/> 
- <span>第一次撸站记录
+ <span>ssctf-pwn2
 </span>
 </a>
 </div>

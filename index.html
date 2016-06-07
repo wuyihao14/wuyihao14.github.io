@@ -81,6 +81,131 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/2016/06/07/alictf-pwn-vss/" title="alictf-pwn-vss" itemprop="url">alictf-pwn-vss</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="Donald Wu" target="_blank" itemprop="author">Donald Wu</a>
+		
+  <p class="article-time">
+    <time datetime="2016-06-07T03:14:23.000Z" itemprop="datePublished"> 發表於 2016-06-07</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>队友做的，自己比赛时没做出来<br>自己忽略了一个问题，就是sub_4011B1的栈里保存了完整的（小于1024byte）的输入，而sub_40108E是存在漏洞的，但是只能刚好覆盖ret地址，因此要利用sub_4011B1的栈。</p>
+<table>
+<thead>
+<tr>
+<th>sub_4011B1</th>
+<th>.</th>
+<th>8B</th>
+<th>Trash*72B</th>
+<th>Trash2*8B</th>
+<th>RopChain*944B</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>sub_40108E</td>
+<td>Trash*72B</td>
+<td>ret</td>
+</tr>
+</tbody>
+</table>
+<p>抬高rsp之后，再ret就能直接ret到我们的ropchain<br>布置栈’A’*72 + (add rsp 0x58; ret;) + ‘A’*8 + ropchain</p>
+<p>用ROPGadget这个软件可以自动生成ropchain。真是牛逼。。<br>分析这次它生成的ropchain，把.data段地址放入rsi，/bin/sh放入rax，把/bin/sh写入.data前8个字节；同理把0x0000000000000000写入.data+8；然后把三个参数rdi,rsi,rdx分别设为data,data+8,data+8（即参数filename,{NULL},{NULL}）,rax设为59(即execve的syscall号)，然后调用syscall</p>
+
+        
+        
+        <p class="article-more-link">
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/pwn/">pwn</a>
+</div>
+
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2016/06/02/ssctf-pwn2/" title="ssctf-pwn2" itemprop="url">ssctf-pwn2</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="Donald Wu" target="_blank" itemprop="author">Donald Wu</a>
+		
+  <p class="article-time">
+    <time datetime="2016-06-01T18:16:57.000Z" itemprop="datePublished"> 發表於 2016-06-02</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        
+        
+        
+        <p class="article-more-link">
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/2016/06/01/ssctf-pwn/" title="ssctf_pwn" itemprop="url">ssctf_pwn</a>
   </h1>
   <p class="article-author">By
@@ -110,7 +235,7 @@
 <li>atoi_got -&gt; 根据堆的起始地址和atoi_got的VA来算</li>
 <li>堆的起始地址 -&gt; 第一次sort，会在堆中生成一个struct Link作为表头，其第一个DWORD便是第一个数组，也就是堆的起始地址。我们对第一次生成的数组排序，然后溢出query，便能查到。</li>
 <li>system的地址 -&gt; 根据atoi_plt算出libc，再算出system。</li>
-<li>atoi_plt -&gt; 同2的方法，在该size值很大的块下，我们能进行很大范围的索引</li>
+<li>atoi_plt -&gt; 同2的方法，在该size值很大的块下，我们能进行很大范围的索引。size为0x40000000时,size*4大于了unsigned的最大范围，因此使用0x40000000能够达到32位进程空间任意读写。</li>
 </ol>
 <h3 id="心得">心得</h3><ol>
 <li>才学会使用IDA的structure功能，汗颜。分析数据结构比较复杂的程序，现在应该专注于数据结构的分析才能比较快。</li>
@@ -328,116 +453,6 @@ def main():
 
 
 
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2016/03/02/Daily/" title="Daily" itemprop="url">Daily</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="Donald Wu" target="_blank" itemprop="author">Donald Wu</a>
-		
-  <p class="article-time">
-    <time datetime="2016-03-01T16:14:07.000Z" itemprop="datePublished"> 發表於 2016-03-02</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <p>1 Mar. Review CVE-2014-2851 on [<a href="https://cyseclabs.com/page?n=02012016" target="_blank" rel="external">https://cyseclabs.com/page?n=02012016</a>] :p<br>8 Mar. Reviewing CVE-2016-0799(DRWON) on [<a href="https://drownattack.com/drown-attack-paper.pdf" target="_blank" rel="external">https://drownattack.com/drown-attack-paper.pdf</a>] ;-&gt;</p>
-
-        
-        
-        <p class="article-more-link">
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2016/02/12/Sharif其它无聊的题解/" title="Sharif其它无聊的题解" itemprop="url">Sharif其它无聊的题解</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="Donald Wu" target="_blank" itemprop="author">Donald Wu</a>
-		
-  <p class="article-time">
-    <time datetime="2016-02-12T05:44:15.000Z" itemprop="datePublished"> 發表於 2016-02-12</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <h2 id="Login_to_System">Login to System</h2><p>栈溢出，标志位覆盖</p>
-<h2 id="Kick_Tort_Teen">Kick Tort Teen</h2><p>VBA宏，写了一个ELF文件</p>
-<h2 id="uagent">uagent</h2><p>流量分析，useragent里的base64。用dshell或dpkt来分析。</p>
-<h2 id="DUMPED">DUMPED</h2><p>dump文件，不需要用windbg来找，内存在dump文件里是原始字节，直接grep Sharif即可</p>
-<h2 id="WE_LOST_THE_FASHION_FLAG">WE LOST THE FASHION FLAG</h2><p>解压缩</p>
-<h2 id="Android_App">Android App</h2><p>把.so里的那串hash输进去就可以了，脑残没有反应过来。</p>
-<h2 id="Asian_Cheetah">Asian Cheetah</h2><p>LSB</p>
-<h2 id="dMd">dMd</h2><p>按字节比较</p>
-<h2 id="SRM">SRM</h2><p>按字节比较</p>
-<h2 id="Serial">Serial</h2><p>已经忘了。。</p>
-<h2 id="SecCoding">SecCoding</h2><p>换成string</p>
-
-        
-        
-        <p class="article-more-link">
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
 
   <nav id="page-nav" class="clearfix">
     <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/8/">8</a><a class="extend next" rel="next" href="/page/2/">Next<span></span></a>
@@ -504,7 +519,7 @@ def main():
 		  
 		
 		  
-			<li><a href="/categories/pwn/" title="pwn">pwn<sup>2</sup></a></li>
+			<li><a href="/categories/pwn/" title="pwn">pwn<sup>3</sup></a></li>
 		  
 		
 		</ul>
